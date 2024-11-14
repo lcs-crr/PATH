@@ -1,0 +1,280 @@
+%implements s0_b0_fv9dr_Start "C"
+
+%function Start(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+
+CXPtMax *_rtXPerturbMax;
+CXPtMin *_rtXPerturbMin;
+NeModelParameters modelParameters;
+NeModelParameters modelParameters_e;
+NeModelParameters modelParameters_p;
+NeslRtpManager *manager;
+NeslRtpManager *manager_p;
+NeslSimulationData *simulationData;
+NeslSimulator *tmp_p;
+NeuDiagnosticManager *diagnosticManager;
+NeuDiagnosticTree *diagnosticTree;
+NeuDiagnosticTree *diagnosticTree_e;
+NeuDiagnosticTree *diagnosticTree_i;
+NeuDiagnosticTree *diagnosticTree_p;
+char *msg;
+char *msg_e;
+char *msg_i;
+char *msg_p;
+real_T tmp_m[16];
+real_T time;
+real_T tmp_e;
+int32_T tmp_i;
+int_T tmp_g[5];
+boolean_T tmp;
+boolean_T val;
+%closefile localVarDecl
+%assign tlcSetupRuntimeResourcesFcnOfS0B4 = OpaqueTLCBlockFcn("SetupRuntimeResources", 0, 4, 0, 0, 0)
+%assign tlcStartFcnOfS0B1 = OpaqueTLCBlockFcn("Start", 0, 1, 0, 0, 1)
+%assign tlcStartFcnOfS0B3 = OpaqueTLCBlockFcn("Start", 0, 3, 0, 0, 2)
+%<SLibCG_TrackContStatesPerturbMax(0)>\
+_rtXPerturbMax = %<(SLibCG_SE(SLibGetContStatesPerturbMaxStructPtr()))>;
+%<SLibCG_TrackContStatesPerturbMin(0)>\
+_rtXPerturbMin = %<(SLibCG_SE(SLibGetContStatesPerturbMinStructPtr()))>;
+%<tlcSetupRuntimeResourcesFcnOfS0B4>\
+%<tlcStartFcnOfS0B1>\
+%<tlcStartFcnOfS0B3>\
+manager_p = nesl_lease_rtp_manager("EVBatteryCoolingSystem/Solver Configuration_1", 0);
+manager = manager_p;
+tmp = pointer_is_null(manager_p);
+if (tmp) {
+    EVBatteryCoolingSystem_e473bc05_1_gateway();
+    manager = nesl_lease_rtp_manager("EVBatteryCoolingSystem/Solver Configuration_1", 0);
+}
+rtDW.gfzyhdldpe = (void *)manager;
+rtDW.mhoqdxbzwj = true;
+tmp_p = nesl_lease_simulator("EVBatteryCoolingSystem/Solver Configuration_1", 0, 0);
+rtDW.b1a0qim2yg = (void *)tmp_p;
+tmp = pointer_is_null(rtDW.b1a0qim2yg);
+if (tmp) {
+    EVBatteryCoolingSystem_e473bc05_1_gateway();
+    tmp_p = nesl_lease_simulator("EVBatteryCoolingSystem/Solver Configuration_1", 0, 0);
+    rtDW.b1a0qim2yg = (void *)tmp_p;
+}
+%<(SaveDWorkRawMemoryForSimTargetOP("\"EVBatteryCoolingSystem/Solver Configuration_100\"", "rtDW.b1a0qim2yg", "0U", "nesl_save_simdata", "nesl_restore_simdata"))>;
+simulationData = nesl_create_simulation_data();
+rtDW.pg1peeaap2 = (void *)simulationData;
+diagnosticManager = rtw_create_diagnostics();
+rtDW.bglls0p5vn = (void *)diagnosticManager;
+modelParameters.mSolverType = NE_SOLVER_TYPE_DAE;
+modelParameters.mSolverAbsTol = 0.001;
+modelParameters.mSolverRelTol = 0.001;
+modelParameters.mSolverModifyAbsTol = NE_MODIFY_ABS_TOL_NO;
+modelParameters.mStartTime = 0.0;
+modelParameters.mLoadInitialState = false;
+modelParameters.mUseSimState = false;
+modelParameters.mLinTrimCompile = false;
+modelParameters.mLoggingMode = SSC_LOGGING_ON;
+modelParameters.mRTWModifiedTimeStamp = 6.23167736E+8;
+modelParameters.mZcDisabled = false;
+modelParameters.mUseModelRefSolver = false;
+modelParameters.mTargetFPGAHIL = false;
+tmp_e = %<(SLibCG_SE(SLibCGIRGetVarStepSolverPropertyValue("RelTol", "0.001")))>;
+modelParameters.mSolverTolerance = tmp_e;
+tmp_e = %<(SLibCG_SE(SLibCGIRGetFixStepSolverPropertyValue("FixedStep", "0.0")))>;
+modelParameters.mFixedStepSize = tmp_e;
+tmp = %<(SLibCG_SE(SLibCGIRHasCompiledModelPropertyValue("SolverType", "VariableStep")))>;
+modelParameters.mVariableStepSolver = tmp;
+tmp = %<(SLibCG_SE(SLibCGIRHasCompiledModelPropertyValue("Solver", "odeN")))>;
+modelParameters.mIsUsingODEN = tmp;
+tmp = %<(SLibCG_SE(SLibIsRapidAccelSimulating()))>;
+val = %<(SLibCG_SE(RTMGetGlobalInitialStatesAvailable()))>;
+if (tmp) {
+    val = (val && %<(SLibCG_SE(LibIsFirstInitCond()))>);
+}
+modelParameters.mLoadInitialState = val;
+modelParameters.mZcDisabled = false;
+diagnosticManager = (NeuDiagnosticManager *)rtDW.bglls0p5vn;
+diagnosticTree = neu_diagnostic_manager_get_initial_tree(diagnosticManager);
+tmp_i = nesl_initialize_simulator((NeslSimulator *)rtDW.b1a0qim2yg, &modelParameters, diagnosticManager);
+if (tmp_i != 0) {
+    tmp = error_buffer_is_empty(%<(LibGetRTModelErrorStatus())>);
+    if (tmp) {
+        msg = rtw_diagnostics_msg(diagnosticTree);
+        %<(LibSetRTModelErrorStatus("msg"))>;
+    }
+}
+simulationData = (NeslSimulationData *)rtDW.pg1peeaap2;
+time = %<(SLibCG_SE(LibGetT()))>;
+simulationData->mData->mTime.mN = 1;
+simulationData->mData->mTime.mX = &time;
+simulationData->mData->mContStates.mN = 337;
+simulationData->mData->mContStates.mX = &rtX.effbkgmtax[0];
+simulationData->mData->mDiscStates.mN = 0;
+simulationData->mData->mDiscStates.mX = &rtDW.pahluld41k;
+simulationData->mData->mModeVector.mN = 246;
+simulationData->mData->mModeVector.mX = &rtDW.idk0zphtpp[0];
+tmp = %<(SLibCG_SE(SLibCGIRGetSolverFoundZcEvents()))>;
+simulationData->mData->mFoundZcEvents = tmp;
+simulationData->mData->mIsMajorTimeStep = %<(SLibCG_SE(LibIsMajorTimeStep()))>;
+tmp = %<(SLibCG_SE(SLibCGIRGetSolverAssertCheck()))>;
+simulationData->mData->mIsSolverAssertCheck = tmp;
+tmp = %<(SLibCG_SE(RTMIsSolverCheckingCIC()))>;
+simulationData->mData->mIsSolverCheckingCIC = tmp;
+tmp = %<(SLibCG_SE(RTMIsSolverComputingJacobian()))>;
+simulationData->mData->mIsComputingJacobian = tmp;
+simulationData->mData->mIsEvaluatingF0 = (%<(SLibCG_SE(RTMGetEvaluatingF0ForJacobian()))> != 0);
+tmp = %<(SLibCG_SE(RTMIsSolverRequestingReset()))>;
+simulationData->mData->mIsSolverRequestingReset = tmp;
+simulationData->mData->mIsModeUpdateTimeStep = %<(SLibCG_SE(RTMGetIsModeUpdateTimeStep()))>;
+tmp_g[0] = 0;
+tmp_m[0] = rtB.g4x5d1kqrr[0];
+tmp_m[1] = rtB.g4x5d1kqrr[1];
+tmp_m[2] = rtB.g4x5d1kqrr[2];
+tmp_m[3] = rtB.g4x5d1kqrr[3];
+tmp_g[1] = 4;
+tmp_m[4] = rtB.hmdfvofm2d[0];
+tmp_m[5] = rtB.hmdfvofm2d[1];
+tmp_m[6] = rtB.hmdfvofm2d[2];
+tmp_m[7] = rtB.hmdfvofm2d[3];
+tmp_g[2] = 8;
+tmp_m[8] = rtB.c4vppbzui3[0];
+tmp_m[9] = rtB.c4vppbzui3[1];
+tmp_m[10] = rtB.c4vppbzui3[2];
+tmp_m[11] = rtB.c4vppbzui3[3];
+tmp_g[3] = 12;
+tmp_m[12] = rtB.apvg0yhoqc[0];
+tmp_m[13] = rtB.apvg0yhoqc[1];
+tmp_m[14] = rtB.apvg0yhoqc[2];
+tmp_m[15] = rtB.apvg0yhoqc[3];
+tmp_g[4] = 16;
+simulationData->mData->mInputValues.mN = 16;
+simulationData->mData->mInputValues.mX = &tmp_m[0];
+simulationData->mData->mInputOffsets.mN = 5;
+simulationData->mData->mInputOffsets.mX = &tmp_g[0];
+simulationData->mData->mNumjacDxLo.mN = 337;
+simulationData->mData->mNumjacDxLo.mX = &_rtXPerturbMin->effbkgmtax[0];
+simulationData->mData->mNumjacDxHi.mN = 337;
+simulationData->mData->mNumjacDxHi.mX = &_rtXPerturbMax->effbkgmtax[0];
+diagnosticManager = (NeuDiagnosticManager *)rtDW.bglls0p5vn;
+diagnosticTree_p = neu_diagnostic_manager_get_initial_tree(diagnosticManager);
+tmp_i = ne_simulator_method((NeslSimulator *)rtDW.b1a0qim2yg, NESL_SIM_NUMJAC_DX_BOUNDS, simulationData, diagnosticManager);
+if (tmp_i != 0) {
+    tmp = error_buffer_is_empty(%<(LibGetRTModelErrorStatus())>);
+    if (tmp) {
+        msg_p = rtw_diagnostics_msg(diagnosticTree_p);
+        %<(LibSetRTModelErrorStatus("msg_p"))>;
+    }
+}
+tmp_p = nesl_lease_simulator("EVBatteryCoolingSystem/Solver Configuration_1", 1, 0);
+rtDW.izgcpovxyi = (void *)tmp_p;
+tmp = pointer_is_null(rtDW.izgcpovxyi);
+if (tmp) {
+    EVBatteryCoolingSystem_e473bc05_1_gateway();
+    tmp_p = nesl_lease_simulator("EVBatteryCoolingSystem/Solver Configuration_1", 1, 0);
+    rtDW.izgcpovxyi = (void *)tmp_p;
+}
+%<(SaveDWorkRawMemoryForSimTargetOP("\"EVBatteryCoolingSystem/Solver Configuration_110\"", "rtDW.izgcpovxyi", "0U", "nesl_save_simdata", "nesl_restore_simdata"))>;
+simulationData = nesl_create_simulation_data();
+rtDW.gvo41anqta = (void *)simulationData;
+diagnosticManager = rtw_create_diagnostics();
+rtDW.nrhx2nf1go = (void *)diagnosticManager;
+modelParameters_p.mSolverType = NE_SOLVER_TYPE_DAE;
+modelParameters_p.mSolverAbsTol = 0.001;
+modelParameters_p.mSolverRelTol = 0.001;
+modelParameters_p.mSolverModifyAbsTol = NE_MODIFY_ABS_TOL_NO;
+modelParameters_p.mStartTime = 0.0;
+modelParameters_p.mLoadInitialState = false;
+modelParameters_p.mUseSimState = false;
+modelParameters_p.mLinTrimCompile = false;
+modelParameters_p.mLoggingMode = SSC_LOGGING_ON;
+modelParameters_p.mRTWModifiedTimeStamp = 6.23167736E+8;
+modelParameters_p.mZcDisabled = false;
+modelParameters_p.mUseModelRefSolver = false;
+modelParameters_p.mTargetFPGAHIL = false;
+tmp_e = %<(SLibCG_SE(SLibCGIRGetVarStepSolverPropertyValue("RelTol", "0.001")))>;
+modelParameters_p.mSolverTolerance = tmp_e;
+tmp_e = %<(SLibCG_SE(SLibCGIRGetFixStepSolverPropertyValue("FixedStep", "0.0")))>;
+modelParameters_p.mFixedStepSize = tmp_e;
+tmp = %<(SLibCG_SE(SLibCGIRHasCompiledModelPropertyValue("SolverType", "VariableStep")))>;
+modelParameters_p.mVariableStepSolver = tmp;
+tmp = %<(SLibCG_SE(SLibCGIRHasCompiledModelPropertyValue("Solver", "odeN")))>;
+modelParameters_p.mIsUsingODEN = tmp;
+tmp = %<(SLibCG_SE(SLibIsRapidAccelSimulating()))>;
+val = %<(SLibCG_SE(RTMGetGlobalInitialStatesAvailable()))>;
+if (tmp) {
+    val = (val && %<(SLibCG_SE(LibIsFirstInitCond()))>);
+}
+modelParameters_p.mLoadInitialState = val;
+modelParameters_p.mZcDisabled = false;
+diagnosticManager = (NeuDiagnosticManager *)rtDW.nrhx2nf1go;
+diagnosticTree_e = neu_diagnostic_manager_get_initial_tree(diagnosticManager);
+tmp_i = nesl_initialize_simulator((NeslSimulator *)rtDW.izgcpovxyi, &modelParameters_p, diagnosticManager);
+if (tmp_i != 0) {
+    tmp = error_buffer_is_empty(%<(LibGetRTModelErrorStatus())>);
+    if (tmp) {
+        msg_e = rtw_diagnostics_msg(diagnosticTree_e);
+        %<(LibSetRTModelErrorStatus("msg_e"))>;
+    }
+}
+tmp_p = nesl_lease_simulator("EVBatteryCoolingSystem/Solver Configuration_1", 1, 1);
+rtDW.o1ucbdw3qn = (void *)tmp_p;
+tmp = pointer_is_null(rtDW.o1ucbdw3qn);
+if (tmp) {
+    EVBatteryCoolingSystem_e473bc05_1_gateway();
+    tmp_p = nesl_lease_simulator("EVBatteryCoolingSystem/Solver Configuration_1", 1, 1);
+    rtDW.o1ucbdw3qn = (void *)tmp_p;
+}
+%<(SaveDWorkRawMemoryForSimTargetOP("\"EVBatteryCoolingSystem/Solver Configuration_111\"", "rtDW.o1ucbdw3qn", "0U", "nesl_save_simdata", "nesl_restore_simdata"))>;
+simulationData = nesl_create_simulation_data();
+rtDW.i0lluemaxm = (void *)simulationData;
+diagnosticManager = rtw_create_diagnostics();
+rtDW.cm54eojqab = (void *)diagnosticManager;
+modelParameters_e.mSolverType = NE_SOLVER_TYPE_DAE;
+modelParameters_e.mSolverAbsTol = 0.001;
+modelParameters_e.mSolverRelTol = 0.001;
+modelParameters_e.mSolverModifyAbsTol = NE_MODIFY_ABS_TOL_NO;
+modelParameters_e.mStartTime = 0.0;
+modelParameters_e.mLoadInitialState = false;
+modelParameters_e.mUseSimState = false;
+modelParameters_e.mLinTrimCompile = false;
+modelParameters_e.mLoggingMode = SSC_LOGGING_ON;
+modelParameters_e.mRTWModifiedTimeStamp = 6.23167736E+8;
+modelParameters_e.mZcDisabled = false;
+modelParameters_e.mUseModelRefSolver = false;
+modelParameters_e.mTargetFPGAHIL = false;
+tmp_e = %<(SLibCG_SE(SLibCGIRGetVarStepSolverPropertyValue("RelTol", "0.001")))>;
+modelParameters_e.mSolverTolerance = tmp_e;
+tmp_e = %<(SLibCG_SE(SLibCGIRGetFixStepSolverPropertyValue("FixedStep", "0.0")))>;
+modelParameters_e.mFixedStepSize = tmp_e;
+tmp = %<(SLibCG_SE(SLibCGIRHasCompiledModelPropertyValue("SolverType", "VariableStep")))>;
+modelParameters_e.mVariableStepSolver = tmp;
+tmp = %<(SLibCG_SE(SLibCGIRHasCompiledModelPropertyValue("Solver", "odeN")))>;
+modelParameters_e.mIsUsingODEN = tmp;
+tmp = %<(SLibCG_SE(SLibIsRapidAccelSimulating()))>;
+val = %<(SLibCG_SE(RTMGetGlobalInitialStatesAvailable()))>;
+if (tmp) {
+    val = (val && %<(SLibCG_SE(LibIsFirstInitCond()))>);
+}
+modelParameters_e.mLoadInitialState = val;
+modelParameters_e.mZcDisabled = false;
+diagnosticManager = (NeuDiagnosticManager *)rtDW.cm54eojqab;
+diagnosticTree_i = neu_diagnostic_manager_get_initial_tree(diagnosticManager);
+tmp_i = nesl_initialize_simulator((NeslSimulator *)rtDW.o1ucbdw3qn, &modelParameters_e, diagnosticManager);
+if (tmp_i != 0) {
+    tmp = error_buffer_is_empty(%<(LibGetRTModelErrorStatus())>);
+    if (tmp) {
+        msg_i = rtw_diagnostics_msg(diagnosticTree_i);
+        %<(LibSetRTModelErrorStatus("msg_i"))>;
+    }
+}
+%closefile cfgTxt
+%<cfgTxt>
+%<LibSetSystemField(system, "CachedStartLocalVars", localVarDecl)>
+%endfunction
+%function StartFcnProtoType(block, system) Output
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void Start(\
+%assign comma = ""
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(0, 0, fcnProtoType)>
+%endfunction

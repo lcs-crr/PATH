@@ -1,0 +1,55 @@
+%implements s0_b0_fv9dr_SystemInitialize "C"
+
+%function SystemInitialize(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+
+int_T is;
+int_T tmp_e;
+int_T tmp_g;
+int_T tmp_i;
+int_T tmp_j;
+int_T tmp_m;
+boolean_T tmp;
+boolean_T tmp_p;
+%<::tSimStructType> *S;
+void *diag;
+%closefile localVarDecl
+%<SLibGetRootInportsFromFile(system, TLC_TRUE)>
+%<SLibInsertAsyncTaskInitializeCode(system)>
+%<SLibWriteMachineInitialize()>
+rtX.bq1z1krpn5 = 0.0;
+rtX.iwyoop3u3r = rtP.StateSpace_InitialCondition;
+rtX.env1qqkpbr = rtP.PIDController_InitialConditionForIntegrator;
+rtX.karozk4fpb = rtP.PIDController_InitialConditionForFilter;
+tmp = %<(SLibCG_SE(SLibCGIRHasCompiledModelPropertyValue("ModelReferenceTargetType", "RTW")))>;
+tmp_p = %<(SLibCG_SE(SLibCGIRHasCompiledModelPropertyValue("ModelReferenceTargetType", "SIM")))>;
+if (tmp_p || tmp) {
+    is = strcmp(%<(RTMSolverGet("SolverName"))>, "daessc");
+    tmp_e = strcmp(%<(RTMSolverGet("SolverName"))>, "ode14x");
+    tmp_i = strcmp(%<(RTMSolverGet("SolverName"))>, "ode15s");
+    tmp_m = strcmp(%<(RTMSolverGet("SolverName"))>, "ode1be");
+    tmp_g = strcmp(%<(RTMSolverGet("SolverName"))>, "ode23t");
+    tmp_j = strcmp(%<(RTMSolverGet("SolverName"))>, "odeN");
+    if ((boolean_T)((is != 0) & (tmp_e != 0) & (tmp_i != 0) & (tmp_m != 0) & (tmp_g != 0) & (tmp_j != 0))) {
+        S = %<::tSimStruct>;
+        diag = CreateDiagnosticAsVoidPtr("physmod:simscape:engine:sli:SimscapeExecutionBlock:InconsistentSolversInModelRef", 2, 3, "daessc", 3, "{daessc, ode14x, ode15s, ode1be, ode23t, odeN}");
+        rt_ssSet_slErrMsg(S, diag);
+    }
+}
+%<SLibInsertInitPeriodicCStatesFcn(system)>
+%<SLibInsertInitSystemMatricesFcn(system)>
+%closefile cfgTxt
+%<cfgTxt>
+%<LibSetSystemField(system, "CachedSystemInitializeLocalVars", localVarDecl)>
+%endfunction
+%function SystemInitializeFcnProtoType(block, system) Output
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void SystemInitialize(\
+%assign comma = ""
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(0, 1, fcnProtoType)>
+%endfunction

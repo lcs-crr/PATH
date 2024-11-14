@@ -1,0 +1,4 @@
+LIBRARY "\\smtcf01008.rd.corpintra.net\correlu$\data\My Documents\MATLAB\Examples\R2023b\simscapefluids\EVBatteryCoolingSystemExample\slprj\raccel\EVBatteryCoolingSystem\tmwinternal\EVBatteryCoolingSystem_capi_host.mexw64" 
+EXPORTS 
+mexFunction 
+mexfilerequiredapiversion 

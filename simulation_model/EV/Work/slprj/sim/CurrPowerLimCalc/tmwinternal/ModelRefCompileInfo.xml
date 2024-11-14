@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MF0 version="1.1" packageUris="http://schema.mathworks.com/mf0/ci/19700101 http://schema.mathworks.com/mf0/sl_data_duplicateandconsistencycheck/R2022b http://schema.mathworks.com/mf0/sl_modelref_info/R2023b http://schema.mathworks.com/mf0/slexec_mm_sto/R2023a_202208151321 http://schema.mathworks.com/mf0/sltp_mm/R2023a_202209151115">
+  <ModelRefInfoRepo.ModelRefInfoRoot type="ModelRefInfoRepo.ModelRefInfoRoot" uuid="6572689a-fe94-47f4-9627-78ad87d07751">
+    <calibrationData type="ModelRefInfoRepo.CalibrationData" uuid="480071fe-f6df-4ada-aa1b-eb6843bfe3c3">
+      <ModelName>CurrPowerLimCalc</ModelName>
+      <Parameters>[{&quot;DualScaledParamProperty&quot;:&quot;&quot;,&quot;Name&quot;:&quot;MaxDchrgCurrLim&quot;,&quot;Profile&quot;:&quot;&quot;},{&quot;DualScaledParamProperty&quot;:&quot;&quot;,&quot;Name&quot;:&quot;MaxChrgCurrLim&quot;,&quot;Profile&quot;:&quot;&quot;},{&quot;DualScaledParamProperty&quot;:&quot;&quot;,&quot;Name&quot;:&quot;MinCellVoltDchrgCurrentLimTable&quot;,&quot;Profile&quot;:&quot;&quot;}]</Parameters>
+      <RootIOData>[{&quot;Name&quot;:&quot;In Bus Element1&quot;,&quot;Profile&quot;:&quot;&quot;},{&quot;Name&quot;:&quot;In Bus Element2&quot;,&quot;Profile&quot;:&quot;&quot;},{&quot;Name&quot;:&quot;CurrentLimits&quot;,&quot;Profile&quot;:&quot;&quot;},{&quot;Name&quot;:&quot;Min_Max_Cells&quot;,&quot;Profile&quot;:&quot;&quot;}]</RootIOData>
+    </calibrationData>
+    <childModelRefInfo type="ModelRefInfoRepo.ChildModelRefInfo" uuid="bb43ac68-61a5-46ea-8150-82268625aeea">
+      <isSingleInstance>true</isSingleInstance>
+      <modelName>CurrPowerLimCalc</modelName>
+      <modelPath>CurrPowerLimCalc</modelPath>
+    </childModelRefInfo>
+    <compDerivCacheNeedsReset>false</compDerivCacheNeedsReset>
+    <compZcCacheNeedsReset>false</compZcCacheNeedsReset>
+    <compiledTFinal>10000.0</compiledTFinal>
+    <dataDictionary>DD_CurrPowerLimCalc.sldd</dataDictionary>
+    <dataDictionarySet>DD_CurrPowerLimCalc.sldd</dataDictionarySet>
+    <dataDictionarySetForDataTypeCheck>DD_CurrPowerLimCalc.sldd</dataDictionarySetForDataTypeCheck>
+    <dataSourceInfo type="ModelRefInfoRepo.DataSourceInfo" uuid="74382108-bde6-44d4-bac2-ebd35195bb6c">
+      <dataSources type="ModelRefInfoRepo.SourceInfo" uuid="667c8a43-170f-4fe5-be56-652e50fe7967">
+        <includeAllSections>true</includeAllSections>
+        <sourceName>base workspace</sourceName>
+        <type>BaseWorkspace</type>
+      </dataSources>
+      <dataSources type="ModelRefInfoRepo.SourceInfo" uuid="5e95266f-d50d-4ea3-bc09-0c82ddd04071">
+        <includeAllSections>true</includeAllSections>
+        <sourceName>DD_CurrPowerLimCalc.sldd</sourceName>
+        <type>DataDictionary</type>
+      </dataSources>
+      <modelName>CurrPowerLimCalc</modelName>
+    </dataSourceInfo>
+    <dataTransferInfos>AAFJTQAAAAAOAAAAOAAAAAYAAAAIAAAAAgAAAAAAAAAFAAAACAAAAAAAAAABAAAAAQAAAAAAAAAFAAQAAQAAAAEAAAAAAAAA</dataTransferInfos>
+    <defaultsCMapping>{&quot;Inports&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;Outports&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;ParameterArguments&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;LocalParameters&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;GlobalParameters&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;InternalData&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;SharedLocalDataStores&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;GlobalDataStores&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;Constants&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;DataTransfers&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;ModelData&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;InitializeTerminate&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;Execution&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;,&quot;SharedUtility&quot;:&quot;{\&quot;Name\&quot;:\&quot;Default\&quot;,\&quot;Checksum\&quot;:\&quot;Default\&quot;,\&quot;PerInstancePropertiesChecksum\&quot;:\&quot;\&quot;,\&quot;MemorySectionName\&quot;:\&quot;None\&quot;,\&quot;MemorySectionChecksum\&quot;:\&quot;None\&quot;}&quot;}</defaultsCMapping>
+    <fastestNoncontSigFeedingDerivPorts>inf</fastestNoncontSigFeedingDerivPorts>
+    <fundamentalSampleTimePeriod>.1</fundamentalSampleTimePeriod>
+    <globalVariables>#CurrentLimits#DD_CurrPowerLimCalc.sldd#</globalVariables>
+    <globalVariables>#Min_Max_Cells#DD_CurrPowerLimCalc.sldd#</globalVariables>
+    <globalVariables>#Sensors#DD_CurrPowerLimCalc.sldd#</globalVariables>
+    <grCompInputPortMaps>0,0,5</grCompInputPortMaps>
+    <grCompOutputPortMaps>0,0,0;1,1,1</grCompOutputPortMaps>
+    <hasBlockWithPeriodicDiscreteSampleTime>true</hasBlockWithPeriodicDiscreteSampleTime>
+    <hasBwsAccessed>true</hasBwsAccessed>
+    <hasBwsAccessedByAnyModel>true</hasBwsAccessedByAnyModel>
+    <hasConstantOutput>false</hasConstantOutput>
+    <hasModelWideEventTs>false</hasModelWideEventTs>
+    <inports type="ModelRefInfoRepo.InportInformation" uuid="9b5cb9bc-8383-416e-bfee-430076d53deb">
+      <isNotDerivPort>true</isNotDerivPort>
+      <designMax>5.0</designMax>
+      <indexType>2</indexType>
+      <rateInfos type="ModelRefInfoRepo.RateInfo">
+        <compiled>true</compiled>
+        <nonFcnCallPartitionName>D1</nonFcnCallPartitionName>
+        <period>.1</period>
+        <priority>40</priority>
+        <rateIdx>0</rateIdx>
+      </rateInfos>
+      <resolvedSignalObject></resolvedSignalObject>
+      <autosarInfo type="ModelRefInfoRepo.AUTOSARInportInfo" uuid="bb956bc4-64d5-4fc8-8677-dc5dca4c2b3a">
+        <ElementName>Cell_Voltages</ElementName>
+        <PortName>Sensors</PortName>
+      </autosarInfo>
+      <executionInterface type="ModelRefInfoRepo.InputExecutionInterface" uuid="2489881e-a115-4d3f-a7c2-488a6dbf3490"/>
+      <sigNameToEMVCEMap type="ModelRefInfoRepo.SigNameEMVCEInfo" uuid="bbbb4b98-6fca-44d3-bd2f-2d8d4daf7d28"/>
+    </inports>
+    <inports type="ModelRefInfoRepo.InportInformation" uuid="e409fcfd-09cb-4a26-b07a-fd9ce764d8bd">
+      <isNotDerivPort>true</isNotDerivPort>
+      <designMax>480.0</designMax>
+      <indexType>2</indexType>
+      <rateInfos type="ModelRefInfoRepo.RateInfo">
+        <compiled>true</compiled>
+        <nonFcnCallPartitionName>D1</nonFcnCallPartitionName>
+        <period>.1</period>
+        <priority>40</priority>
+        <rateIdx>0</rateIdx>
+      </rateInfos>
+      <resolvedSignalObject></resolvedSignalObject>
+      <autosarInfo type="ModelRefInfoRepo.AUTOSARInportInfo" uuid="30517e73-b767-46c1-94e6-f55b789e7e41"/>
+      <executionInterface type="ModelRefInfoRepo.InputExecutionInterface" uuid="7037b1dc-ef8d-4998-a51b-ffbc3c35c079"/>
+      <sigNameToEMVCEMap type="ModelRefInfoRepo.SigNameEMVCEInfo" uuid="04b26e7f-895a-479e-81b8-dd071e0fdc72"/>
+    </inports>
+    <inports type="ModelRefInfoRepo.InportInformation" uuid="1f6b4478-ba7f-401b-9a83-132ddc5f65b9">
+      <isNotDerivPort>true</isNotDerivPort>
+      <designMax>100.0</designMax>
+      <designMin>-100.0</designMin>
+      <indexType>2</indexType>
+      <rateInfos type="ModelRefInfoRepo.RateInfo">
+        <compiled>true</compiled>
+        <nonFcnCallPartitionName>D1</nonFcnCallPartitionName>
+        <period>.1</period>
+        <priority>40</priority>
+        <rateIdx>0</rateIdx>
+      </rateInfos>
+      <resolvedSignalObject></resolvedSignalObject>
+      <autosarInfo type="ModelRefInfoRepo.AUTOSARInportInfo" uuid="e24e46f5-6d46-4e9d-9055-16961a4f644c"/>
+      <executionInterface type="ModelRefInfoRepo.InputExecutionInterface" uuid="719da96c-af24-464a-9fc5-3b0767afa864"/>
+      <sigNameToEMVCEMap type="ModelRefInfoRepo.SigNameEMVCEInfo" uuid="47f9b3a6-5564-4a66-b11d-b24963673f3a"/>
+    </inports>
+    <inports type="ModelRefInfoRepo.InportInformation" uuid="b19f4a10-188f-40c8-9e23-0205a13c43e7">
+      <isNotDerivPort>true</isNotDerivPort>
+      <designMax>40.0</designMax>
+      <designMin>-10.0</designMin>
+      <indexType>2</indexType>
+      <rateInfos type="ModelRefInfoRepo.RateInfo">
+        <compiled>true</compiled>
+        <nonFcnCallPartitionName>D1</nonFcnCallPartitionName>
+        <period>.1</period>
+        <priority>40</priority>
+        <rateIdx>0</rateIdx>
+      </rateInfos>
+      <resolvedSignalObject></resolvedSignalObject>
+      <autosarInfo type="ModelRefInfoRepo.AUTOSARInportInfo" uuid="5c1ddcac-20aa-4930-ae9a-edf97a239e1c">
+        <ElementName>Cell_Temperatures</ElementName>
+        <PortName>Sensors</PortName>
+      </autosarInfo>
+      <executionInterface type="ModelRefInfoRepo.InputExecutionInterface" uuid="dfca896d-ff02-44b9-af61-c95b882c17dd"/>
+      <sigNameToEMVCEMap type="ModelRefInfoRepo.SigNameEMVCEInfo" uuid="a9570607-3dbd-4f49-9e23-14d3a500ec70"/>
+    </inports>
+    <inports type="ModelRefInfoRepo.InportInformation" uuid="2ce32d04-f2af-437e-9573-4f5a99d594b7">
+      <isNotDerivPort>true</isNotDerivPort>
+      <designMax>500.0</designMax>
+      <designMin>-500.0</designMin>
+      <indexType>2</indexType>
+      <rateInfos type="ModelRefInfoRepo.RateInfo">
+        <compiled>true</compiled>
+        <nonFcnCallPartitionName>D1</nonFcnCallPartitionName>
+        <period>.1</period>
+        <priority>40</priority>
+        <rateIdx>0</rateIdx>
+      </rateInfos>
+      <resolvedSignalObject></resolvedSignalObject>
+      <autosarInfo type="ModelRefInfoRepo.AUTOSARInportInfo" uuid="636b54ab-636e-445e-a1f5-333f18a8c714"/>
+      <executionInterface type="ModelRefInfoRepo.InputExecutionInterface" uuid="eaa31bff-d459-4658-8371-c403cfb6b4e3"/>
+      <sigNameToEMVCEMap type="ModelRefInfoRepo.SigNameEMVCEInfo" uuid="8ab1954a-8022-4dc0-9ed4-4d48296f95e2"/>
+    </inports>
+    <inports type="ModelRefInfoRepo.InportInformation" uuid="ec2ffd4e-549e-4624-b586-41bf66e7e612">
+      <isNotDerivPort>true</isNotDerivPort>
+      <designMax>500.0</designMax>
+      <designMin>-500.0</designMin>
+      <indexType>2</indexType>
+      <rateInfos type="ModelRefInfoRepo.RateInfo">
+        <compiled>true</compiled>
+        <nonFcnCallPartitionName>D1</nonFcnCallPartitionName>
+        <period>.1</period>
+        <priority>40</priority>
+        <rateIdx>0</rateIdx>
+      </rateInfos>
+      <resolvedSignalObject></resolvedSignalObject>
+      <autosarInfo type="ModelRefInfoRepo.AUTOSARInportInfo" uuid="2a981f84-4ab9-45d2-9450-c79d4a7ec4ab"/>
+      <executionInterface type="ModelRefInfoRepo.InputExecutionInterface" uuid="c2ca1582-debc-4326-a7e6-712337cfe878"/>
+      <sigNameToEMVCEMap type="ModelRefInfoRepo.SigNameEMVCEInfo" uuid="aaff8b56-e6b0-4ab1-a82f-231a15afbf49"/>
+    </inports>
+    <isAperiodicRootFcnCallSystem>false</isAperiodicRootFcnCallSystem>
+    <isInlineParamsOn>true</isInlineParamsOn>
+    <isNumAllowedInstancesOne>true</isNumAllowedInstancesOne>
+    <isOrigInportVirtualBus>true</isOrigInportVirtualBus>
+    <isOrigOutportVirtualBus>false</isOrigOutportVirtualBus>
+    <isOrigOutportVirtualBus>false</isOrigOutportVirtualBus>
+    <isPreCompSingleRate>false</isPreCompSingleRate>
+    <isRefModelConstant>false</isRefModelConstant>
+    <isRootFcnCallPortGroupsEmpty>true</isRootFcnCallPortGroupsEmpty>
+    <loggingSaveFormat>2</loggingSaveFormat>
+    <maxFreqHz>-1.0</maxFreqHz>
+    <numDataInputPorts>1</numDataInputPorts>
+    <numLoggableJacobianDStates>0</numLoggableJacobianDStates>
+    <numModelWideEventTs>0</numModelWideEventTs>
+    <numPortlessSimulinkFunctionPortGroups>0</numPortlessSimulinkFunctionPortGroups>
+    <numRuntimeExportedRates>1</numRuntimeExportedRates>
+    <numTs>1</numTs>
+    <origInportBusType>Sensors</origInportBusType>
+    <origOutportBusOutputAsStruct>true</origOutportBusOutputAsStruct>
+    <origOutportBusOutputAsStruct>true</origOutportBusOutputAsStruct>
+    <origOutportBusType>CurrentLimits</origOutportBusType>
+    <origOutportBusType>Min_Max_Cells</origOutportBusType>
+    <outports type="ModelRefInfoRepo.OutportInformation" uuid="b4e1f4be-0203-4322-a735-a621a79aabb7">
+      <okToMerge>3</okToMerge>
+      <designMax>inf</designMax>
+      <designMin>-inf</designMin>
+      <indexType>2</indexType>
+      <rateInfos type="ModelRefInfoRepo.RateInfo">
+        <compiled>true</compiled>
+        <nonFcnCallPartitionName>D1</nonFcnCallPartitionName>
+        <period>.1</period>
+        <priority>40</priority>
+        <rateIdx>0</rateIdx>
+      </rateInfos>
+      <resolvedSignalObject></resolvedSignalObject>
+      <autosarInfo type="ModelRefInfoRepo.AUTOSAROutportInfo" uuid="60bffacd-dcec-4c4c-bbcf-f9f4949fe74d">
+        <ElementName>CurrentLimits</ElementName>
+        <PortName>CurrentLimits</PortName>
+      </autosarInfo>
+      <executionInterface type="ModelRefInfoRepo.OutputExecutionInterface" uuid="31b19798-9cb7-46e0-a75c-84bea37ab046"/>
+      <sigNameToEMVCEMap type="ModelRefInfoRepo.SigNameEMVCEInfo" uuid="dfef2f85-3a4e-492e-85ae-e3ca6731abe4"/>
+    </outports>
+    <outports type="ModelRefInfoRepo.OutportInformation" uuid="8e63e987-aade-4f6e-ba85-c0126d46a0e8">
+      <okToMerge>2</okToMerge>
+      <srcHasMultiDsts>true</srcHasMultiDsts>
+      <RTWSignalIdentifier>Min_Max_Cells</RTWSignalIdentifier>
+      <designMax>inf</designMax>
+      <designMin>-inf</designMin>
+      <indexType>2</indexType>
+      <originalPortNumber>1</originalPortNumber>
+      <rateInfos type="ModelRefInfoRepo.RateInfo">
+        <compiled>true</compiled>
+        <nonFcnCallPartitionName>D1</nonFcnCallPartitionName>
+        <period>.1</period>
+        <priority>40</priority>
+        <rateIdx>0</rateIdx>
+      </rateInfos>
+      <resolvedSignalObject></resolvedSignalObject>
+      <autosarInfo type="ModelRefInfoRepo.AUTOSAROutportInfo" uuid="0378a7e9-fb87-40da-969d-d0542b3c8e44">
+        <ElementName>Min_Max_Cells</ElementName>
+        <PortName>Min_Max_Cells</PortName>
+      </autosarInfo>
+      <executionInterface type="ModelRefInfoRepo.OutputExecutionInterface" uuid="6a66ae44-7b6c-416f-aef3-877b2151b006"/>
+      <sigNameToEMVCEMap type="ModelRefInfoRepo.SigNameEMVCEInfo" uuid="d9bbdb3f-1dd9-4587-a008-ef94c2546e09"/>
+    </outports>
+    <preCompAllowConstTsOnPorts>false</preCompAllowConstTsOnPorts>
+    <preCompAllowPortBasedInTriggeredSS>false</preCompAllowPortBasedInTriggeredSS>
+    <removeResetFunc>true</removeResetFunc>
+    <runtimeNonFcnCallRateInfos type="ModelRefInfoRepo.RateInfo">
+      <compiled>true</compiled>
+      <nonFcnCallPartitionName>D1</nonFcnCallPartitionName>
+      <period>.1</period>
+      <priority>40</priority>
+      <rateIdx>0</rateIdx>
+    </runtimeNonFcnCallRateInfos>
+    <sampleTimeInheritanceRule>2</sampleTimeInheritanceRule>
+    <solverStatusFlags>331</solverStatusFlags>
+    <timingAndTaskingRegistry>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;slexec_sto version=&quot;1.1&quot; packageUris=&quot;http://schema.mathworks.com/mf0/slexec_mm_sto/R2023a_202208151321&quot;&gt;
+  &lt;sto.Registry type=&quot;sto.Registry&quot; uuid=&quot;b8909ba0-faf8-4e22-9dba-d5e3af7c5fe3&quot;&gt;
+    &lt;executionSpec&gt;Undetermined&lt;/executionSpec&gt;
+    &lt;identifier&gt;CurrPowerLimCalc&lt;/identifier&gt;
+    &lt;clockRegistry type=&quot;sto.ClockRegistry&quot; uuid=&quot;9f4c9808-7260-48d7-94d0-8ab4e5d6618b&quot;&gt;
+      &lt;clocks type=&quot;sto.Timer&quot; uuid=&quot;734299c5-6e22-46f1-881e-470e8a3ad404&quot;&gt;
+        &lt;clockTickConstraint&gt;PeriodicWithFixedResolution&lt;/clockTickConstraint&gt;
+        &lt;computedFundamentalDiscretePeriod&gt;.1&lt;/computedFundamentalDiscretePeriod&gt;
+        &lt;fastestDiscreteRate type=&quot;sto.ClassicPeriodicDiscreteRate&quot; uuid=&quot;8c80f75c-7047-4431-8d10-9e73107d631a&quot;/&gt;
+        &lt;isDefaultTimer&gt;true&lt;/isDefaultTimer&gt;
+        &lt;resolution&gt;.1&lt;/resolution&gt;
+        &lt;timeAdvanceMode&gt;FixedStep&lt;/timeAdvanceMode&gt;
+        &lt;identifier&gt;CurrPowerLimCalc::defaultTimer&lt;/identifier&gt;
+        &lt;rates type=&quot;sto.ClassicPeriodicDiscreteRate&quot; uuid=&quot;8c80f75c-7047-4431-8d10-9e73107d631a&quot;&gt;
+          &lt;annotation&gt;D1&lt;/annotation&gt;
+          &lt;clockId&gt;CurrPowerLimCalc::defaultTimer&lt;/clockId&gt;
+          &lt;description&gt;Discrete 1&lt;/description&gt;
+          &lt;taskId&gt;_task0&lt;/taskId&gt;
+          &lt;rateSpec type=&quot;sto.RateSpec&quot; uuid=&quot;f71dd617-f499-4d88-bdb4-ad3646b2dfc2&quot;&gt;
+            &lt;period&gt;.1&lt;/period&gt;
+            &lt;rateType&gt;ClassicPeriodicDiscrete&lt;/rateType&gt;
+          &lt;/rateSpec&gt;
+        &lt;/rates&gt;
+        &lt;baseRate type=&quot;sto.ClassicPeriodicDiscreteRate&quot; uuid=&quot;e1206a9d-4944-4286-852f-43caba41d2f6&quot;&gt;
+          &lt;annotation&gt;D1&lt;/annotation&gt;
+          &lt;clockId&gt;CurrPowerLimCalc::defaultTimer&lt;/clockId&gt;
+          &lt;description&gt;Discrete 1&lt;/description&gt;
+          &lt;taskId&gt;_task0&lt;/taskId&gt;
+          &lt;rateSpec type=&quot;sto.RateSpec&quot; uuid=&quot;c2aab96a-06aa-43b0-83b2-4bdff111c27c&quot;&gt;
+            &lt;period&gt;.1&lt;/period&gt;
+            &lt;rateType&gt;ClassicPeriodicDiscrete&lt;/rateType&gt;
+          &lt;/rateSpec&gt;
+        &lt;/baseRate&gt;
+      &lt;/clocks&gt;
+      &lt;timeAdvanceMode&gt;FixedStep&lt;/timeAdvanceMode&gt;
+    &lt;/clockRegistry&gt;
+    &lt;taskRegistry type=&quot;sto.TaskRegistry&quot; uuid=&quot;b8c2fd6d-5678-415c-9cdb-65516c690b7f&quot;&gt;
+      &lt;rootTaskHierarchyElements type=&quot;sto.Task&quot; uuid=&quot;07ec9276-6f7a-41ee-8b4a-8d760b79de76&quot;&gt;
+        &lt;isExecutable&gt;true&lt;/isExecutable&gt;
+        &lt;orderIndex&gt;1&lt;/orderIndex&gt;
+        &lt;rates type=&quot;sto.ClassicPeriodicDiscreteRate&quot; uuid=&quot;656729df-8a14-416d-a05a-f8a87936f650&quot;&gt;
+          &lt;annotation&gt;D1&lt;/annotation&gt;
+          &lt;clockId&gt;CurrPowerLimCalc::defaultTimer&lt;/clockId&gt;
+          &lt;description&gt;Discrete 1&lt;/description&gt;
+          &lt;taskId&gt;_task0&lt;/taskId&gt;
+          &lt;rateSpec type=&quot;sto.RateSpec&quot; uuid=&quot;0e57c503-06d5-4253-86bf-0da63825f1a5&quot;&gt;
+            &lt;period&gt;.1&lt;/period&gt;
+            &lt;rateType&gt;ClassicPeriodicDiscrete&lt;/rateType&gt;
+          &lt;/rateSpec&gt;
+        &lt;/rates&gt;
+        &lt;schedulingClockId&gt;CurrPowerLimCalc::defaultTimer&lt;/schedulingClockId&gt;
+        &lt;timeKeeperClockId&gt;CurrPowerLimCalc::defaultTimer&lt;/timeKeeperClockId&gt;
+        &lt;elementType&gt;Task&lt;/elementType&gt;
+        &lt;identifier&gt;_task0&lt;/identifier&gt;
+        &lt;priority&gt;40&lt;/priority&gt;
+      &lt;/rootTaskHierarchyElements&gt;
+      &lt;taskDependencyGraph type=&quot;sto.SerializedTaskConnectionList&quot; uuid=&quot;2072974b-c8c8-465e-92be-cf0e4bb60975&quot;&gt;
+        &lt;clockIdentifier&gt;CurrPowerLimCalc::defaultTimer&lt;/clockIdentifier&gt;
+        &lt;taskIdentifier&gt;_task0&lt;/taskIdentifier&gt;
+      &lt;/taskDependencyGraph&gt;
+    &lt;/taskRegistry&gt;
+  &lt;/sto.Registry&gt;
+&lt;/slexec_sto&gt;</timingAndTaskingRegistry>
+    <usePortBasedSampleTime>true</usePortBasedSampleTime>
+    <FMUBlockMap type="ModelRefInfoRepo.FMUBlockInfo" uuid="1aeea01b-47ce-4cee-8302-8e4afb58236a"/>
+    <codeGenInfo type="ModelRefInfoRepo.CodeGenInformation" uuid="5c6fcbd3-2657-4d6a-981f-ffefe52e55f8">
+      <DWorkTypeName>pdpnucaqsyk</DWorkTypeName>
+    </codeGenInfo>
+    <compiledVariantInfos type="ModelRefInfoRepo.CompiledVariantInfoMap" uuid="7a514f0d-14ed-4948-a7a5-de2e5f47f399"/>
+    <configSettingsForConsistencyChecks type="ModelRefInfoRepo.ConfigSettingsForConsistencyChecks" uuid="b8d92587-dd7f-4603-a67e-ecb7cc6cefbb">
+      <LUTObjectStructOrderEvenSpacing>1</LUTObjectStructOrderEvenSpacing>
+      <consistentOutportInitialization>true</consistentOutportInitialization>
+      <fixedStepSize>.1</fixedStepSize>
+      <frameDiagnosticSetting>2</frameDiagnosticSetting>
+      <hasHybridSampleTime>true</hasHybridSampleTime>
+      <optimizedInitCode>true</optimizedInitCode>
+      <signalLoggingSaveFormat>2</signalLoggingSaveFormat>
+      <simSIMDOptimization>1</simSIMDOptimization>
+      <solverName>FixedStepDiscrete</solverName>
+      <solverType>SOLVER_TYPE_FIXEDSTEP</solverType>
+      <hardwareSettings type="ModelRefInfoRepo.HardwareSettings" uuid="dbc81603-4e24-433d-8e40-e7f84f60bf0b">
+        <prodBitPerChar>8</prodBitPerChar>
+        <prodBitPerDouble>64</prodBitPerDouble>
+        <prodBitPerFloat>32</prodBitPerFloat>
+        <prodBitPerInt>32</prodBitPerInt>
+        <prodBitPerLong>64</prodBitPerLong>
+        <prodBitPerLongLong>64</prodBitPerLongLong>
+        <prodBitPerPointer>64</prodBitPerPointer>
+        <prodBitPerPtrDiffT>64</prodBitPerPtrDiffT>
+        <prodBitPerShort>16</prodBitPerShort>
+        <prodBitPerSizeT>64</prodBitPerSizeT>
+        <prodEndianess>1</prodEndianess>
+        <prodLongLongMode>true</prodLongLongMode>
+        <prodShiftRight>true</prodShiftRight>
+        <prodWordSize>64</prodWordSize>
+      </hardwareSettings>
+    </configSettingsForConsistencyChecks>
+    <controllableInputRatesMap type="ModelRefInfoRepo.VarTsUIDMap" uuid="bff78026-bc1d-457f-aa2d-1f887753f67e"/>
+    <controllableOutputRatesMap type="ModelRefInfoRepo.VarTsUIDMap" uuid="58c39fab-d8da-4e91-8db9-bd5fdf676898"/>
+    <dataPortGroup type="ModelRefInfoRepo.DataPortGroup" uuid="8694f104-7978-429c-8e95-ae2189da7bcf">
+      <compDataInputPorts>0</compDataInputPorts>
+      <compDataInputPorts>1</compDataInputPorts>
+      <compDataInputPorts>2</compDataInputPorts>
+      <compDataInputPorts>3</compDataInputPorts>
+      <compDataInputPorts>4</compDataInputPorts>
+      <compDataInputPorts>5</compDataInputPorts>
+      <compDataOutputPorts>0</compDataOutputPorts>
+      <compDataOutputPorts>1</compDataOutputPorts>
+      <dataInputPorts>0</dataInputPorts>
+      <dataOutputPorts>0</dataOutputPorts>
+      <dataOutputPorts>1</dataOutputPorts>
+    </dataPortGroup>
+    <expFcnUnconnectedDataPortGroup type="ModelRefInfoRepo.DataPortGroup" uuid="014e415d-079e-4fad-a41d-8ca40978ad49">
+      <compDataInputPorts>1</compDataInputPorts>
+      <compDataInputPorts>2</compDataInputPorts>
+      <compDataInputPorts>4</compDataInputPorts>
+      <compDataInputPorts>5</compDataInputPorts>
+    </expFcnUnconnectedDataPortGroup>
+    <interfaceParameterInfo type="ModelRefInfoRepo.InterfaceParameterInfo" uuid="c7bbb0d6-f616-41b1-865d-4be17776ddb9"/>
+    <messageInfo type="ModelRefInfoRepo.MessageInformation" uuid="7cd7a967-5219-42b7-be80-8948fa7473c3"/>
+    <methodInfo type="ModelRefInfoRepo.MethodExistenceInfo" uuid="3541b3af-a7b1-44cd-9051-0a39e4996df6">
+      <hasSystemInitializeMethod>true</hasSystemInitializeMethod>
+      <hasTerminateMethod>true</hasTerminateMethod>
+    </methodInfo>
+    <periodicEventPortUnsupportedBlockInfo type="ModelRefInfoRepo.PeriodicEventPortUnsupportedBlockInfo" uuid="03ebf262-08f7-4867-a470-0b0f9977838d"/>
+    <portGroupsRequireSameRate type="ModelRefInfoRepo.PortGroupsRequireSameRate" uuid="3eaa0dfe-6846-4f30-a417-b575ed3448cc">
+      <DSMPortGroups type="ModelRefInfoRepo.NameToPortGroupIdxVectMap" uuid="b88a95ad-f303-4e94-988c-10e881b9c113"/>
+      <GlobalDSMPortGroups type="ModelRefInfoRepo.NameToPortGroupIdxVectMap" uuid="c25317fa-4b65-4e71-b1c9-5af5c92678d9"/>
+      <mergedPortGroups type="ModelRefInfoRepo.NameToPortGroupIdxVectMap" uuid="7769c542-4668-4c93-9ebd-fc33767d24c8"/>
+    </portGroupsRequireSameRate>
+    <rateBasedMdlGlobalDSMRateSpec type="ModelRefInfoRepo.GlobalDSMRateSpecMap" uuid="e99abfc2-0ceb-4c14-a918-37623fdba9b2"/>
+    <rateSpecOfGlobalDSMAccessedByDescExpFcnMdlMap type="ModelRefInfoRepo.GlobalDSMRateSpecMap" uuid="57c145ef-a78b-4e0d-a999-b555f8ecbf09"/>
+    <rootBlockDiagramInterface type="ci.Model" uuid="686e6cf7-d0ca-4ffa-ae98-11ff74b6bad7">
+      <p_RootComponentInterface type="ci.ComponentInterface" uuid="5474bfe5-d4c0-459a-b885-1e07358e8222">
+        <p_InputPorts type="ci.SignalInterface" uuid="e52fe187-3bc3-4539-9ccc-9ff11e3d57a6">
+          <p_ComputedNumericDimensions>96.0</p_ComputedNumericDimensions>
+          <p_ComputedSampleTime>.1</p_ComputedSampleTime>
+          <p_ComputedSampleTime>0.0</p_ComputedSampleTime>
+          <p_ComputedType>single</p_ComputedType>
+          <p_ComputedUnit>V</p_ComputedUnit>
+          <p_Name>Sensors_Cell_Voltages</p_Name>
+        </p_InputPorts>
+        <p_InputPorts type="ci.SignalInterface" uuid="2f33d3bc-8a0b-43c7-8bb3-ce6a95775df8">
+          <p_ComputedNumericDimensions>1.0</p_ComputedNumericDimensions>
+          <p_ComputedSampleTime>.1</p_ComputedSampleTime>
+          <p_ComputedSampleTime>0.0</p_ComputedSampleTime>
+          <p_ComputedType>single</p_ComputedType>
+          <p_ComputedUnit>V</p_ComputedUnit>
+          <p_Name>Sensors_Pack_Voltage</p_Name>
+        </p_InputPorts>
+        <p_InputPorts type="ci.SignalInterface" uuid="e23dbbe4-6e9e-4f15-8795-3a48cbc3fa2a">
+          <p_ComputedNumericDimensions>1.0</p_ComputedNumericDimensions>
+          <p_ComputedSampleTime>.1</p_ComputedSampleTime>
+          <p_ComputedSampleTime>0.0</p_ComputedSampleTime>
+          <p_ComputedType>single</p_ComputedType>
+          <p_ComputedUnit>A</p_ComputedUnit>
+          <p_Name>Sensors_Pack_Current</p_Name>
+        </p_InputPorts>
+        <p_InputPorts type="ci.SignalInterface" uuid="5ddc724f-4419-4013-b2c0-76ba52dfc8b8">
+          <p_ComputedNumericDimensions>96.0</p_ComputedNumericDimensions>
+          <p_ComputedSampleTime>.1</p_ComputedSampleTime>
+          <p_ComputedSampleTime>0.0</p_ComputedSampleTime>
+          <p_ComputedType>single</p_ComputedType>
+          <p_ComputedUnit>degC</p_ComputedUnit>
+          <p_Name>Sensors_Cell_Temperatures</p_Name>
+        </p_InputPorts>
+        <p_InputPorts type="ci.SignalInterface" uuid="7e3d1563-37a8-4e50-9774-280a0ac4794a">
+          <p_ComputedNumericDimensions>1.0</p_ComputedNumericDimensions>
+          <p_ComputedSampleTime>.1</p_ComputedSampleTime>
+          <p_ComputedSampleTime>0.0</p_ComputedSampleTime>
+          <p_ComputedType>single</p_ComputedType>
+          <p_ComputedUnit>V</p_ComputedUnit>
+          <p_Name>Sensors_Vout_Chgr</p_Name>
+        </p_InputPorts>
+        <p_InputPorts type="ci.SignalInterface" uuid="0e8be3bc-30b1-4f9b-b322-2e8ad7584a8b">
+          <p_ComputedNumericDimensions>1.0</p_ComputedNumericDimensions>
+          <p_ComputedSampleTime>.1</p_ComputedSampleTime>
+          <p_ComputedSampleTime>0.0</p_ComputedSampleTime>
+          <p_ComputedType>single</p_ComputedType>
+          <p_ComputedUnit>V</p_ComputedUnit>
+          <p_Name>Sensors_Vout_Invtr</p_Name>
+        </p_InputPorts>
+        <p_Name>CurrPowerLimCalc</p_Name>
+        <p_OutputPorts type="ci.SignalInterface" uuid="d8a22684-65b0-4c23-b622-fafdc5b3943b">
+          <p_ComputedNumericDimensions>1.0</p_ComputedNumericDimensions>
+          <p_ComputedSampleTime>.1</p_ComputedSampleTime>
+          <p_ComputedSampleTime>0.0</p_ComputedSampleTime>
+          <p_ComputedType>CurrentLimits</p_ComputedType>
+          <p_Name>CurrentLimits</p_Name>
+        </p_OutputPorts>
+        <p_OutputPorts type="ci.SignalInterface" uuid="b553a37d-31c3-404f-b8e4-623198bd4d60">
+          <p_ComputedNumericDimensions>1.0</p_ComputedNumericDimensions>
+          <p_ComputedSampleTime>.1</p_ComputedSampleTime>
+          <p_ComputedSampleTime>0.0</p_ComputedSampleTime>
+          <p_ComputedType>Min_Max_Cells</p_ComputedType>
+          <p_Name>Min_Max_Cells</p_Name>
+        </p_OutputPorts>
+        <p_Type>ROOT</p_Type>
+      </p_RootComponentInterface>
+    </rootBlockDiagramInterface>
+    <simulinkFunctions type="ModelRefInfoRepo.SimulinkFunctions" uuid="7480d331-f026-48b4-aa15-fcded111661f">
+      <compSimulinkFunctionCatalog></compSimulinkFunctionCatalog>
+    </simulinkFunctions>
+    <sltpContext type="sltp.mm.core.Context" uuid="f461499c-86a7-4463-9571-871fe0594fdc">
+      <globalData type="sltp.mm.core.GlobalData" uuid="60acee1b-02f0-4aec-97f9-8c9630c91b8f">
+        <dataName>portCurrentLimits</dataName>
+        <type>RootOutport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="4d867057-895b-4044-9375-97875e030dd5">
+        <dataName>portCurrentLimits_ChargeCurrentLimit</dataName>
+        <type>RootOutport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="c798138d-cd5e-4ce6-85c3-2d0d376d9811">
+        <dataName>portCurrentLimits_DischargeCurrentLimit</dataName>
+        <type>RootOutport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="86458ff4-2d64-4210-b537-9cba38525d48">
+        <dataName>portMin_Max_Cells</dataName>
+        <type>RootOutport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="83feb241-efcf-4f47-95eb-c9770585379c">
+        <dataName>portMin_Max_Cells_MaxCellTemp</dataName>
+        <type>RootOutport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="a0cca3a5-808d-417b-979d-79a0cc5d9396">
+        <dataName>portMin_Max_Cells_MaxCellVolt</dataName>
+        <type>RootOutport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="244cba97-ec05-42bd-a5e6-9e6d7359d32d">
+        <dataName>portMin_Max_Cells_MinCellTemp</dataName>
+        <type>RootOutport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="9cf60088-7eb1-4c86-a632-251d2e248886">
+        <dataName>portMin_Max_Cells_MinCellVolt</dataName>
+        <type>RootOutport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="bdd39083-babc-4b15-af9e-133b042b9e48">
+        <dataName>portSensors1_Cell_Temperatures</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="d5dce2d1-0e41-4c8d-96ae-8dc9216717ff">
+        <dataName>portSensors1_Cell_Voltages</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="8d996dec-03df-4c2f-9877-167991d5f30f">
+        <dataName>portSensors1_Pack_Current</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="482e5e26-a6bd-451e-a2d7-d6dc9f52046c">
+        <dataName>portSensors1_Pack_Voltage</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="e8cfefae-9683-427f-a946-9374a67a26e9">
+        <dataName>portSensors1_Vout_Chgr</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="8bc045a0-120d-4c79-aaaf-5459ba39c3df">
+        <dataName>portSensors1_Vout_Invtr</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="cd7f3d27-15fe-4c0b-b2e6-9cb968916e50">
+        <dataName>portSensors1_soc</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="b8cff115-29e4-4a35-81d6-fdf4f8752947">
+        <dataName>portSensors_Cell_Temperatures</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="426d7075-01cf-4e19-8f17-a32c647ca56c">
+        <dataName>portSensors_Cell_Voltages</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="c3fae0b1-ed73-4b03-852a-c136bae0c24a">
+        <dataName>portSensors_Pack_Current</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="b72e2116-c722-46fd-9fb5-348092c5d58b">
+        <dataName>portSensors_Pack_Voltage</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="da386e89-a532-47c0-9305-dc8d6661df23">
+        <dataName>portSensors_Vout_Chgr</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="9bc85fdf-d833-4c72-9c17-0085ee7fc55c">
+        <dataName>portSensors_Vout_Invtr</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <globalData type="sltp.mm.core.GlobalData" uuid="3ad32726-dde4-4dfa-b878-1d0cafd990a7">
+        <dataName>portSensors_soc</dataName>
+        <type>RootInport</type>
+      </globalData>
+      <defaultEventBehavior type="sltp.mm.core.EventBehavior" uuid="72483363-e930-4694-acaa-0df8fb2d909c"/>
+      <editorState type="sltp.mm.core.EditorState" uuid="53fb73fa-701b-4fb3-a7e1-37350f1d5f7a">
+        <isSynchronized>true</isSynchronized>
+        <panelState type="sltp.mm.core.EditorPanelState" uuid="f5407322-b3bd-413e-95cf-a7ca78405b9a"/>
+      </editorState>
+      <rootTask type="sltp.mm.core.Task" uuid="f90a4c2c-3bf0-4d62-95c5-d9bec6f94cd2">
+        <context type="sltp.mm.core.Context" uuid="f461499c-86a7-4463-9571-871fe0594fdc"/>
+        <explicit>false</explicit>
+        <name>Default</name>
+        <priority>-2147483648</priority>
+        <subgraph type="sltp.mm.core.Graph" uuid="b9852fd4-fee4-4eb9-8362-b3af097b3fb0">
+          <tasks type="sltp.mm.core.Task" uuid="9c29e2f0-0c17-4c6c-b9a7-fe880c6dde80">
+            <context type="sltp.mm.core.Context" uuid="f461499c-86a7-4463-9571-871fe0594fdc"/>
+            <explicit>false</explicit>
+            <id>1</id>
+            <isTimed>true</isTimed>
+            <name>D1</name>
+            <priority>40</priority>
+            <rates type="sltp.mm.core.Rate" uuid="96162e89-789e-4694-9c20-7640d098e4b2">
+              <annotation>D1</annotation>
+              <color>-12240129</color>
+              <hasBlocks>true</hasBlocks>
+              <rateIndex>0</rateIndex>
+              <rateSpec type="sltp.mm.core.RateSpec">
+                <period>.1</period>
+              </rateSpec>
+              <sti>0</sti>
+            </rates>
+          </tasks>
+        </subgraph>
+      </rootTask>
+    </sltpContext>
+    <stateWriterToOwnerMap type="ModelRefInfoRepo.StateWriterInfo" uuid="8591759c-d404-4a49-b2c3-1ceeedd83ab4"/>
+    <stoClientDataRegistry type="sto.ClientDataRegistry" uuid="95820fd3-7fa0-4c1b-a5ab-f9729feafb2f">
+      <dataSets type="sto.ClientClockNamedDataSet" uuid="0e594df4-57be-4bcc-8b09-53a559a107d5">
+        <tag>sltpEvents</tag>
+      </dataSets>
+      <dataSets type="sto.ClientTaskHierarchyElementNamedDataSet" uuid="9f1bbe5a-bf61-4590-8099-15d9ab17156e">
+        <tag>sltpTaskGroups</tag>
+      </dataSets>
+      <dataSets type="sto.ClientTaskHierarchyElementNamedDataSet" uuid="53966114-4a32-4fd7-8d32-500c72970b9b">
+        <dSet type="ModelRefInfoRepo.SltpTaskData" uuid="eb985d6e-5f1e-4cbb-a9c8-e3d3b9ca45cf"/>
+        <tSet type="ModelRefInfoRepo.SltpTaskData" uuid="eb985d6e-5f1e-4cbb-a9c8-e3d3b9ca45cf">
+          <dataName>D1</dataName>
+          <linkedSet type="sto.ClientTaskHierarchyElementNamedDataSet" uuid="53966114-4a32-4fd7-8d32-500c72970b9b"/>
+          <id type="sto.TaskHierarchyElementId">
+            <clockId>CurrPowerLimCalc::defaultTimer</clockId>
+            <id>_task0</id>
+          </id>
+        </tSet>
+        <tag>sltpTasks</tag>
+      </dataSets>
+    </stoClientDataRegistry>
+    <varTsUIDMap type="ModelRefInfoRepo.VarTsUIDMap" uuid="c07de75b-473f-4900-a116-934052162897"/>
+  </ModelRefInfoRepo.ModelRefInfoRoot>
+</MF0>

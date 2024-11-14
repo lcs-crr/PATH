@@ -1,0 +1,32 @@
+CC     = "C:\Program Files\MATLAB\R2023b\sys\lcc64\lcc64\bin\lcc64.exe"
+LD     = "C:\Program Files\MATLAB\R2023b\sys\lcc64\lcc64\bin\lcclnk64.exe"
+LIBCMD = "C:\Program Files\MATLAB\R2023b\sys\lcc64\lcc64\bin\lcclib64.exe"
+CFLAGS = -dll -noregistrylookup  -c -Zp8 -DLCC_WIN64 -DMATLAB_MEX_FILE -nodeclspec 
+LDFLAGS = -s -dll -L"C:\Program Files\MATLAB\R2023b\sys\lcc64\lcc64\lib64" -entry LibMain -map sfun.map 
+LIBFLAGS = 
+
+OBJECTS = \
+	"Balancing_Logic_sfun.obj"\
+	"c1_Balancing_Logic.obj"\
+	"Balancing_Logic_sfun_registry.obj"\
+	"half_type.obj"\
+	"lccstub.obj"\
+	"c_mexapi_version.obj"\
+
+INCLUDE_PATH= -I"C:\Program Files\MATLAB\R2023b\extern\include"  -I"C:\Program Files\MATLAB\R2023b\simulink\include"  -I"C:\Program Files\MATLAB\R2023b\simulink\include\sf_runtime"  -I"C:\Program Files\MATLAB\R2023b\stateflow\c\mex\include"  -I"C:\Program Files\MATLAB\R2023b\rtw\c\src"  -I"D:\Full_EV_Model\EV\Work\slprj\_sfprj\Balancing_Logic\_self\sfun\src"  -I"D:\full_ev_model\EV\Work\slprj\_sfprj\balancing_logic\_self\sfun\src"  -I"D:\full_ev_model\EV\Work"  -I"D:\full_ev_model\EV\controller\BMS"  -I"C:\Program Files\MATLAB\R2023b\sys\lcc64\lcc64\include64" 
+ 
+
+Balancing_Logic_sfun.mexw64 : $(MAKEFILE) $(OBJECTS)
+	$(LD) $(LDFLAGS) -o Balancing_Logic_sfun.mexw64 @Balancing_Logic_sfun.lmko
+Balancing_Logic_sfun.obj :	"D:\Full_EV_Model\EV\Work\slprj\_sfprj\Balancing_Logic\_self\sfun\src\Balancing_Logic_sfun.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "D:\Full_EV_Model\EV\Work\slprj\_sfprj\Balancing_Logic\_self\sfun\src\Balancing_Logic_sfun.c"
+c1_Balancing_Logic.obj :	"D:\Full_EV_Model\EV\Work\slprj\_sfprj\Balancing_Logic\_self\sfun\src\c1_Balancing_Logic.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "D:\Full_EV_Model\EV\Work\slprj\_sfprj\Balancing_Logic\_self\sfun\src\c1_Balancing_Logic.c"
+Balancing_Logic_sfun_registry.obj :	"D:\Full_EV_Model\EV\Work\slprj\_sfprj\Balancing_Logic\_self\sfun\src\Balancing_Logic_sfun_registry.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "D:\Full_EV_Model\EV\Work\slprj\_sfprj\Balancing_Logic\_self\sfun\src\Balancing_Logic_sfun_registry.c"
+half_type.obj :	"D:\Full_EV_Model\EV\Work\slprj\_sfprj\Balancing_Logic\_self\sfun\src\half_type.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "D:\Full_EV_Model\EV\Work\slprj\_sfprj\Balancing_Logic\_self\sfun\src\half_type.c"
+lccstub.obj :	"C:\Program Files\MATLAB\R2023b\sys\lcc64\lcc64\mex\lccstub.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "C:\Program Files\MATLAB\R2023b\sys\lcc64\lcc64\mex\lccstub.c"
+c_mexapi_version.obj :	"C:\Program Files\MATLAB\R2023b\extern\version\c_mexapi_version.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "C:\Program Files\MATLAB\R2023b\extern\version\c_mexapi_version.c"

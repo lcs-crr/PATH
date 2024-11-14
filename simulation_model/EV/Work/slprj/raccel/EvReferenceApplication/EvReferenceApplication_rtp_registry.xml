@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MF0 version="1.1" packageUris="http://schema.mathworks.com/mf0/slsa_mm_rtp_registry/R2023a">
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="f09ba054-77da-4ab0-a16f-9cf6c5d29d61">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="51cb9418-db51-4f9a-a662-deaba8671b91"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>18</valueIndices>
+    <valueIndices>18</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="8812eb88-181c-46c8-8f02-5136204c532c">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>A_pr</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="51cb9418-db51-4f9a-a662-deaba8671b91"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="183a89d0-1c76-4dd3-9eb3-faa403c5edf8">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="6eb4ccd6-7a3a-498c-bf3c-ad29b4958d04"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>21</valueIndices>
+    <valueIndices>21</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.ModelMetadata type="slsa.mm.rtpregistry.ModelMetadata" uuid="d882d9cb-46df-4d46-9c22-f012855bf61d">
+    <modelName>EvReferenceApplication</modelName>
+  </slsa.mm.rtpregistry.ModelMetadata>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="d12e1642-88df-4538-8715-8225a2826ffe">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>InitialCondition</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="6eb4ccd6-7a3a-498c-bf3c-ad29b4958d04"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="918a3c70-473c-408c-ba8f-ce126e673040">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>C_pr</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="1b50a383-1742-48db-a47c-ccbdfcf6a309"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="51cb9418-db51-4f9a-a662-deaba8671b91">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="8812eb88-181c-46c8-8f02-5136204c532c"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="f09ba054-77da-4ab0-a16f-9cf6c5d29d61"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="7e68c29d-23ad-4428-b71e-b8a97763b73b">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="c51b8743-a9b2-4253-a5b0-7b83f63e6669"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="1de10923-4b6a-42fc-88cb-aee5df169cba"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="1de10923-4b6a-42fc-88cb-aee5df169cba">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="7e68c29d-23ad-4428-b71e-b8a97763b73b"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>19</valueIndices>
+    <valueIndices>19</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="c51b8743-a9b2-4253-a5b0-7b83f63e6669">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>B_pr</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="7e68c29d-23ad-4428-b71e-b8a97763b73b"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="db8b76b0-dd07-46cf-bd64-ddbc2723896c">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="b494e690-27aa-4180-9368-ebc14ddeb43a"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="b4b1f382-b9c9-43a3-8bb2-26c4969f6b05"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="1b561e9f-f624-441d-ac24-0346df597def">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="06f0527d-256f-493b-9930-cd9d292cb873"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="b8e4f654-4db1-4019-a135-e3b31fb8c7ef"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="1b50a383-1742-48db-a47c-ccbdfcf6a309">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="918a3c70-473c-408c-ba8f-ce126e673040"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="8fcd29a2-e85f-47c6-9d3e-ba16c0db52d3"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="8fcd29a2-e85f-47c6-9d3e-ba16c0db52d3">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="1b50a383-1742-48db-a47c-ccbdfcf6a309"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>20</valueIndices>
+    <valueIndices>20</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.StructParameter type="slsa.mm.rtpregistry.StructParameter" uuid="ae5f6a55-52e5-4836-a491-88b6f4e192af">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="e94e09e2-c92c-4c8c-839a-6637bb87c3f3"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="9f2367d7-6b3b-40af-a13b-17ccb4183e5b"/>
+  </slsa.mm.rtpregistry.StructParameter>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="6eb4ccd6-7a3a-498c-bf3c-ad29b4958d04">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="d12e1642-88df-4538-8715-8225a2826ffe"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="183a89d0-1c76-4dd3-9eb3-faa403c5edf8"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="67b9d367-ccf4-417d-976f-69d5ece40c75">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="9ff8e764-b12f-41fe-ae58-da32927ab809"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>3643</valueIndices>
+    <valueIndices>3643</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="67942a21-bb00-4c3f-8e14-e18c947b2452">
+    <blockPath>EvReferenceApplication/Drive Cycle Source/Timing Mode/Continuous/tFinal</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="9ff8e764-b12f-41fe-ae58-da32927ab809"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="a75378fc-8767-4f99-beba-40928d1f2f12">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="6df2aa6a-13a3-443b-844d-37b7cc036004"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="e5d1ef40-0276-4d94-8279-90c1612fca58"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="ed457fdc-a16e-4913-a0c2-50583d7774f1">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Battery1/Pack 3/Thermal Model/Subsystem_around_RTP_8D439205_T/RTP_8D439205_T</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="fc602d6c-0d71-47bd-8ec9-c527048411b0"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="6df2aa6a-13a3-443b-844d-37b7cc036004">
+    <blockPath>EvReferenceApplication/Drive Cycle Source/Timing Mode/Continuous/1-D Lookup Table</blockPath>
+    <name>Table</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="a75378fc-8767-4f99-beba-40928d1f2f12"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="a55a0aa1-d86d-45f1-a5ec-0eee121396c9">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b606a97e-0ea1-4d9b-b7e5-afcea7bb6cb0"/>
+    <segmentIndex>4</segmentIndex>
+    <valueIndices>7</valueIndices>
+    <valueIndices>8</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="25b96734-591d-407f-bbb8-a0a5e0aa8af9">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="46e3d67c-be30-485a-873f-787f8bf30f2e"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="de768624-6aa3-47c5-b19b-2bdc59fe1b90"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="e5d1ef40-0276-4d94-8279-90c1612fca58">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="a75378fc-8767-4f99-beba-40928d1f2f12"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>28</valueIndices>
+    <valueIndices>1828</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="74702dc0-4e64-4b5d-8be3-2ab9c0db6acd">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>B_jc</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="0bbdbd70-bfca-4016-9bb1-8c439d27a4b3"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="3462bee0-a1b8-4495-8b82-0f2cdc144bd3">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="3db43d1b-464c-41e3-b726-894478cb64f4"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="7c0e892f-f14c-47ce-822f-0841b6cabd41"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="b4b1f382-b9c9-43a3-8bb2-26c4969f6b05">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="db8b76b0-dd07-46cf-bd64-ddbc2723896c"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1829</valueIndices>
+    <valueIndices>3629</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="b494e690-27aa-4180-9368-ebc14ddeb43a">
+    <blockPath>EvReferenceApplication/Drive Cycle Source/Timing Mode/Continuous/1-D Lookup Table</blockPath>
+    <name>BreakpointsForDimension1</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="db8b76b0-dd07-46cf-bd64-ddbc2723896c"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="46e3d67c-be30-485a-873f-787f8bf30f2e">
+    <blockPath>EvReferenceApplication/Drive Cycle Source/Timing Mode/Continuous/Hit  Crossing</blockPath>
+    <name>HitCrossingOffset</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="25b96734-591d-407f-bbb8-a0a5e0aa8af9"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="de768624-6aa3-47c5-b19b-2bdc59fe1b90">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="25b96734-591d-407f-bbb8-a0a5e0aa8af9"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>3634</valueIndices>
+    <valueIndices>3634</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="9f2367d7-6b3b-40af-a13b-17ccb4183e5b">
+    <parameter type="slsa.mm.rtpregistry.StructParameter" uuid="ae5f6a55-52e5-4836-a491-88b6f4e192af"/>
+    <segmentIndex>6</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="9f2cb302-d097-491f-bd02-e1e2beb75dbb">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="f76c959e-337e-43c3-9894-a00722182ac7"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="73042d7c-cf8f-4098-a72a-5d6bd55ec2a6"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="9ff8e764-b12f-41fe-ae58-da32927ab809">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="67942a21-bb00-4c3f-8e14-e18c947b2452"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="67b9d367-ccf4-417d-976f-69d5ece40c75"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="f76c959e-337e-43c3-9894-a00722182ac7">
+    <blockPath>EvReferenceApplication/Drive Cycle Source/Timing Mode/Continuous/repeat</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="9f2cb302-d097-491f-bd02-e1e2beb75dbb"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="339680b4-9879-486b-9375-b8ff23b72730">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="75d40f6b-271c-41f5-b487-04d497dcd95b"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="32833711-f25b-4f82-b9d5-c1be582057ca"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="7305efb8-95de-4723-bd00-b54369e516ae">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b3263bfd-842f-4f43-94e2-f186076cf013"/>
+    <segmentIndex>4</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="b3263bfd-842f-4f43-94e2-f186076cf013">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="75753227-3d35-4926-a208-f749c594b420"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="7305efb8-95de-4723-bd00-b54369e516ae"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="73042d7c-cf8f-4098-a72a-5d6bd55ec2a6">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="9f2cb302-d097-491f-bd02-e1e2beb75dbb"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>3642</valueIndices>
+    <valueIndices>3642</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="32833711-f25b-4f82-b9d5-c1be582057ca">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="339680b4-9879-486b-9375-b8ff23b72730"/>
+    <segmentIndex>4</segmentIndex>
+    <valueIndices>1</valueIndices>
+    <valueIndices>2</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="b297f875-4177-455e-b6e0-128140f8e737">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="9c79e114-7ea8-49e3-b054-b5abf7801c0c"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="13ba1202-e013-4d99-8b47-58bf879e2391"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="9c79e114-7ea8-49e3-b054-b5abf7801c0c">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Battery1/Pack 1/Thermal Model/Subsystem_around_RTP_87B9D3CA_T/RTP_87B9D3CA_T</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b297f875-4177-455e-b6e0-128140f8e737"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="13ba1202-e013-4d99-8b47-58bf879e2391">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b297f875-4177-455e-b6e0-128140f8e737"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>3655</valueIndices>
+    <valueIndices>3655</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="3db43d1b-464c-41e3-b726-894478cb64f4">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Battery1/Pack 2/Thermal Model/Subsystem_around_RTP_6F7C700D_T/RTP_6F7C700D_T</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="3462bee0-a1b8-4495-8b82-0f2cdc144bd3"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="fc602d6c-0d71-47bd-8ec9-c527048411b0">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="ed457fdc-a16e-4913-a0c2-50583d7774f1"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="62fe2dfe-0cd1-4422-89db-b44f0dcbcb52"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="7c8a5aac-b7d0-4651-8dcf-4ff586aaf959">
+    <workspaceName>global-workspace</workspaceName>
+    <name>T_env</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="6cf4dd86-4dc0-4535-b39c-a3df76b4bbe3"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="7c0e892f-f14c-47ce-822f-0841b6cabd41">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="3462bee0-a1b8-4495-8b82-0f2cdc144bd3"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>3656</valueIndices>
+    <valueIndices>3656</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="62fe2dfe-0cd1-4422-89db-b44f0dcbcb52">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="fc602d6c-0d71-47bd-8ec9-c527048411b0"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>3657</valueIndices>
+    <valueIndices>3657</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="ce17c886-b776-4685-8c6c-61cd803ea1db">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="d5256617-96fb-432c-9120-561df12ea6a4"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="1a2abdc2-6913-4329-8e33-415aaddf9126"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="d5256617-96fb-432c-9120-561df12ea6a4">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Battery1/Pack 4/Thermal Model/Subsystem_around_RTP_28B86618_T/RTP_28B86618_T</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="ce17c886-b776-4685-8c6c-61cd803ea1db"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="1a2abdc2-6913-4329-8e33-415aaddf9126">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="ce17c886-b776-4685-8c6c-61cd803ea1db"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>3658</valueIndices>
+    <valueIndices>3658</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.StructParameter type="slsa.mm.rtpregistry.StructParameter" uuid="f5da273c-8453-47b4-8380-c23179fe7192">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="362ccaed-2a56-4b74-b4af-03b399b5ccb1"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="ecbd77e0-9b9d-4350-b2b4-165243015b46"/>
+  </slsa.mm.rtpregistry.StructParameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="75d40f6b-271c-41f5-b487-04d497dcd95b">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>A_jc</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="339680b4-9879-486b-9375-b8ff23b72730"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="75753227-3d35-4926-a208-f749c594b420">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>A_ir</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b3263bfd-842f-4f43-94e2-f186076cf013"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="a68beb57-9f52-49f3-aa77-18860c43f03e">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b393f120-54c7-4148-8b33-63e23f6e2f32"/>
+    <segmentIndex>11</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="a631d126-7635-4d7b-9726-78523a2aa113">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="6cc8d8ae-d856-4cd7-abac-d9a8e9ac4aee"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="e36c73f9-9e32-4e5a-944d-3f546901e040"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="a625b7bd-1574-47cb-9e55-c4a74476b643">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>C_ir</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="e86f527e-228b-4037-8f9f-443de9d58f24"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="ecbd77e0-9b9d-4350-b2b4-165243015b46">
+    <parameter type="slsa.mm.rtpregistry.StructParameter" uuid="f5da273c-8453-47b4-8380-c23179fe7192"/>
+    <segmentIndex>7</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="6cf4dd86-4dc0-4535-b39c-a3df76b4bbe3">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="7c8a5aac-b7d0-4651-8dcf-4ff586aaf959"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="6bd421eb-7518-40d6-a221-d3b6eaa3c47a"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="6cc8d8ae-d856-4cd7-abac-d9a8e9ac4aee">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>B_ir</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="a631d126-7635-4d7b-9726-78523a2aa113"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="e36c73f9-9e32-4e5a-944d-3f546901e040">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="a631d126-7635-4d7b-9726-78523a2aa113"/>
+    <segmentIndex>4</segmentIndex>
+    <valueIndices>3</valueIndices>
+    <valueIndices>3</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="0bbdbd70-bfca-4016-9bb1-8c439d27a4b3">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="74702dc0-4e64-4b5d-8be3-2ab9c0db6acd"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="f9314080-4349-44d9-8cd8-e8ae833a6230"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="f9314080-4349-44d9-8cd8-e8ae833a6230">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="0bbdbd70-bfca-4016-9bb1-8c439d27a4b3"/>
+    <segmentIndex>4</segmentIndex>
+    <valueIndices>4</valueIndices>
+    <valueIndices>5</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="e86f527e-228b-4037-8f9f-443de9d58f24">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="a625b7bd-1574-47cb-9e55-c4a74476b643"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="d7bf1cd5-d1f7-4ddc-aa31-3173fb5ffab9"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="d7bf1cd5-d1f7-4ddc-aa31-3173fb5ffab9">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="e86f527e-228b-4037-8f9f-443de9d58f24"/>
+    <segmentIndex>4</segmentIndex>
+    <valueIndices>6</valueIndices>
+    <valueIndices>6</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="362ccaed-2a56-4b74-b4af-03b399b5ccb1">
+    <workspaceName>global-workspace</workspaceName>
+    <name>pump</name>
+    <parameter type="slsa.mm.rtpregistry.StructParameter" uuid="f5da273c-8453-47b4-8380-c23179fe7192"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="b606a97e-0ea1-4d9b-b7e5-afcea7bb6cb0">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="9673e9d1-4916-47d2-b7b5-ea84609f2d79"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="a55a0aa1-d86d-45f1-a5ec-0eee121396c9"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="9673e9d1-4916-47d2-b7b5-ea84609f2d79">
+    <blockPath>EvReferenceApplication/Passenger Car/Electric Plant/Powertrain Blockset/Battery Cooling/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>C_jc</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b606a97e-0ea1-4d9b-b7e5-afcea7bb6cb0"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="e94e09e2-c92c-4c8c-839a-6637bb87c3f3">
+    <workspaceName>global-workspace</workspaceName>
+    <name>radiator</name>
+    <parameter type="slsa.mm.rtpregistry.StructParameter" uuid="ae5f6a55-52e5-4836-a491-88b6f4e192af"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="6bd8ef60-7115-431d-ab9b-c3e81b38b119">
+    <workspaceName>global-workspace</workspaceName>
+    <name>BattSocInit</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b393f120-54c7-4148-8b33-63e23f6e2f32"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="6bd421eb-7518-40d6-a221-d3b6eaa3c47a">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="6cf4dd86-4dc0-4535-b39c-a3df76b4bbe3"/>
+    <segmentIndex>8</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="06f0527d-256f-493b-9930-cd9d292cb873">
+    <workspaceName>global-workspace</workspaceName>
+    <name>T_set</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="1b561e9f-f624-441d-ac24-0346df597def"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="b8e4f654-4db1-4019-a135-e3b31fb8c7ef">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="1b561e9f-f624-441d-ac24-0346df597def"/>
+    <segmentIndex>10</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="b393f120-54c7-4148-8b33-63e23f6e2f32">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="6bd8ef60-7115-431d-ab9b-c3e81b38b119"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="a68beb57-9f52-49f3-aa77-18860c43f03e"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="a563642e-ed05-4fc6-be36-bc421d1164ab">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="fa39e225-0c2d-4400-9761-f604b6ab12c6"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="1821765d-babc-435e-87b3-231940df0217"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="fa39e225-0c2d-4400-9761-f604b6ab12c6">
+    <workspaceName>global-workspace</workspaceName>
+    <name>enable_regen</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="a563642e-ed05-4fc6-be36-bc421d1164ab"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="1821765d-babc-435e-87b3-231940df0217">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="a563642e-ed05-4fc6-be36-bc421d1164ab"/>
+    <segmentIndex>12</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="ef5cc1b7-de78-403d-a970-41fa0cb9d535">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="4f9449b9-26dd-47cc-850a-f069bad44031"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="60ea28a2-508c-4317-b13f-1e216243eb74"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="4f9449b9-26dd-47cc-850a-f069bad44031">
+    <workspaceName>global-workspace</workspaceName>
+    <name>bat_soc_init</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="ef5cc1b7-de78-403d-a970-41fa0cb9d535"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="60ea28a2-508c-4317-b13f-1e216243eb74">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="ef5cc1b7-de78-403d-a970-41fa0cb9d535"/>
+    <segmentIndex>13</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+</MF0>

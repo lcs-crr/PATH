@@ -1,0 +1,4 @@
+LIBRARY ..\..\..\..\State_Machine_msf.mexw64
+EXPORTS
+    mexFunction
+    mexfilerequiredapiversion

@@ -1,0 +1,32 @@
+%implements s1_b0_8wvor_Terminate "C"
+
+%function Terminate(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+neu_destroy_diagnostic_manager((NeuDiagnosticManager *)rtDW.bglls0p5vn);
+nesl_destroy_simulation_data((NeslSimulationData *)rtDW.pg1peeaap2);
+nesl_erase_simulator("EVBatteryCoolingSystem/Solver Configuration_1");
+nesl_destroy_registry();
+neu_destroy_diagnostic_manager((NeuDiagnosticManager *)rtDW.nrhx2nf1go);
+nesl_destroy_simulation_data((NeslSimulationData *)rtDW.gvo41anqta);
+nesl_erase_simulator("EVBatteryCoolingSystem/Solver Configuration_1");
+nesl_destroy_registry();
+neu_destroy_diagnostic_manager((NeuDiagnosticManager *)rtDW.cm54eojqab);
+nesl_destroy_simulation_data((NeslSimulationData *)rtDW.i0lluemaxm);
+nesl_erase_simulator("EVBatteryCoolingSystem/Solver Configuration_1");
+nesl_destroy_registry();
+ssc_logger_terminate(rtDW.b3yt44zx0e);
+free(rtDW.dp32jrdpwa);
+ssc_logger_destroy(rtDW.b3yt44zx0e);
+%closefile cfgTxt
+%<cfgTxt>
+%endfunction
+%function TerminateFcnProtoType(block, system) Output
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void Terminate(\
+%assign comma = ""
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(0, 9, fcnProtoType)>
+%endfunction

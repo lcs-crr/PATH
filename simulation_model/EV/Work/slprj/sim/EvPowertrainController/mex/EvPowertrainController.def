@@ -1,0 +1,4 @@
+LIBRARY ..\..\..\..\EvPowertrainController_msf.mexw64
+EXPORTS
+    mexFunction
+    mexfilerequiredapiversion

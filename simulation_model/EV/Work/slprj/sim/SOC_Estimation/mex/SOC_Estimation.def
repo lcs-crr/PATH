@@ -1,0 +1,4 @@
+LIBRARY ..\..\..\..\SOC_Estimation_msf.mexw64
+EXPORTS
+    mexFunction
+    mexfilerequiredapiversion

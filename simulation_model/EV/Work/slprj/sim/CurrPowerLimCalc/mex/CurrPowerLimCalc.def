@@ -1,0 +1,4 @@
+LIBRARY ..\..\..\..\CurrPowerLimCalc_msf.mexw64
+EXPORTS
+    mexFunction
+    mexfilerequiredapiversion

@@ -1,0 +1,4 @@
+LIBRARY ..\..\..\..\Balancing_Logic_msf.mexw64
+EXPORTS
+    mexFunction
+    mexfilerequiredapiversion

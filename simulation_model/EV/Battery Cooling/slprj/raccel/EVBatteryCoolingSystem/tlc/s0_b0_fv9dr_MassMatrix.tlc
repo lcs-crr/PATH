@@ -1,0 +1,94 @@
+%implements s0_b0_fv9dr_MassMatrix "C"
+
+%function MassMatrix(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+
+NeslSimulationData *simulationData;
+NeuDiagnosticManager *diagnosticManager;
+NeuDiagnosticTree *diagnosticTree;
+char *msg;
+real_T tmp_p[16];
+real_T time;
+real_T *tmp_i;
+real_T *tmp_m;
+int32_T tmp_g;
+int_T tmp_e[5];
+boolean_T tmp;
+%closefile localVarDecl
+simulationData = (NeslSimulationData *)rtDW.pg1peeaap2;
+time = %<(SLibCG_SE(LibGetT()))>;
+simulationData->mData->mTime.mN = 1;
+simulationData->mData->mTime.mX = &time;
+simulationData->mData->mContStates.mN = 337;
+simulationData->mData->mContStates.mX = &rtX.effbkgmtax[0];
+simulationData->mData->mDiscStates.mN = 0;
+simulationData->mData->mDiscStates.mX = &rtDW.pahluld41k;
+simulationData->mData->mModeVector.mN = 246;
+simulationData->mData->mModeVector.mX = &rtDW.idk0zphtpp[0];
+tmp = %<(SLibCG_SE(SLibCGIRGetSolverFoundZcEvents()))>;
+simulationData->mData->mFoundZcEvents = tmp;
+simulationData->mData->mIsMajorTimeStep = %<(SLibCG_SE(LibIsMajorTimeStep()))>;
+tmp = %<(SLibCG_SE(SLibCGIRGetSolverAssertCheck()))>;
+simulationData->mData->mIsSolverAssertCheck = tmp;
+tmp = %<(SLibCG_SE(RTMIsSolverCheckingCIC()))>;
+simulationData->mData->mIsSolverCheckingCIC = tmp;
+tmp = %<(SLibCG_SE(RTMIsSolverComputingJacobian()))>;
+simulationData->mData->mIsComputingJacobian = tmp;
+simulationData->mData->mIsEvaluatingF0 = (%<(SLibCG_SE(RTMGetEvaluatingF0ForJacobian()))> != 0);
+tmp = %<(SLibCG_SE(RTMIsSolverRequestingReset()))>;
+simulationData->mData->mIsSolverRequestingReset = tmp;
+simulationData->mData->mIsModeUpdateTimeStep = %<(SLibCG_SE(RTMGetIsModeUpdateTimeStep()))>;
+tmp_e[0] = 0;
+tmp_p[0] = rtB.g4x5d1kqrr[0];
+tmp_p[1] = rtB.g4x5d1kqrr[1];
+tmp_p[2] = rtB.g4x5d1kqrr[2];
+tmp_p[3] = rtB.g4x5d1kqrr[3];
+tmp_e[1] = 4;
+tmp_p[4] = rtB.hmdfvofm2d[0];
+tmp_p[5] = rtB.hmdfvofm2d[1];
+tmp_p[6] = rtB.hmdfvofm2d[2];
+tmp_p[7] = rtB.hmdfvofm2d[3];
+tmp_e[2] = 8;
+tmp_p[8] = rtB.c4vppbzui3[0];
+tmp_p[9] = rtB.c4vppbzui3[1];
+tmp_p[10] = rtB.c4vppbzui3[2];
+tmp_p[11] = rtB.c4vppbzui3[3];
+tmp_e[3] = 12;
+tmp_p[12] = rtB.apvg0yhoqc[0];
+tmp_p[13] = rtB.apvg0yhoqc[1];
+tmp_p[14] = rtB.apvg0yhoqc[2];
+tmp_p[15] = rtB.apvg0yhoqc[3];
+tmp_e[4] = 16;
+simulationData->mData->mInputValues.mN = 16;
+simulationData->mData->mInputValues.mX = &tmp_p[0];
+simulationData->mData->mInputOffsets.mN = 5;
+simulationData->mData->mInputOffsets.mX = &tmp_e[0];
+tmp_i = %<(SLibCG_SE(LibGetMassMatrixGlobalPrFromRTM()))>;
+tmp_m = double_pointer_shift(tmp_i, rtDW.olbucdh0u4);
+simulationData->mData->mMassMatrixPr.mN = 106;
+simulationData->mData->mMassMatrixPr.mX = tmp_m;
+diagnosticManager = (NeuDiagnosticManager *)rtDW.bglls0p5vn;
+diagnosticTree = neu_diagnostic_manager_get_initial_tree(diagnosticManager);
+tmp_g = ne_simulator_method((NeslSimulator *)rtDW.b1a0qim2yg, NESL_SIM_MASSMATRIX, simulationData, diagnosticManager);
+if (tmp_g != 0) {
+    tmp = error_buffer_is_empty(%<(LibGetRTModelErrorStatus())>);
+    if (tmp) {
+        msg = rtw_diagnostics_msg(diagnosticTree);
+        %<(LibSetRTModelErrorStatus("msg"))>;
+    }
+}
+%closefile cfgTxt
+%<cfgTxt>
+%<LibSetSystemField(system, "CachedMassMatrixLocalVars", localVarDecl)>
+%endfunction
+%function MassMatrixFcnProtoType(block, system) Output
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void MassMatrix(\
+%assign comma = ""
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(0, 7, fcnProtoType)>
+%endfunction

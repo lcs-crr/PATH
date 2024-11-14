@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MF0 version="1.1" packageUris="http://schema.mathworks.com/mf0/slsa_mm_rtp_registry/R2023a">
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="0ee7c7eb-554f-4adf-9565-6c8464ea1e76">
+    <workspaceName>global-workspace</workspaceName>
+    <name>T_set</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="0cf24218-60df-411c-9b09-ed45011ccc11"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.ModelMetadata type="slsa.mm.rtpregistry.ModelMetadata" uuid="8e43a7b7-2877-421d-a746-f047a94d647f">
+    <modelName>EVBatteryCoolingSystem</modelName>
+  </slsa.mm.rtpregistry.ModelMetadata>
+  <slsa.mm.rtpregistry.StructParameter type="slsa.mm.rtpregistry.StructParameter" uuid="e5296f2e-cf36-460a-839f-f63adda218f3">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="6f6f9612-20f3-4742-8e46-df19e23b3b23"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="afee3b40-11d8-4c81-b22a-476ad416899b"/>
+  </slsa.mm.rtpregistry.StructParameter>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="6f6f9612-20f3-4742-8e46-df19e23b3b23">
+    <workspaceName>global-workspace</workspaceName>
+    <name>radiator</name>
+    <parameter type="slsa.mm.rtpregistry.StructParameter" uuid="e5296f2e-cf36-460a-839f-f63adda218f3"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="afee3b40-11d8-4c81-b22a-476ad416899b">
+    <parameter type="slsa.mm.rtpregistry.StructParameter" uuid="e5296f2e-cf36-460a-839f-f63adda218f3"/>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="4874fa29-2611-4175-b545-467595e24fa6">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="9692801f-a32b-4926-9d43-3fdccdf1109f"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="642a9466-6c28-4775-8199-22ab6d1e3db4"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="88728baa-c0a6-49e2-884b-0c67211fd71d">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>C_pr</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="20a7c12f-382d-48dc-9623-389f67ba961e"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="c80a9599-5f66-4159-baf5-3b85551fca8e">
+    <workspaceName>global-workspace</workspaceName>
+    <name>pump</name>
+    <parameter type="slsa.mm.rtpregistry.StructParameter" uuid="7823abf0-6101-43a0-988d-41467d97976e"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="b8280376-66e6-49d6-b37a-ad57f4ee8220">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="2abc64d1-6981-4ef4-a429-5bba7c2fce44"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="cb2c731c-5cc0-4a1a-8442-982e702361dc"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="78a058e5-51e5-48a9-a353-7539b031fba6">
+    <blockPath>EVBatteryCoolingSystem/Battery/Pack 2/Thermal Model/Subsystem_around_RTP_7EE98BC0_T/RTP_7EE98BC0_T</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="6c2330f5-8012-4744-add5-a81993370f8a"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="38611481-c028-4980-977d-230f0deed162">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="4279bde7-ed6c-4c69-91cd-340ee3af4c98"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1</valueIndices>
+    <valueIndices>1</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.StructParameter type="slsa.mm.rtpregistry.StructParameter" uuid="7823abf0-6101-43a0-988d-41467d97976e">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="c80a9599-5f66-4159-baf5-3b85551fca8e"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="695a3474-8319-43d0-8e83-42a8e2832c45"/>
+  </slsa.mm.rtpregistry.StructParameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="f15ef76f-8e21-491e-82d9-615cdf029f0c">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>B_ir</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="0139c881-9da0-4d6d-9556-055eb9aa8ae2"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="b115ae35-54f8-44e7-a59c-b0c8272ad3e9">
+    <blockPath>EVBatteryCoolingSystem/Battery/Pack 3/Thermal Model/Subsystem_around_RTP_95CC90AC_T/RTP_95CC90AC_T</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="6b514cc8-326c-43c7-8b22-5be113bc7126"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="71441ed1-167a-4c28-9b9a-d2437dd03e57">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="2174237a-f5d2-4d66-8958-c765fc287380"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="7ca27ccb-f82c-482b-8f62-628ecbe5f536"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="695a3474-8319-43d0-8e83-42a8e2832c45">
+    <parameter type="slsa.mm.rtpregistry.StructParameter" uuid="7823abf0-6101-43a0-988d-41467d97976e"/>
+    <segmentIndex>1</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="213f7b92-39d8-48f0-955a-4117f431bcc8">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>A_ir</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b30b1be8-d088-4428-9d12-4c184002ee93"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="a125008a-f0f7-436b-bb4a-f82e30888a45">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>B_pr</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="ad42abc9-4895-41c3-8523-2ebdba2752ca"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="2174237a-f5d2-4d66-8958-c765fc287380">
+    <workspaceName>global-workspace</workspaceName>
+    <name>T_env</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="71441ed1-167a-4c28-9b9a-d2437dd03e57"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="7ca27ccb-f82c-482b-8f62-628ecbe5f536">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="71441ed1-167a-4c28-9b9a-d2437dd03e57"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="4279bde7-ed6c-4c69-91cd-340ee3af4c98">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="aa6c9751-a287-4870-9568-d9e27e56cd92"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="38611481-c028-4980-977d-230f0deed162"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="2abc64d1-6981-4ef4-a429-5bba7c2fce44">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>C_ir</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b8280376-66e6-49d6-b37a-ad57f4ee8220"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="aa6c9751-a287-4870-9568-d9e27e56cd92">
+    <workspaceName>global-workspace</workspaceName>
+    <name>T_init</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="4279bde7-ed6c-4c69-91cd-340ee3af4c98"/>
+  </slsa.mm.rtpregistry.VariableId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="0cf24218-60df-411c-9b09-ed45011ccc11">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="0ee7c7eb-554f-4adf-9565-6c8464ea1e76"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="6c05c1f7-199d-4809-a773-e6516c788643"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="6c2330f5-8012-4744-add5-a81993370f8a">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="78a058e5-51e5-48a9-a353-7539b031fba6"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="e38f58f4-d432-4597-9cfb-4c00ce70430c"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="6c05c1f7-199d-4809-a773-e6516c788643">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="0cf24218-60df-411c-9b09-ed45011ccc11"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>2</valueIndices>
+    <valueIndices>2</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="cb2c731c-5cc0-4a1a-8442-982e702361dc">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b8280376-66e6-49d6-b37a-ad57f4ee8220"/>
+    <segmentIndex>3</segmentIndex>
+    <valueIndices>6</valueIndices>
+    <valueIndices>6</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="4b048bd2-74b5-43a8-b094-6158144fdd0f">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="124c26f1-8978-4d09-b6bd-786c34e6e21c"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="d28f8ec9-bd61-49da-a42d-75d9633657de"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="d228f680-f239-4982-9ac1-7ddf9ccd919c">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="68af0cc3-12e1-413c-bbcb-bb2a09a4f7bf"/>
+    <segmentIndex>3</segmentIndex>
+    <valueIndices>7</valueIndices>
+    <valueIndices>8</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="d28f8ec9-bd61-49da-a42d-75d9633657de">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="4b048bd2-74b5-43a8-b094-6158144fdd0f"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1056331</valueIndices>
+    <valueIndices>1056331</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="124c26f1-8978-4d09-b6bd-786c34e6e21c">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>A_pr</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="4b048bd2-74b5-43a8-b094-6158144fdd0f"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="ad42abc9-4895-41c3-8523-2ebdba2752ca">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="a125008a-f0f7-436b-bb4a-f82e30888a45"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="86f9ddb1-b23e-4ae7-8f65-fdfa8e95b973"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="86f9ddb1-b23e-4ae7-8f65-fdfa8e95b973">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="ad42abc9-4895-41c3-8523-2ebdba2752ca"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1056332</valueIndices>
+    <valueIndices>1056332</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="20a7c12f-382d-48dc-9623-389f67ba961e">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="88728baa-c0a6-49e2-884b-0c67211fd71d"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="684a9edd-4903-415b-a828-b5e6548b8d40"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="68af0cc3-12e1-413c-bbcb-bb2a09a4f7bf">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="4442a1aa-e8c2-413d-ac9a-d5b25f20e89b"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="d228f680-f239-4982-9ac1-7ddf9ccd919c"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="684a9edd-4903-415b-a828-b5e6548b8d40">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="20a7c12f-382d-48dc-9623-389f67ba961e"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1056333</valueIndices>
+    <valueIndices>1056333</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="f2f61375-d9de-470d-a027-8c6893739b31">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="5f2f1c62-1d49-4454-b1a8-dde60e589e98"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="ab2c9633-fad6-42e2-93c2-f69177ce5378"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="5f2f1c62-1d49-4454-b1a8-dde60e589e98">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>InitialCondition</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="f2f61375-d9de-470d-a027-8c6893739b31"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="6b514cc8-326c-43c7-8b22-5be113bc7126">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="b115ae35-54f8-44e7-a59c-b0c8272ad3e9"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="db3735c2-4bac-4cfa-baa9-c06b9943e7b0"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="ab2c9633-fad6-42e2-93c2-f69177ce5378">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="f2f61375-d9de-470d-a027-8c6893739b31"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1056334</valueIndices>
+    <valueIndices>1056334</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="9692801f-a32b-4926-9d43-3fdccdf1109f">
+    <blockPath>EVBatteryCoolingSystem/Battery/Pack 1/Thermal Model/Subsystem_around_RTP_731D9D8D_T/RTP_731D9D8D_T</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="4874fa29-2611-4175-b545-467595e24fa6"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="642a9466-6c28-4775-8199-22ab6d1e3db4">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="4874fa29-2611-4175-b545-467595e24fa6"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1056342</valueIndices>
+    <valueIndices>1056342</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="635627d8-375a-4e32-8fef-9ee3319d9163">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="d1ddf1b2-0ca4-4896-8a9c-faadfb21d76e"/>
+    <segmentIndex>3</segmentIndex>
+    <valueIndices>1</valueIndices>
+    <valueIndices>2</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="23b0eb69-98c2-4f88-b04c-e07770212c0c">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="98f9b783-9387-44a0-982f-c089c9e55715"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="8fa756b9-dcb1-4b6f-9a7a-18bd73a4f8b8"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="e38f58f4-d432-4597-9cfb-4c00ce70430c">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="6c2330f5-8012-4744-add5-a81993370f8a"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1056343</valueIndices>
+    <valueIndices>1056343</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="db3735c2-4bac-4cfa-baa9-c06b9943e7b0">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="6b514cc8-326c-43c7-8b22-5be113bc7126"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1056344</valueIndices>
+    <valueIndices>1056344</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="98f9b783-9387-44a0-982f-c089c9e55715">
+    <blockPath>EVBatteryCoolingSystem/Battery/Pack 4/Thermal Model/Subsystem_around_RTP_7D09336B_T/RTP_7D09336B_T</blockPath>
+    <name>Value</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="23b0eb69-98c2-4f88-b04c-e07770212c0c"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="8fa756b9-dcb1-4b6f-9a7a-18bd73a4f8b8">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="23b0eb69-98c2-4f88-b04c-e07770212c0c"/>
+    <segmentIndex>2</segmentIndex>
+    <valueIndices>1056345</valueIndices>
+    <valueIndices>1056345</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="b30b1be8-d088-4428-9d12-4c184002ee93">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="213f7b92-39d8-48f0-955a-4117f431bcc8"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="176de8a4-a519-4e1d-9a58-add7e9f4ad52"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="176de8a4-a519-4e1d-9a58-add7e9f4ad52">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="b30b1be8-d088-4428-9d12-4c184002ee93"/>
+    <segmentIndex>3</segmentIndex>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="910dea63-9be4-4146-97ff-3e7669ce7f98">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>B_jc</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="751c926d-edc6-439b-8c9d-c8420519b440"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="d1ddf1b2-0ca4-4896-8a9c-faadfb21d76e">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="7df29fd6-a535-4d45-b67b-c003d77019c4"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="635627d8-375a-4e32-8fef-9ee3319d9163"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="7df29fd6-a535-4d45-b67b-c003d77019c4">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>A_jc</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="d1ddf1b2-0ca4-4896-8a9c-faadfb21d76e"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="0139c881-9da0-4d6d-9556-055eb9aa8ae2">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="f15ef76f-8e21-491e-82d9-615cdf029f0c"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="b74ddb6f-e605-4128-be2f-49877866577a"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="b74ddb6f-e605-4128-be2f-49877866577a">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="0139c881-9da0-4d6d-9556-055eb9aa8ae2"/>
+    <segmentIndex>3</segmentIndex>
+    <valueIndices>3</valueIndices>
+    <valueIndices>3</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="751c926d-edc6-439b-8c9d-c8420519b440">
+    <id type="slsa.mm.rtpregistry.BlockParameterId" uuid="910dea63-9be4-4146-97ff-3e7669ce7f98"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="c0507ca8-847b-4d53-b3e9-cd01bc82c0fb"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="c0507ca8-847b-4d53-b3e9-cd01bc82c0fb">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="751c926d-edc6-439b-8c9d-c8420519b440"/>
+    <segmentIndex>3</segmentIndex>
+    <valueIndices>4</valueIndices>
+    <valueIndices>5</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.BlockParameterId type="slsa.mm.rtpregistry.BlockParameterId" uuid="4442a1aa-e8c2-413d-ac9a-d5b25f20e89b">
+    <blockPath>EVBatteryCoolingSystem/Heating-Cooling Unit/Controller/Transfer Fcn (with initial outputs)/State Space</blockPath>
+    <name>C_jc</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="68af0cc3-12e1-413c-bbcb-bb2a09a4f7bf"/>
+  </slsa.mm.rtpregistry.BlockParameterId>
+</MF0>

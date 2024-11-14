@@ -1,0 +1,415 @@
+%implements s0_b0_fv9dr_Outputs "C"
+
+%function OutputsForTID(block, system, tid) Output
+%if tid == 0
+%assign ::GlobalCurrentTID = 0
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+
+NeParameterBundle expl_temp;
+NeslSimulationData *simulationData;
+NeuDiagnosticManager *diag;
+NeuDiagnosticTree *diagTree;
+NeuDiagnosticTree *diagnosticTree;
+NeuDiagnosticTree *diagnosticTree_e;
+NeuDiagnosticTree *diagnosticTree_p;
+char *msg;
+char *msg_e;
+char *msg_i;
+char *msg_p;
+real_T tmp[21];
+real_T tmp_p[16];
+real_T luxwyadlqr;
+real_T time;
+real_T time_e;
+real_T time_g;
+real_T time_i;
+real_T time_m;
+real_T time_p;
+real_T *parameterBundle_mRealParameters_mX;
+int_T tmp_i[6];
+int_T tmp_m[6];
+int_T tmp_e[5];
+int_T iy;
+uint32_T ri;
+boolean_T first_output;
+%closefile localVarDecl
+%assign tlcOutputsFcnOfS0B1 = OpaqueTLCBlockFcn("Outputs", 0, 1, 0, 2, 0)
+%assign tlcOutputsFcnOfS0B3 = OpaqueTLCBlockFcn("Outputs", 0, 3, 0, 2, 1)
+%assign tlcOutputsFcnOfS0B4 = OpaqueTLCBlockFcn("Outputs", 0, 4, 0, 2, 2)
+%<SLibGetRootInportsFromFile(system, TLC_FALSE)>
+%<SLibGenerateExtModeOutput(system)>
+%<tlcOutputsFcnOfS0B1>\
+rtB.kvdm2qa4kz = rtB.hdgi0ckwmt + rtP.Airvelocityms_Bias;
+rtB.bdmsuutsho = rtB.kvdm2qa4kz * rtP.radiator.area_air * rtP.Airdensitykgm3_Value;
+if (rtDW.of51ysnuoh == 0.0) {
+    rtDW.of51ysnuoh = 1.0;
+    rtX.lxztuzhhop = rtB.bdmsuutsho;
+}
+rtB.g4x5d1kqrr[0] = rtX.lxztuzhhop;
+rtB.g4x5d1kqrr[1] = (rtB.bdmsuutsho - rtX.lxztuzhhop) * 100.0;
+rtB.g4x5d1kqrr[2] = 0.0;
+rtB.g4x5d1kqrr[3] = 0.0;
+%<tlcOutputsFcnOfS0B3>\
+rtB.hmdfvofm2d[0] = rtB.jjbuzly2c4;
+rtB.hmdfvofm2d[1] = 0.0;
+rtB.hmdfvofm2d[2] = 0.0;
+rtB.hmdfvofm2d[3] = 0.0;
+rtB.awjh3m2i52 = 0.0;
+rtB.awjh3m2i52 += rtP.Pumpresponsedelay_C * rtX.bq1z1krpn5;
+rtB.c4vppbzui3[0] = rtB.awjh3m2i52;
+rtB.c4vppbzui3[1] = 0.0;
+rtB.c4vppbzui3[2] = 0.0;
+rtB.c4vppbzui3[3] = 0.0;
+rtB.kj5ged5ouv = 0.0;
+for (ri = rtP.StateSpace_C_jc[0U]; ri < rtP.StateSpace_C_jc[1U]; ri++) {
+    rtB.kj5ged5ouv += rtP.StateSpace_C_pr * rtX.iwyoop3u3r;
+}
+rtB.guzkycy441 = rtP.T_set - rtB.kj5ged5ouv;
+rtB.e4dmel4npm = rtP.PIDController_P * rtB.guzkycy441;
+rtB.daxysc2t0q = rtX.env1qqkpbr;
+rtB.ktxsqan1ix = rtP.PIDController_D * rtB.guzkycy441;
+rtB.ox2ag4rjwi = rtX.karozk4fpb;
+rtB.ktdys5yo0t = rtB.ktxsqan1ix - rtB.ox2ag4rjwi;
+rtB.jdzew5kwiu = rtP.PIDController_N * rtB.ktdys5yo0t;
+rtB.n1kdcxnjx2 = (rtB.e4dmel4npm + rtB.daxysc2t0q) + rtB.jdzew5kwiu;
+if (%<(RTMGetIsModeUpdateTimeStep())>) {
+    rtDW.fni05y3dyi = rtB.n1kdcxnjx2 >= rtP.PIDController_UpperSaturationLimit ? 1 : rtB.n1kdcxnjx2 > rtP.PIDController_LowerSaturationLimit ? 0 : -1;
+}
+rtB.cwyp0u4fxj = rtDW.fni05y3dyi == 1 ? rtP.PIDController_UpperSaturationLimit : rtDW.fni05y3dyi == -1 ? rtP.PIDController_LowerSaturationLimit : rtB.n1kdcxnjx2;
+rtB.ek2xrgvbnw = (real_T)rtB.pat4o3qai3 * 0.03125 + rtB.cwyp0u4fxj;
+if (rtDW.eztgjvjrnk == 0.0) {
+    rtDW.eztgjvjrnk = 1.0;
+    rtX.fr1u0arkx5 = rtB.ek2xrgvbnw;
+}
+rtB.apvg0yhoqc[0] = rtX.fr1u0arkx5;
+rtB.apvg0yhoqc[1] = (rtB.ek2xrgvbnw - rtX.fr1u0arkx5) * 1000.0;
+rtB.apvg0yhoqc[2] = 0.0;
+rtB.apvg0yhoqc[3] = 0.0;
+if (%<(SLibCGIRIsSampleHit(1, 0))>) {
+    if (rtDW.mhoqdxbzwj) {
+        tmp[0] = rtP.RTP_731D9D8D_T_Value;
+        tmp[1] = rtP.RTP_7EE98BC0_T_Value;
+        tmp[2] = rtP.RTP_7D09336B_T_Value;
+        tmp[3] = rtP.RTP_95CC90AC_T_Value;
+        tmp[4] = rtP.T_init;
+        tmp[5] = rtP.T_init;
+        tmp[6] = rtP.T_init;
+        tmp[7] = rtP.T_init;
+        tmp[8] = rtP.T_init;
+        tmp[9] = rtP.T_init;
+        tmp[10] = rtP.T_init;
+        tmp[11] = rtP.T_init;
+        tmp[12] = rtP.T_init;
+        tmp[13] = rtP.T_init;
+        tmp[14] = rtP.T_init;
+        tmp[15] = rtP.T_init;
+        tmp[16] = rtP.T_init;
+        tmp[17] = rtP.T_init;
+        tmp[18] = rtP.RTP_A90ABFEE_level_Value;
+        tmp[19] = rtP.RTP_A90ABFEE_p_gas_Value;
+        tmp[20] = rtP.RTP_A90ABFEE_volume_liquid_Value;
+        parameterBundle_mRealParameters_mX = &tmp[0];
+        diag = rtw_create_diagnostics();
+        diagTree = neu_diagnostic_manager_get_initial_tree(diag);
+        expl_temp.mRealParameters.mN = 21;
+        expl_temp.mRealParameters.mX = parameterBundle_mRealParameters_mX;
+        expl_temp.mLogicalParameters.mN = 0;
+        expl_temp.mLogicalParameters.mX = NULL;
+        expl_temp.mIntegerParameters.mN = 0;
+        expl_temp.mIntegerParameters.mX = NULL;
+        expl_temp.mIndexParameters.mN = 0;
+        expl_temp.mIndexParameters.mX = NULL;
+        first_output = nesl_rtp_manager_set_rtps((NeslRtpManager *)rtDW.gfzyhdldpe, %<(LibGetT())>, expl_temp, diag);
+        if (!first_output) {
+            first_output = error_buffer_is_empty(%<(LibGetRTModelErrorStatus())>);
+            if (first_output) {
+                msg = rtw_diagnostics_msg(diagTree);
+                %<(LibSetRTModelErrorStatus("msg"))>;
+            }
+        }
+    }
+    rtDW.mhoqdxbzwj = false;
+}
+simulationData = (NeslSimulationData *)rtDW.pg1peeaap2;
+time = %<(SLibCG_SE(LibGetT()))>;
+simulationData->mData->mTime.mN = 1;
+simulationData->mData->mTime.mX = &time;
+simulationData->mData->mContStates.mN = 337;
+simulationData->mData->mContStates.mX = &rtX.effbkgmtax[0];
+simulationData->mData->mDiscStates.mN = 0;
+simulationData->mData->mDiscStates.mX = &rtDW.pahluld41k;
+simulationData->mData->mModeVector.mN = 246;
+simulationData->mData->mModeVector.mX = &rtDW.idk0zphtpp[0];
+first_output = %<(SLibCG_SE(SLibCGIRGetSolverFoundZcEvents()))>;
+simulationData->mData->mFoundZcEvents = first_output;
+simulationData->mData->mIsMajorTimeStep = %<(SLibCG_SE(LibIsMajorTimeStep()))>;
+first_output = %<(SLibCG_SE(SLibCGIRGetSolverAssertCheck()))>;
+simulationData->mData->mIsSolverAssertCheck = first_output;
+first_output = %<(SLibCG_SE(RTMIsSolverCheckingCIC()))>;
+simulationData->mData->mIsSolverCheckingCIC = first_output;
+first_output = %<(SLibCG_SE(RTMIsSolverComputingJacobian()))>;
+simulationData->mData->mIsComputingJacobian = first_output;
+simulationData->mData->mIsEvaluatingF0 = (%<(SLibCG_SE(RTMGetEvaluatingF0ForJacobian()))> != 0);
+first_output = %<(SLibCG_SE(RTMIsSolverRequestingReset()))>;
+simulationData->mData->mIsSolverRequestingReset = first_output;
+simulationData->mData->mIsModeUpdateTimeStep = %<(SLibCG_SE(RTMGetIsModeUpdateTimeStep()))>;
+tmp_e[0] = 0;
+tmp_p[0] = rtB.g4x5d1kqrr[0];
+tmp_p[1] = rtB.g4x5d1kqrr[1];
+tmp_p[2] = rtB.g4x5d1kqrr[2];
+tmp_p[3] = rtB.g4x5d1kqrr[3];
+tmp_e[1] = 4;
+tmp_p[4] = rtB.hmdfvofm2d[0];
+tmp_p[5] = rtB.hmdfvofm2d[1];
+tmp_p[6] = rtB.hmdfvofm2d[2];
+tmp_p[7] = rtB.hmdfvofm2d[3];
+tmp_e[2] = 8;
+tmp_p[8] = rtB.c4vppbzui3[0];
+tmp_p[9] = rtB.c4vppbzui3[1];
+tmp_p[10] = rtB.c4vppbzui3[2];
+tmp_p[11] = rtB.c4vppbzui3[3];
+tmp_e[3] = 12;
+tmp_p[12] = rtB.apvg0yhoqc[0];
+tmp_p[13] = rtB.apvg0yhoqc[1];
+tmp_p[14] = rtB.apvg0yhoqc[2];
+tmp_p[15] = rtB.apvg0yhoqc[3];
+tmp_e[4] = 16;
+simulationData->mData->mInputValues.mN = 16;
+simulationData->mData->mInputValues.mX = &tmp_p[0];
+simulationData->mData->mInputOffsets.mN = 5;
+simulationData->mData->mInputOffsets.mX = &tmp_e[0];
+simulationData->mData->mOutputs.mN = 583;
+simulationData->mData->mOutputs.mX = &rtB.ci1eqffra0[0];
+simulationData->mData->mTolerances.mN = 0;
+simulationData->mData->mTolerances.mX = NULL;
+simulationData->mData->mCstateHasChanged = false;
+time_p = %<(SLibCG_SE(LibGetTaskTime(0)))>;
+simulationData->mData->mTime.mN = 1;
+simulationData->mData->mTime.mX = &time_p;
+simulationData->mData->mSampleHits.mN = 0;
+simulationData->mData->mSampleHits.mX = NULL;
+simulationData->mData->mIsFundamentalSampleHit = false;
+diag = (NeuDiagnosticManager *)rtDW.bglls0p5vn;
+diagnosticTree = neu_diagnostic_manager_get_initial_tree(diag);
+iy = ne_simulator_method((NeslSimulator *)rtDW.b1a0qim2yg, NESL_SIM_OUTPUTS, simulationData, diag);
+if (iy != 0) {
+    first_output = error_buffer_is_empty(%<(LibGetRTModelErrorStatus())>);
+    if (first_output) {
+        msg_p = rtw_diagnostics_msg(diagnosticTree);
+        %<(LibSetRTModelErrorStatus("msg_p"))>;
+    }
+}
+if (%<(SLibCG_SE(LibIsMajorTimeStep()))> && simulationData->mData->mCstateHasChanged) {
+    %<(RTMSetBlockStateForSolverChangedAtMajorStep())>;
+}
+simulationData = (NeslSimulationData *)rtDW.gvo41anqta;
+time_e = %<(SLibCG_SE(LibGetT()))>;
+simulationData->mData->mTime.mN = 1;
+simulationData->mData->mTime.mX = &time_e;
+simulationData->mData->mContStates.mN = 0;
+simulationData->mData->mContStates.mX = NULL;
+simulationData->mData->mDiscStates.mN = 0;
+simulationData->mData->mDiscStates.mX = &rtDW.mjvwcs3qal;
+simulationData->mData->mModeVector.mN = 0;
+simulationData->mData->mModeVector.mX = &rtDW.eya4mzvurp;
+first_output = %<(SLibCG_SE(SLibCGIRGetSolverFoundZcEvents()))>;
+simulationData->mData->mFoundZcEvents = first_output;
+simulationData->mData->mIsMajorTimeStep = %<(SLibCG_SE(LibIsMajorTimeStep()))>;
+first_output = %<(SLibCG_SE(SLibCGIRGetSolverAssertCheck()))>;
+simulationData->mData->mIsSolverAssertCheck = first_output;
+first_output = %<(SLibCG_SE(RTMIsSolverCheckingCIC()))>;
+simulationData->mData->mIsSolverCheckingCIC = first_output;
+simulationData->mData->mIsComputingJacobian = false;
+simulationData->mData->mIsEvaluatingF0 = false;
+first_output = %<(SLibCG_SE(RTMIsSolverRequestingReset()))>;
+simulationData->mData->mIsSolverRequestingReset = first_output;
+simulationData->mData->mIsModeUpdateTimeStep = %<(SLibCG_SE(RTMGetIsModeUpdateTimeStep()))>;
+tmp_i[0] = 0;
+rtB.dv[0] = rtB.g4x5d1kqrr[0];
+rtB.dv[1] = rtB.g4x5d1kqrr[1];
+rtB.dv[2] = rtB.g4x5d1kqrr[2];
+rtB.dv[3] = rtB.g4x5d1kqrr[3];
+tmp_i[1] = 4;
+rtB.dv[4] = rtB.hmdfvofm2d[0];
+rtB.dv[5] = rtB.hmdfvofm2d[1];
+rtB.dv[6] = rtB.hmdfvofm2d[2];
+rtB.dv[7] = rtB.hmdfvofm2d[3];
+tmp_i[2] = 8;
+rtB.dv[8] = rtB.c4vppbzui3[0];
+rtB.dv[9] = rtB.c4vppbzui3[1];
+rtB.dv[10] = rtB.c4vppbzui3[2];
+rtB.dv[11] = rtB.c4vppbzui3[3];
+tmp_i[3] = 12;
+rtB.dv[12] = rtB.apvg0yhoqc[0];
+rtB.dv[13] = rtB.apvg0yhoqc[1];
+rtB.dv[14] = rtB.apvg0yhoqc[2];
+rtB.dv[15] = rtB.apvg0yhoqc[3];
+tmp_i[4] = 16;
+memcpy(&rtB.dv[16], &rtB.ci1eqffra0[0], 583U * sizeof(real_T));
+tmp_i[5] = 599;
+simulationData->mData->mInputValues.mN = 599;
+simulationData->mData->mInputValues.mX = &rtB.dv[0];
+simulationData->mData->mInputOffsets.mN = 6;
+simulationData->mData->mInputOffsets.mX = &tmp_i[0];
+simulationData->mData->mOutputs.mN = 7;
+simulationData->mData->mOutputs.mX = &rtB.cizm5vaana[0];
+simulationData->mData->mTolerances.mN = 0;
+simulationData->mData->mTolerances.mX = NULL;
+simulationData->mData->mCstateHasChanged = false;
+time_i = %<(SLibCG_SE(LibGetTaskTime(0)))>;
+simulationData->mData->mTime.mN = 1;
+simulationData->mData->mTime.mX = &time_i;
+simulationData->mData->mSampleHits.mN = 0;
+simulationData->mData->mSampleHits.mX = NULL;
+simulationData->mData->mIsFundamentalSampleHit = false;
+diag = (NeuDiagnosticManager *)rtDW.nrhx2nf1go;
+diagnosticTree_p = neu_diagnostic_manager_get_initial_tree(diag);
+iy = ne_simulator_method((NeslSimulator *)rtDW.izgcpovxyi, NESL_SIM_OUTPUTS, simulationData, diag);
+if (iy != 0) {
+    first_output = error_buffer_is_empty(%<(LibGetRTModelErrorStatus())>);
+    if (first_output) {
+        msg_e = rtw_diagnostics_msg(diagnosticTree_p);
+        %<(LibSetRTModelErrorStatus("msg_e"))>;
+    }
+}
+if (%<(SLibCG_SE(LibIsMajorTimeStep()))> && simulationData->mData->mCstateHasChanged) {
+    %<(RTMSetBlockStateForSolverChangedAtMajorStep())>;
+}
+simulationData = (NeslSimulationData *)rtDW.i0lluemaxm;
+time_m = %<(SLibCG_SE(LibGetT()))>;
+simulationData->mData->mTime.mN = 1;
+simulationData->mData->mTime.mX = &time_m;
+simulationData->mData->mContStates.mN = 0;
+simulationData->mData->mContStates.mX = NULL;
+simulationData->mData->mDiscStates.mN = 0;
+simulationData->mData->mDiscStates.mX = &rtDW.ps2h2vwltm;
+simulationData->mData->mModeVector.mN = 0;
+simulationData->mData->mModeVector.mX = &rtDW.lqagrnen3f;
+first_output = %<(SLibCG_SE(SLibCGIRGetSolverFoundZcEvents()))>;
+simulationData->mData->mFoundZcEvents = first_output;
+simulationData->mData->mIsMajorTimeStep = %<(SLibCG_SE(LibIsMajorTimeStep()))>;
+first_output = %<(SLibCG_SE(SLibCGIRGetSolverAssertCheck()))>;
+simulationData->mData->mIsSolverAssertCheck = first_output;
+first_output = %<(SLibCG_SE(RTMIsSolverCheckingCIC()))>;
+simulationData->mData->mIsSolverCheckingCIC = first_output;
+simulationData->mData->mIsComputingJacobian = false;
+simulationData->mData->mIsEvaluatingF0 = false;
+first_output = %<(SLibCG_SE(RTMIsSolverRequestingReset()))>;
+simulationData->mData->mIsSolverRequestingReset = first_output;
+simulationData->mData->mIsModeUpdateTimeStep = %<(SLibCG_SE(RTMGetIsModeUpdateTimeStep()))>;
+tmp_m[0] = 0;
+rtB.dv1[0] = rtB.g4x5d1kqrr[0];
+rtB.dv1[1] = rtB.g4x5d1kqrr[1];
+rtB.dv1[2] = rtB.g4x5d1kqrr[2];
+rtB.dv1[3] = rtB.g4x5d1kqrr[3];
+tmp_m[1] = 4;
+rtB.dv1[4] = rtB.hmdfvofm2d[0];
+rtB.dv1[5] = rtB.hmdfvofm2d[1];
+rtB.dv1[6] = rtB.hmdfvofm2d[2];
+rtB.dv1[7] = rtB.hmdfvofm2d[3];
+tmp_m[2] = 8;
+rtB.dv1[8] = rtB.c4vppbzui3[0];
+rtB.dv1[9] = rtB.c4vppbzui3[1];
+rtB.dv1[10] = rtB.c4vppbzui3[2];
+rtB.dv1[11] = rtB.c4vppbzui3[3];
+tmp_m[3] = 12;
+rtB.dv1[12] = rtB.apvg0yhoqc[0];
+rtB.dv1[13] = rtB.apvg0yhoqc[1];
+rtB.dv1[14] = rtB.apvg0yhoqc[2];
+rtB.dv1[15] = rtB.apvg0yhoqc[3];
+tmp_m[4] = 16;
+memcpy(&rtB.dv1[16], &rtB.ci1eqffra0[0], 583U * sizeof(real_T));
+tmp_m[5] = 599;
+simulationData->mData->mInputValues.mN = 599;
+simulationData->mData->mInputValues.mX = &rtB.dv1[0];
+simulationData->mData->mInputOffsets.mN = 6;
+simulationData->mData->mInputOffsets.mX = &tmp_m[0];
+simulationData->mData->mOutputs.mN = 1;
+simulationData->mData->mOutputs.mX = &luxwyadlqr;
+simulationData->mData->mTolerances.mN = 0;
+simulationData->mData->mTolerances.mX = NULL;
+simulationData->mData->mCstateHasChanged = false;
+time_g = %<(SLibCG_SE(LibGetTaskTime(0)))>;
+simulationData->mData->mTime.mN = 1;
+simulationData->mData->mTime.mX = &time_g;
+simulationData->mData->mSampleHits.mN = 0;
+simulationData->mData->mSampleHits.mX = NULL;
+simulationData->mData->mIsFundamentalSampleHit = false;
+diag = (NeuDiagnosticManager *)rtDW.cm54eojqab;
+diagnosticTree_e = neu_diagnostic_manager_get_initial_tree(diag);
+iy = ne_simulator_method((NeslSimulator *)rtDW.o1ucbdw3qn, NESL_SIM_OUTPUTS, simulationData, diag);
+if (iy != 0) {
+    first_output = error_buffer_is_empty(%<(LibGetRTModelErrorStatus())>);
+    if (first_output) {
+        msg_i = rtw_diagnostics_msg(diagnosticTree_e);
+        %<(LibSetRTModelErrorStatus("msg_i"))>;
+    }
+}
+if (%<(SLibCG_SE(LibIsMajorTimeStep()))> && simulationData->mData->mCstateHasChanged) {
+    %<(RTMSetBlockStateForSolverChangedAtMajorStep())>;
+}
+luxwyadlqr *= rtB.cizm5vaana[4];
+rtB.e2egazwdtp = rtP.kW_Gain * luxwyadlqr;
+rtB.eaf2lxhueg = rtP.Efficiency_Gain * rtB.cizm5vaana[6];
+%<tlcOutputsFcnOfS0B4>\
+rtB.ne3aknl42j = rtB.cizm5vaana[3] - rtP.T_set;
+if (%<(RTMGetIsModeUpdateTimeStep())>) {
+    rtDW.m53bymnnod = ((rtB.ne3aknl42j >= rtP.Relay_OnVal) || ((!(rtB.ne3aknl42j <= rtP.Relay_OffVal)) && rtDW.m53bymnnod));
+}
+if (%<(SLibCGIRIsSampleHit(1, 0))>) {
+    if (rtDW.m53bymnnod) {
+        luxwyadlqr = rtP.Relay_YOn;
+    } else {
+        luxwyadlqr = rtP.Relay_YOff;
+    }
+    rtB.cbztcpotvv = rtP.pump.omega * luxwyadlqr;
+}
+rtB.obweg0l22f = rtB.cwyp0u4fxj - rtB.n1kdcxnjx2;
+rtB.mijc1dwvec = rtP.PIDController_Kb * rtB.obweg0l22f;
+rtB.j4w0fnlfbw = rtP.PIDController_I * rtB.guzkycy441;
+rtB.gmef4hcfga = rtB.mijc1dwvec + rtB.j4w0fnlfbw;
+%<SLibInsertSolverResetCode()>\
+%closefile cfgTxt
+%<cfgTxt>
+%<LibSetSystemField(system, "CachedOutputLocalVars", localVarDecl)>
+%assign ::GlobalCurrentTID = []
+%endif
+%if tid == 2
+%assign ::GlobalCurrentTID = 2
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+rtB.onxkezlpwm = rtP.T_set + 1.0;
+rtB.g4gjxqt3j1 = rtP.T_set - 0.5;
+rtB.pat4o3qai3 = (uint8_T)(((((uint32_T)(rtP.T_env < rtP.Constant1_Value ? (int32_T)rtP.Gain1_Gain : 0) << 1) + (uint32_T)(rtP.T_env >= rtP.Constant_Value ? (int32_T)rtP.Gain_Gain : 0)) + ((uint32_T)((rtP.T_env >= rtP.Constant2_Value) && (rtP.T_env < rtP.Constant3_Value) ? (int32_T)rtP.Gain2_Gain : 0) << 1)) >> 1);
+%closefile cfgTxt
+%<cfgTxt>
+%<LibSetSystemField(system, "CachedOutput2LocalVars", localVarDecl)>
+%assign ::GlobalCurrentTID = []
+%endif
+%endfunction
+%function OutputsFcnProtoTypeForTID(block, system, tid) Output
+%if tid == 0
+%assign ::GlobalCurrentTID = 0
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void Outputs0(\
+%assign comma = ""
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(0, 2, fcnProtoType)>
+%assign ::GlobalCurrentTID = []
+%endif
+%if tid == 2
+%assign ::GlobalCurrentTID = 2
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void Outputs1(\
+%assign comma = ""
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(0, 3, fcnProtoType)>
+%assign ::GlobalCurrentTID = []
+%endif
+%endfunction

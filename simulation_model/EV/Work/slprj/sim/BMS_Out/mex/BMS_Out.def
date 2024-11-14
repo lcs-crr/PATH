@@ -1,0 +1,4 @@
+LIBRARY ..\..\..\..\BMS_Out_msf.mexw64
+EXPORTS
+    mexFunction
+    mexfilerequiredapiversion
