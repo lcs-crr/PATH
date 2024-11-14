@@ -14,7 +14,7 @@ import tensorflow as tf
 from tqdm import tqdm
 from dotenv import dotenv_values
 from sklearn import metrics
-from ts_functions import ts_processor, ts_plotter
+from ts_functions import ts_processor
 
 # Declare constants
 SEED = 1
@@ -74,7 +74,6 @@ for model_seed in range(1, 6):
         # Pre-allocate lists
         total_test_detection_score = []
         total_delays = []
-        test_rootcause_channels_sorted = []
         groundtruth_labels = []
         predicted_labels = []
         # Iterate over all test time series with unsupervised threshold
@@ -88,13 +87,11 @@ for model_seed in range(1, 6):
                     predicted_anomaly_start = np.argwhere(score_ts >= threshold)[0][0]
                     predicted_labels.append(True)
                     groundtruth_labels.append(False)
-                    test_rootcause_channels_sorted.append(np.argsort(test_rootcause_score[idx_test][predicted_anomaly_start]))
                 # =0 time steps in anomaly score higher than threshold
                 # True negative
                 else:
                     predicted_labels.append(False)
                     groundtruth_labels.append(False)
-                    test_rootcause_channels_sorted.append(np.nan)
             # Ground-truth anomalous time series
             else:
                 # Extract groundtruth anomaly start from file name and correct it for lower sampling rate
@@ -110,7 +107,6 @@ for model_seed in range(1, 6):
                         groundtruth_labels.append(True)
                         delay, _ = ts_processor.find_detection_delay(score_ts, threshold, sampling_rate, reverse_window_mode, window_size, len(score_ts), groundtruth_anomaly_start)
                         total_delays.append(delay)
-                        test_rootcause_channels_sorted.append(np.argsort(test_rootcause_score[idx_test][predicted_anomaly_start]))
                     # First predicted anomalous time step is before the groundtruth anomaly start
                     # False positive
                     else:
@@ -118,7 +114,6 @@ for model_seed in range(1, 6):
                         groundtruth_labels.append(False)
                         delay, _ = ts_processor.find_detection_delay(score_ts, threshold, sampling_rate, reverse_window_mode, window_size, len(score_ts), groundtruth_anomaly_start)
                         total_delays.append(delay)
-                        test_rootcause_channels_sorted.append(np.argsort(test_rootcause_score[idx_test][predicted_anomaly_start]))
                 # =0 time steps in anomaly score higher than threshold
                 # False negative
                 else:
@@ -126,7 +121,6 @@ for model_seed in range(1, 6):
                     groundtruth_labels.append(True)
                     delay = (len(score_ts) - groundtruth_anomaly_start) / sampling_rate
                     total_delays.append(delay)
-                    test_rootcause_channels_sorted.append(np.nan)
             total_test_detection_score.append(score_ts)
 
         # Store results in dataframe
@@ -196,7 +190,6 @@ for model_seed in range(1, 6):
 
         # Pre-allocate lists
         total_delays_best = []
-        test_rootcause_channels_sorted_best = []
         groundtruth_labels_best = []
         predicted_labels_best = []
         # Iterate over all test time series with the best threshold
@@ -210,13 +203,11 @@ for model_seed in range(1, 6):
                     predicted_labels_best.append(True)
                     groundtruth_labels_best.append(False)
                     predicted_anomaly_start = np.argwhere(score_ts >= threshold_best)[0][0]
-                    test_rootcause_channels_sorted_best.append(np.argsort(test_rootcause_score[idx_test][predicted_anomaly_start]))
                 # =0 time steps in anomaly score higher than threshold
                 # True negative
                 else:
                     predicted_labels_best.append(False)
                     groundtruth_labels_best.append(False)
-                    test_rootcause_channels_sorted_best.append(np.nan)
             # Ground-truth anomalous time series
             else:
                 # Extract groundtruth anomaly start from file name
@@ -232,7 +223,6 @@ for model_seed in range(1, 6):
                         groundtruth_labels_best.append(True)
                         delay, _ = ts_processor.find_detection_delay(score_ts, threshold_best, sampling_rate, reverse_window_mode, window_size, len(score_ts), groundtruth_anomaly_start)
                         total_delays_best.append(delay)
-                        test_rootcause_channels_sorted_best.append(np.argsort(test_rootcause_score[idx_test][predicted_anomaly_start]))
                     # First predicted anomalous time step is before the groundtruth anomaly start
                     # False positive
                     else:
@@ -240,7 +230,6 @@ for model_seed in range(1, 6):
                         groundtruth_labels_best.append(False)
                         delay, _ = ts_processor.find_detection_delay(score_ts, threshold_best, sampling_rate, reverse_window_mode, window_size, len(score_ts), groundtruth_anomaly_start)
                         total_delays_best.append(delay)
-                        test_rootcause_channels_sorted.append(np.argsort(test_rootcause_score[idx_test][predicted_anomaly_start]))
                 # =0 time steps in anomaly score higher than threshold
                 # False negative
                 else:
@@ -248,7 +237,6 @@ for model_seed in range(1, 6):
                     groundtruth_labels_best.append(True)
                     delay = (len(score_ts) - groundtruth_anomaly_start) / sampling_rate
                     total_delays_best.append(delay)
-                    test_rootcause_channels_sorted.append(np.nan)
 
         results_best.loc[(model_seed - 1) * 3 + fold_idx, 'Seed'] = model_seed
         results_best.loc[(model_seed - 1) * 3 + fold_idx, 'Fold'] = fold_idx
