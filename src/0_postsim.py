@@ -5,7 +5,6 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
-import pickle
 import scipy
 import numpy as np
 import random

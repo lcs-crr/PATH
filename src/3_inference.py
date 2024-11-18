@@ -5,14 +5,12 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
-import pickle
 import random
 import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
 from dotenv import dotenv_values
-from sklearn import metrics
-from ts_functions import ts_processor, ts_plotter
+from ts_functions import ts_processor
 
 # Declare constants
 SEED = 1
