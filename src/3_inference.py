@@ -5,19 +5,16 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
-import pickle
 import random
-import numpy as np
-import tensorflow as tf
 from tqdm import tqdm
 from dotenv import dotenv_values
-from sklearn import metrics
-from ts_functions import ts_processor, ts_plotter
+from ts_functions import ts_processor
+from model_garden.tevae import *
 
 # Declare constants
 SEED = 1
 AD_MODE = 'us'  # or 'ss'
-MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae'
+MODEL_NAME = 'tevae'
 
 # Set fixed seed for random operations
 random.seed(SEED)
@@ -57,17 +54,19 @@ for model_seed in range(1, 6):
             pass
         else:
             # Load model
-            model = tf.keras.models.load_model(model_load_path)
+            model = keras.models.load_model(model_load_path + '.keras', custom_objects={
+                "Sampling": Sampling,
+                "TeVAE_Encoder": TeVAE_Encoder,
+                "TeVAE_Decoder": TeVAE_Decoder,
+                "MA": MA,
+                "TeVAE": TeVAE,
+            })
             val_detection_score = []
             val_output = []
             # Iterate over all validation time series
             for val_ts in tqdm(val_list):
                 # Do inference on each validation time series in val_list. Key for score_function argument:
                 # - tevae: 'negloglik'
-                # - tcnae: 'logcosh'
-                # - omnianomaly: 'negloglik'
-                # - sisvae: 'negloglik'
-                # - lwvae: 'rss'
                 detection_score, output = ts_processor.inference(model, val_ts, window_size, score_function='negloglik')
                 val_detection_score.append(detection_score)
                 val_output.append(output)
@@ -81,17 +80,19 @@ for model_seed in range(1, 6):
             pass
         else:
             # Load model
-            model = tf.keras.models.load_model(model_load_path)
+            model = keras.models.load_model(model_load_path + '.keras', custom_objects={
+                "Sampling": Sampling,
+                "TeVAE_Encoder": TeVAE_Encoder,
+                "TeVAE_Decoder": TeVAE_Decoder,
+                "MA": MA,
+                "TeVAE": TeVAE,
+            })
             test_detection_score = []
             test_output = []
             # Iterate over all test time series
             for test_ts in tqdm(test_list):
                 # Do inference on each test time series in test_list. Key for score_function argument:
                 # - tevae: 'negloglik'
-                # - tcnae: 'logcosh'
-                # - omnianomaly: 'negloglik'
-                # - sisvae: 'negloglik'
-                # - lwvae: 'rss'
                 detection_score, output = ts_processor.inference(model, test_ts, window_size, score_function='negloglik')
                 test_detection_score.append(detection_score)
                 test_output.append(output)
