@@ -8,12 +8,9 @@ import numpy as np
 from scipy.signal import butter, lfilter
 import tensorflow_probability as tfp
 import tensorflow as tf
-import scipy
 from statsmodels.tsa import stattools
 import os
 import pickle
-from scipy.interpolate import interp1d
-import sklearn
 
 
 def window_list(input_list, window_size, shift):
@@ -22,7 +19,7 @@ def window_list(input_list, window_size, shift):
     The windows are concatenated into a single array.
 
     :param input_list: list of multivariate time series
-    :type input_list: list[array (time steps, channels)]
+    :type input_list: list[array (time_steps, channels)]
     :param window_size: window size
     :type window_size: int
     :param shift: number of time steps between windows
@@ -63,7 +60,7 @@ def reverse_window(windows, shift, mode):
     :param mode: reverse window mode
     :type mode: str
     :return: multivariate time series
-    :rtype: array (time steps, channels)
+    :rtype: array (time_steps, channels)
     """
     num_windows, window_size, num_channels = windows.shape
     data = np.zeros(((num_windows - 1) * shift + window_size, num_channels))  # Pre-allocate array
@@ -88,7 +85,7 @@ def find_scalers(input_list):
     This function finds the minimum, maximum, mean and standard deviation for each channel in a list of arrays.
 
     :param input_list: list of multivariate time series
-    :type input_list: list[array (time steps, channels)]
+    :type input_list: list[array (time_steps, channels)]
     :return: list of scalers
     :rtype: list[array (channels)]
     """
@@ -108,12 +105,13 @@ def scale_list(input_list, scalers, scale_type):
     """
     This function scales a multivariate time series. The scalers input must come from find_scalers() function.
     :param input_list: list of multivariate time series
-    :type input_list: list[array (time steps, channels)]
+    :type input_list: list[array (time_steps, channels)]
     :param scalers: list of scalers
     :type scalers: list[array (channels)]
     :param scale_type: scaling type
     :type scale_type: str
-    :return:
+    :return: data_scaled: list of multivariate time series
+    :rtype: list[array (time_steps, channels)]
     """
     # Assign minimum scaler value from scalers input
     minimum = scalers[0]
@@ -140,7 +138,7 @@ def downsample(time_series, cutoff_frequency, sampling_frequency, filter_order):
     """
     This function applies a low-pass Butterworth filter to a multivariate time series.
     :param time_series: multivariate time series
-    :type time_series: array (time steps, channels)
+    :type time_series: array (time_steps, channels)
     :param cutoff_frequency: cutoff frequency
     :type cutoff_frequency: float
     :param sampling_frequency: sampling frequency
@@ -148,7 +146,7 @@ def downsample(time_series, cutoff_frequency, sampling_frequency, filter_order):
     :param filter_order: filter order
     :type filter_order: int
     :return: low-pass filtered multivariate time series
-    :rtype: array (time steps, channels)
+    :rtype: array (time_steps, channels)
     """
     # Calculate Butterworth filter coefficients
     b, a = butter(filter_order, cutoff_frequency, fs=sampling_frequency, btype='low', analog=False)
@@ -162,16 +160,16 @@ def negative_log_likelihood(mean, standard_deviation, sample):
     """
     Calculates the negative log likelihood for Gaussian distribution parameters given sample
     :param mean: Mean parameter of Gaussian distribution
-    :type mean: array (M, features)
+    :type mean: array (time_steps, features)
     :param standard_deviation: Standard deviation parameter of Gaussian distribution
-    :type standard_deviation: array (M, features)
+    :type standard_deviation: array (time_steps, features)
     :param sample: Observed sample
-    :type sample: array (M, features)
+    :type sample: array (time_steps, features)
     :return: negative log likelihood
-    :rtype: array (M, features)
+    :rtype: array (time_steps,)
     """
     outputDist = tfp.distributions.MultivariateNormalDiag(loc=mean, scale_diag=standard_deviation)
-    negloglik = tf.expand_dims(-outputDist.log_prob(sample), axis=1)  # (M, 1)
+    negloglik = tf.expand_dims(-outputDist.log_prob(sample), axis=1)  # (time_steps, 1)
     return negloglik
 
 
@@ -182,7 +180,7 @@ def inference(model, input_array, window_size, rev_mode='mean', batch_size=512, 
     :param model: trained model
     :type model: tf.keras.Model
     :param input_array: multivariate time series
-    :type input_array: array (time steps, channels)
+    :type input_array: array (time_steps, channels)
     :param rev_mode: reverse window mode
     :type rev_mode: str
     :param window_size: window size
@@ -191,8 +189,10 @@ def inference(model, input_array, window_size, rev_mode='mean', batch_size=512, 
     :type batch_size: int
     :param score_function: anomaly score function
     :type score_function: str
-    :return: anomaly score and model outputs
-    :rtype: array (M, 1), list[list[array (M, features), array (M, features), array (M, features)]]
+    :return: anomaly score
+    :rtype: array (time_steps, 1)
+    :return: model outputs
+    :rtype: list[list[array (time_steps, features), array (time_steps, features), array (time_steps, features)]]
     """
     # Window input array
     input_windows = window_list(input_array, window_size, 1)
@@ -242,7 +242,7 @@ def find_window_size(series):
     This function plots the autocorrelation for each channel in a multivariate time series.
 
     :param series: multivariate input time series
-    :type series: array (time steps, channels)
+    :type series: array (time_steps, channels)
     :return window size: integer
     """
 
@@ -265,7 +265,7 @@ def find_detection_delay(score, threshold, sampling_frequency, rev_mode, window_
     This function calculates the total detection delay for a given reverse window mode.
 
     :param score: anomaly score
-    :type score: array (M, 1)
+    :type score: array (time_steps, 1)
     :param threshold: anomaly threshold
     :type threshold: float
     :param sampling_frequency: sampling frequency
@@ -279,6 +279,8 @@ def find_detection_delay(score, threshold, sampling_frequency, rev_mode, window_
     :param anomaly_start: time step of anomaly start
     :type anomaly_start: float
     :return: delay
+    :rtype: float
+    :return: time of detection
     :rtype: float
     """
     # Find first time step above threshold
