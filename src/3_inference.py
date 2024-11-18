@@ -54,7 +54,7 @@ for model_seed in range(1, 6):
             pass
         else:
             # Load model
-            model = keras.models.load_model(model_load_path + '.keras', custom_objects={
+            model = keras.models.load_model(os.path.join(model_load_path, 'model.keras'), custom_objects={
                 "Sampling": Sampling,
                 "TeVAE_Encoder": TeVAE_Encoder,
                 "TeVAE_Decoder": TeVAE_Decoder,
@@ -68,7 +68,7 @@ for model_seed in range(1, 6):
                 # Do inference on each validation time series in val_list. Key for score_function argument:
                 # - tevae: 'negloglik'
                 detection_score, output = ts_processor.inference(model, val_ts, window_size, score_function='negloglik')
-                val_detection_score.append(detection_score)
+                val_detection_score.append(detection_score.numpy())
                 val_output.append(output)
             # Save detection scores and outputs
             ts_processor.dump_pickle(val_detection_score, os.path.join(model_load_path, 'val_detection_score_' + reverse_window_mode + '.pkl'))
@@ -80,7 +80,7 @@ for model_seed in range(1, 6):
             pass
         else:
             # Load model
-            model = keras.models.load_model(model_load_path + '.keras', custom_objects={
+            model = keras.models.load_model(os.path.join(model_load_path, 'model.keras'), custom_objects={
                 "Sampling": Sampling,
                 "TeVAE_Encoder": TeVAE_Encoder,
                 "TeVAE_Decoder": TeVAE_Decoder,
@@ -94,7 +94,7 @@ for model_seed in range(1, 6):
                 # Do inference on each test time series in test_list. Key for score_function argument:
                 # - tevae: 'negloglik'
                 detection_score, output = ts_processor.inference(model, test_ts, window_size, score_function='negloglik')
-                test_detection_score.append(detection_score)
+                test_detection_score.append(detection_score.numpy())
                 test_output.append(output)
             # Save detection scores and outputs
             ts_processor.dump_pickle(test_detection_score, os.path.join(model_load_path, 'test_detection_score_' + reverse_window_mode + '.pkl'))

@@ -3,17 +3,14 @@ Lucas Correia
 LIACS | Leiden University
 Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
-
+import os
+os.environ["KERAS_BACKEND"] = "torch"
+import keras
+import torch
 import numpy as np
 from scipy.signal import butter, lfilter
-import tensorflow_probability as tfp
-import tensorflow as tf
-import scipy
 from statsmodels.tsa import stattools
-import os
 import pickle
-from scipy.interpolate import interp1d
-import sklearn
 
 
 def window_list(input_list, window_size, shift):
@@ -168,10 +165,12 @@ def negative_log_likelihood(mean, standard_deviation, sample):
     :param sample: Observed sample
     :type sample: array (M, features)
     :return: negative log likelihood
-    :rtype: array (M, features)
+    :rtype: array (M, 1)
     """
-    outputDist = tfp.distributions.MultivariateNormalDiag(loc=mean, scale_diag=standard_deviation)
-    negloglik = tf.expand_dims(-outputDist.log_prob(sample), axis=1)  # (M, 1)
+    mean = torch.tensor(mean)
+    standard_deviation = torch.tensor(standard_deviation)
+    sample = torch.tensor(sample)
+    negloglik = -torch.distributions.MultivariateNormal(loc=mean, scale_tril=torch.diag_embed(standard_deviation)).log_prob(sample)
     return negloglik
 
 
@@ -180,7 +179,7 @@ def inference(model, input_array, window_size, rev_mode='mean', batch_size=512, 
     Inference function for stochastic output variational autoencoder.
 
     :param model: trained model
-    :type model: tf.keras.Model
+    :type model: keras.Model
     :param input_array: multivariate time series
     :type input_array: array (time steps, channels)
     :param rev_mode: reverse window mode
@@ -225,14 +224,8 @@ def inference(model, input_array, window_size, rev_mode='mean', batch_size=512, 
     # Calculate anomaly score
     if score_function == 'negloglik':
         anomaly_score = negative_log_likelihood(Xhat_mean, Xhat_std, input_array)
-    elif score_function == 'logcosh':
-        anomaly_score = tf.losses.LogCosh(reduction=tf.keras.losses.Reduction.NONE)(input_array, Xhat).numpy()[:, np.newaxis]
-        anomaly_score = tf.reduce_sum(anomaly_score, axis=-1)[:, np.newaxis]
-    elif score_function == 'rss':
-        anomaly_score = (input_array - Xhat) ** 2
-        anomaly_score = tf.reduce_sum(anomaly_score, axis=-1)[:, np.newaxis]
     # Clear GPU memory before next call
-    tf.keras.backend.clear_session()
+    keras.backend.clear_session()
     # Return anomaly score and model outputs
     return anomaly_score, [Xhat_mean, Xhat_std, Xhat]
 
