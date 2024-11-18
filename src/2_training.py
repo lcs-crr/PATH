@@ -38,11 +38,11 @@ for seed in range(1, 6):
         model_save_path = os.path.join(model_path, MODEL_NAME + '_' + AD_MODE + '_' + str(fold_idx) + '_' + str(seed))
 
         # Load data
-        tfdata_train = tf.data.Dataset.load(os.path.join(data_load_path, 'fold_' + str(fold_idx), 'train')).take(256)
-        tfdata_val = tf.data.Dataset.load(os.path.join(data_load_path, 'fold_' + str(fold_idx), 'val')).take(256)
+        tfdata_train = tf.data.Dataset.load(os.path.join(data_load_path, 'fold_' + str(fold_idx), 'train'))
+        tfdata_val = tf.data.Dataset.load(os.path.join(data_load_path, 'fold_' + str(fold_idx), 'val'))
 
-        tfdata_train = tfdata_train.unbatch().batch(128).cache()
-        tfdata_val = tfdata_val.unbatch().batch(128).cache()
+        tfdata_train = tfdata_train.unbatch().batch(1024).cache()
+        tfdata_val = tfdata_val.unbatch().batch(1024).cache()
 
         # Establish callbacks
         early_stopping = keras.callbacks.EarlyStopping(
@@ -82,19 +82,15 @@ for seed in range(1, 6):
                             epochs=10000,
                             callbacks=callback_list,
                             validation_data=tfdata_val,
-                            verbose=1
+                            verbose=2
                             )
 
         # Save model
-        model.save(model_save_path + '.keras')
+        try:
+            os.mkdir(model_save_path)
+        except FileExistsError:
+            pass
+        model.save(os.path.join(model_save_path, 'model.keras'))
         with open(os.path.join(model_save_path, 'final_loss.txt'), 'x') as f:
             f.write(str(min(history.history['val_rec_loss'])))
         keras.backend.clear_session()
-
-        # model_loaded = keras.models.load_model("tevae_model.keras", custom_objects={
-        #     "Sampling": Sampling,
-        #     "TeVAE_Encoder": TeVAE_Encoder,
-        #     "TeVAE_Decoder": TeVAE_Decoder,
-        #     "MA": MA,
-        #     "TeVAE": TeVAE,
-        # })
