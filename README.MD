@@ -6,3 +6,5 @@ So far, only `TeVAE` with the `PyTorch` backend is implemented, since `TensorFlo
 `JAX`-compatible code is planned for the future.
 
 Also, `keras.distributed` only supports the `JAX` backend for now, hence model training can only run on a single GPU.
+
+As of writing this README (Keras 3.6), keras.layers.MultiHeadAttention still enforces query_shape[-1]==value_shape[-1] and output_shape being a tuple, though this has been fixed in the latest commits.
