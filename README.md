@@ -36,7 +36,7 @@ The data set and consists of three states, each with a folder associated with it
 - `1_postsim`, where files are saved after post-simulation processing 
 - `2_preprocessed`, where files are saved after downsampling, standardising, and windowing
 
-The contents of the `1_postsim` folder can be found on [Zenodo](), which consists of the following pickle files:
+The contents of the `1_postsim` folder can be found on [Zenodo](https://zenodo.org/records/13255121), which consists of the following pickle files:
 - `normal.pkl`, which contains all nominal sequences 
 - `anomalous.pkl`, which contains all anomalous sequences 
 - `control.pkl`, which contains all control-counterparts to anomalous.pkl
