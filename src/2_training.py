@@ -14,7 +14,7 @@ from model_garden.tevae import *
 for seed in range(1, 6):
     # Declare constants
     AD_MODE = 'us'  # or 'ss'
-    MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae'
+    MODEL_NAME = 'tevae'
 
     # Set fixed seed for random operations
     random.seed(seed)

@@ -17,6 +17,7 @@ td = torch.distributions
 
 keras.saving.get_custom_objects().clear()
 
+
 @keras.saving.register_keras_serializable(package="TeVAE")
 class Sampling(keras.Layer):
     def __init__(self, seed, **kwargs):
@@ -54,7 +55,7 @@ class KL_annealing(keras.callbacks.Callback):
         if annealing_type in ["cyclical", "monotonic"]:
             self.beta_values = ko.linspace(start, end, annealing_epochs)
 
-    def on_epoch_begin(self, epoch,logs=None):
+    def on_epoch_begin(self, epoch, logs=None):
         shifted_epochs = ko.maximum(0.0, epoch - self.grace_period_idx)
         if epoch < self.grace_period_idx or self.annealing_type == "normal":
             new_value = self.start
@@ -94,7 +95,7 @@ class TeVAE_Encoder(keras.Model):
     def build_encoder(self):
         enc_input = kl.Input(shape=(self.seq_len, self.features))
         enc_input = kl.GaussianNoise(0.01, seed=self.seed)(enc_input)
-        bilstm = kl.Bidirectional(kl.LSTM(self.hidden_units*2, return_sequences=True, name="bilstm1"))(enc_input)
+        bilstm = kl.Bidirectional(kl.LSTM(self.hidden_units * 2, return_sequences=True, name="bilstm1"))(enc_input)
         bilstm = kl.Bidirectional(kl.LSTM(self.hidden_units, return_sequences=True, name="bilstm2"))(bilstm)
         z_mean = kl.TimeDistributed(kl.Dense(self.latent_dim, name="Z_mean"))(bilstm)
         z_logvar = kl.TimeDistributed(kl.Dense(self.latent_dim, name="Z_logvar"))(bilstm)
@@ -141,7 +142,7 @@ class TeVAE_Decoder(keras.Model):
     def build_decoder(self):
         dec_input = kl.Input(shape=(self.seq_len, self.latent_dim))
         bilstm = kl.Bidirectional(kl.LSTM(self.hidden_units, return_sequences=True, name="bilstm3"))(dec_input)
-        bilstm = kl.Bidirectional(kl.LSTM(self.hidden_units*2, return_sequences=True, name="bilstm4"))(bilstm)
+        bilstm = kl.Bidirectional(kl.LSTM(self.hidden_units * 2, return_sequences=True, name="bilstm4"))(bilstm)
         xhat_mean = kl.TimeDistributed(kl.Dense(self.features), name="Xhat_mean")(bilstm)
         xhat_logvar = kl.TimeDistributed(kl.Dense(self.features), name="Xhat_logvar")(bilstm)
         xhat = Sampling(seed=self.seed)([xhat_mean, xhat_logvar])
@@ -219,7 +220,7 @@ class MA(keras.Model):
             name=config['name']
         )
 
-    
+
 @keras.saving.register_keras_serializable(package="TeVAE")
 class TeVAE(keras.Model):
     def __init__(self, encoder, decoder, ma, beta=1e0, name=None, **kwargs):
@@ -253,7 +254,7 @@ class TeVAE(keras.Model):
         # Calculate negative log likelihood
         loglik = torch.distributions.MultivariateNormal(loc=xhat_mean, scale_tril=torch.diag_embed(torch.sqrt(torch.exp(xhat_logvar)))).log_prob(x)
         # Calculate KL divergence
-        kl_loss =  td.kl.kl_divergence(
+        kl_loss = td.kl.kl_divergence(
             torch.distributions.MultivariateNormal(loc=z_mean, scale_tril=torch.diag_embed(torch.sqrt(torch.exp(z_logvar)))),
             torch.distributions.MultivariateNormal(loc=torch.zeros_like(z_mean), scale_tril=torch.diag_embed(torch.ones_like(z_logvar)))
         )
@@ -302,7 +303,6 @@ class TeVAE(keras.Model):
             "kl_loss": self.kl_loss_tracker.result(),
         }
 
-
     def test_step(self, *args, **kwargs):
         if keras.backend.backend() == "jax":
             return self._jax_test_step(*args, **kwargs)
@@ -331,7 +331,6 @@ class TeVAE(keras.Model):
         self.kl_loss_tracker.update_state(kl_div.item())
         return {m.name: m.result() for m in self.metrics if m.name == 'rec_loss'}
 
-
     def call(self, x, *args, **kwargs):
         # Forward pass of encoder and decoder
         z_mean, z_logvar, z = self.encoder(x, training=False)
@@ -355,6 +354,7 @@ class TeVAE(keras.Model):
         decoder = TeVAE_Decoder.from_config(config["decoder"])
         ma = MA.from_config(config["ma"])
         return cls(encoder=encoder, decoder=decoder, ma=ma, beta=config["beta"])
+
 
 if __name__ == "__main__":
     pass
