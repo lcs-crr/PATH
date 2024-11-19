@@ -45,7 +45,7 @@ The contents of the `1_postsim` folder can be found on [Zenodo](), which consist
 - `testing.pkl`, which contains all pre-determined folds for testing
 - `testing_clean.pkl`, a version of testing.pkl without anomalous sequences
 
-Each pickle file is a list of several 2D NumPy arrays, each representing a time series. The name of the corresponding .mat file (and, by extension, the label) is present in the metadata. For NumPy object `array`, it can be read by calling `array.dtype.metadata['file_name']`.
+Each pickle file is a list of several 2D NumPy arrays, each representing a multivariate time series. The name of the corresponding .mat file (and, by extension, the label) is present in the metadata. For NumPy object `array`, it can be read by calling `array.dtype.metadata['file_name']`.
 
 The raw simulation output sequences in the `0_simulation` folder are not provided due to data host limitations.
 We decided to omit the data belonging to the `2_preprocessed` folder as the contents are specific to the TensorFlow data pipeline and the same data host limitations would apply. If needed, the contents can be obtained by running `1_data.py`; for more details, see the **Reproducing Results** section below.
