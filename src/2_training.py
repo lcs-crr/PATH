@@ -47,8 +47,8 @@ for seed in range(1, 6):
         tfdata_train = tf.data.Dataset.load(os.path.join(data_load_path, 'fold_' + str(fold_idx), 'train'))
         tfdata_val = tf.data.Dataset.load(os.path.join(data_load_path, 'fold_' + str(fold_idx), 'val'))
 
-        tfdata_train = tfdata_train.unbatch().batch(1024).cache()
-        tfdata_val = tfdata_val.unbatch().batch(1024).cache()
+        tfdata_train = tfdata_train.cache().batch(1024).prefetch(tf.data.AUTOTUNE)
+        tfdata_val = tfdata_val.cache().batch(1024).prefetch(tf.data.AUTOTUNE)
 
         # Establish callbacks
         early_stopping = tf.keras.callbacks.EarlyStopping(
