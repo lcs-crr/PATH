@@ -130,8 +130,8 @@ for fold_idx, _ in enumerate(train_list_fold):
     tfdata_val = tf.data.Dataset.from_tensor_slices(scaled_val_window.astype(np.dtype('float32')))
 
     # Shuffle and batch tf.data objects
-    tfdata_train = tfdata_train.shuffle(tfdata_train.cardinality(), seed=SEED).batch(1).prefetch(tf.data.AUTOTUNE)
-    tfdata_val = tfdata_val.shuffle(tfdata_val.cardinality(), seed=SEED).batch(1).prefetch(tf.data.AUTOTUNE)
+    tfdata_train = tfdata_train.shuffle(tfdata_train.cardinality(), seed=SEED)
+    tfdata_val = tfdata_val.shuffle(tfdata_val.cardinality(), seed=SEED)
 
     # Save training and validation data as tf.data
     tf.data.Dataset.save(tfdata_train, os.path.join(data_save_path, 'fold_' + str(fold_idx), 'train'))
