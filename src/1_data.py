@@ -141,4 +141,3 @@ for fold_idx, _ in enumerate(train_list_fold):
     ts_processor.dump_pickle(scaled_train_list, os.path.join(data_save_path, 'fold_' + str(fold_idx), 'train.pkl'))
     ts_processor.dump_pickle(scaled_val_list, os.path.join(data_save_path, 'fold_' + str(fold_idx), 'val.pkl'))
     ts_processor.dump_pickle(scaled_test_list, os.path.join(data_save_path, 'fold_' + str(fold_idx), 'test.pkl'))
-    print()
