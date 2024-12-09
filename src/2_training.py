@@ -5,9 +5,10 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
-os.environ["KERAS_BACKEND"] = "torch"
-import random
+os.environ["KERAS_BACKEND"] = 'jax'
+import numpy as np
 import keras
+import tensorflow as tf
 from dotenv import load_dotenv, dotenv_values
 from model_garden.tevae import *
 
@@ -17,7 +18,6 @@ for seed in range(1, 6):
     MODEL_NAME = 'tevae'
 
     # Set fixed seed for random operations
-    random.seed(seed)
     np.random.seed(seed)
     keras.utils.set_random_seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -41,8 +41,8 @@ for seed in range(1, 6):
         tfdata_train = tf.data.Dataset.load(os.path.join(data_load_path, 'fold_' + str(fold_idx), 'train'))
         tfdata_val = tf.data.Dataset.load(os.path.join(data_load_path, 'fold_' + str(fold_idx), 'val'))
 
-        tfdata_train = tfdata_train.cache().batch(1024).prefetch(tf.data.AUTOTUNE)
-        tfdata_val = tfdata_val.cache().batch(1024).prefetch(tf.data.AUTOTUNE)
+        tfdata_train = tfdata_train.cache().batch(8).prefetch(tf.data.AUTOTUNE)
+        tfdata_val = tfdata_val.cache().batch(8).prefetch(tf.data.AUTOTUNE)
 
         # Establish callbacks
         early_stopping = keras.callbacks.EarlyStopping(

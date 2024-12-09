@@ -6,14 +6,16 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 Original paper DOI: arXiv:2407.06849
 """
 
-import numpy as np
 import keras
 import torch
-import tensorflow as tf
+import jax
+from tensorflow_probability.substrates import jax as tfp  # TODO
 
 kl = keras.layers
 ko = keras.ops
 td = torch.distributions
+tfd = tfp.distributions
+jnp = jax.numpy
 
 keras.saving.get_custom_objects().clear()
 
@@ -244,14 +246,32 @@ class TeVAE(keras.Model):
             self.kl_loss_tracker,
         ]
 
-    def jax_loss_fn(self, x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar):
+    def loss_fn(self, *args, **kwargs):
+        if keras.backend.backend() == "jax":
+            return self._jax_loss_fn(*args, **kwargs)
+        elif keras.backend.backend() == "tensorflow":
+            return self._tensorflow_loss_fn(*args, **kwargs)
+        elif keras.backend.backend() == "torch":
+            return self._torch_loss_fn(*args, **kwargs)
+
+    @staticmethod
+    def _jax_loss_fn(x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar):
+        # Calculate log likelihood
+        loglik = tfd.MultivariateNormalDiag(loc=xhat_mean, scale_diag=jnp.sqrt(jnp.exp(xhat_logvar))).log_prob(x)
+        # Calculate KL divergence
+        kl_loss = tfd.kl_divergence(
+            tfd.MultivariateNormalDiag(loc=z_mean, scale_diag=jnp.sqrt(jnp.exp(z_logvar))),
+            tfd.MultivariateNormalDiag(loc=jnp.zeros_like(z_mean), scale_diag=jnp.ones_like(z_logvar))
+        )
+        return -jnp.sum(loglik, axis=1), jnp.sum(kl_loss, axis=1)
+
+    @staticmethod
+    def _tensorflow_loss_fn(x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar):
         pass
 
-    def tensorflow_loss_fn(self, x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar):
-        pass
-
-    def torch_loss_fn(self, x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar):
-        # Calculate negative log likelihood
+    @staticmethod
+    def _torch_loss_fn(x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar):
+        # Calculate log likelihood
         loglik = torch.distributions.MultivariateNormal(loc=xhat_mean, scale_tril=torch.diag_embed(torch.sqrt(torch.exp(xhat_logvar)))).log_prob(x)
         # Calculate KL divergence
         kl_loss = td.kl.kl_divergence(
@@ -268,8 +288,33 @@ class TeVAE(keras.Model):
         elif keras.backend.backend() == "torch":
             return self._torch_train_step(*args, **kwargs)
 
-    def _jax_train_step(self, x):
-        pass
+    def _jax_train_step(self, state, x):  # TODO
+        # Define the loss function
+        def wrapper_loss_fn(params):
+            # Forward pass
+            z_mean, z_logvar, z = self.encoder.apply(params["encoder"], x, training=True)
+            c = self.ma.apply(params["ma"], x, z, training=True)
+            xhat_mean, xhat_logvar, xhat = self.decoder.apply(params["decoder"], c, training=True)
+            # Compute loss
+            negloglik, kl_div = self.loss_fn(x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar)
+            total_loss = jnp.mean(negloglik + self.beta * kl_div)
+            return total_loss, (jnp.mean(negloglik), jnp.mean(kl_div))
+        # Compute gradients
+        (loss, (negloglik, kl_div)), grads = jax.value_and_grad(wrapper_loss_fn, has_aux=True)(self.params)
+        # Apply gradients using Keras optimizer
+        gradients_and_variables = zip(jax.tree_util.tree_flatten(grads)[0], jax.tree_util.tree_flatten(self.params)[0])
+        self.optimizer.apply_gradients(gradients_and_variables)
+        # Update loss trackers
+        self.beta_tracker.update_state(self.beta)
+        self.total_loss_tracker.update_state(loss.item())
+        self.negloglik_loss_tracker.update_state(negloglik.item())
+        self.kl_loss_tracker.update_state(kl_div.item())
+        return {
+            "beta": self.beta_tracker.result(),
+            "loss": self.total_loss_tracker.result(),
+            "rec_loss": self.negloglik_loss_tracker.result(),
+            "kl_loss": self.kl_loss_tracker.result(),
+        }
 
     def _tensorflow_train_step(self, x):
         pass
@@ -278,11 +323,11 @@ class TeVAE(keras.Model):
         # Zero the gradients
         self.zero_grad()
         # Forward pass of encoder and decoder
-        z_mean, z_logvar, z = self.encoder(x, training=True)  # Get the encoded values
+        z_mean, z_logvar, z = self.encoder(x, training=True)
         c = self.ma([x, z], training=True)
-        xhat_mean, xhat_logvar, xhat = self.decoder(c, training=True)  # Decode the latent representation
+        xhat_mean, xhat_logvar, xhat = self.decoder(c, training=True)
         # Compute loss
-        negloglik, kl_div = self.torch_loss_fn(x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar)
+        negloglik, kl_div = self.loss_fn(x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar)
         total_loss = negloglik + self.beta * kl_div
         # Backpropagation
         total_loss.backward()
@@ -303,27 +348,13 @@ class TeVAE(keras.Model):
             "kl_loss": self.kl_loss_tracker.result(),
         }
 
-    def test_step(self, *args, **kwargs):
-        if keras.backend.backend() == "jax":
-            return self._jax_test_step(*args, **kwargs)
-        elif keras.backend.backend() == "tensorflow":
-            return self._tensorflow_test_step(*args, **kwargs)
-        elif keras.backend.backend() == "torch":
-            return self._torch_test_step(*args, **kwargs)
-
-    def _jax_test_step(self, x):
-        pass
-
-    def _tensorflow_test_step(self, x):
-        pass
-
-    def _torch_test_step(self, x):
+    def test_step(self, x):  # TODO
         # Forward pass of encoder and decoder
         z_mean, z_logvar, z = self.encoder(x, training=False)  # Get the encoded values
         c = self.ma([x, z_mean], training=True)
         xhat_mean, xhat_logvar, xhat = self.decoder(c, training=False)  # Decode the latent representation
         # Compute loss
-        negloglik, kl_div = self.torch_loss_fn(x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar)
+        negloglik, kl_div = self.loss_fn(x, xhat, xhat_mean, xhat_logvar, z_mean, z_logvar)
         total_loss = negloglik + self.beta * kl_div
         # Update loss trackers
         self.total_loss_tracker.update_state(total_loss.item())
