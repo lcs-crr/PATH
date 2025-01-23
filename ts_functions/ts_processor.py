@@ -216,6 +216,14 @@ def inference(
     :return: anomaly score
     :return: model outputs
     """
+    
+    assert isinstance(model, tf.keras.Model), 'model argument must be a tf.keras.Model.'
+    assert isinstance(input_array, np.ndarray), 'input_array argument must be a numpy array.'
+    assert len(input_array.shape) == 2, 'input_array argument must be a 2D numpy array.'
+    assert isinstance(rev_mode, str), 'rev_mode argument must be a string.'
+    assert isinstance(window_size, int), 'window_size argument must be a integer.'
+    assert isinstance(batch_size, int), 'batch_size argument must be a integer.'
+    assert isinstance(score_function, str), 'score_function argument must be a string.'
 
     # Window input array
     input_windows = window_list(input_array, window_size, 1)
@@ -270,6 +278,8 @@ def find_window_size(
     :param series: multivariate time series of shape (time_steps, channels)
     :return window size: integer
     """
+    
+    assert isinstance(series, np.ndarray), 'series argument must be a numpy array.'
 
     intersection_list = []
     for channel in range(series.shape[-1]):
@@ -308,6 +318,16 @@ def find_detection_delay(
     :return: delay
     :return: time of detection
     """
+    
+    assert isinstance(score, np.ndarray), 'score argument must be a numpy array.'
+    assert len(score.shape) == 2, 'score argument must be a 2D numpy array.'
+    assert isinstance(threshold, float), 'threshold argument must be a float.'
+    assert isinstance(sampling_frequency, float), 'sampling_frequency argument must be a float.'
+    assert isinstance(rev_mode, str), 'rev_mode argument must be a string.'
+    assert isinstance(window_size, int), 'window_size argument must be a integer.'
+    assert isinstance(sequence_length, int), 'sequence_length argument must be a integer.'
+    assert isinstance(anomaly_start, float), 'anomaly_start argument must be a float.'
+    
     # Find first time step above threshold
     time_step_detection = np.argwhere(score >= threshold)[0, 0]
     # If reverse window mode is mean or first
