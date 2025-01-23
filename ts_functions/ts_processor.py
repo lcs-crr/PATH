@@ -11,22 +11,28 @@ import tensorflow as tf
 from statsmodels.tsa import stattools
 import os
 import pickle
+from typing import List, Tuple, Optional
 
 
-def window_list(input_list, window_size, shift):
+def window_list(
+        input_list: List[np.ndarray],
+        window_size: int,
+        shift: int,
+) -> np.ndarray:
     """
     This function generates windows from a list of arrays.
     The windows are concatenated into a single array.
 
-    :param input_list: list of multivariate time series
-    :type input_list: list[array (time_steps, channels)]
+    :param input_list: list of multivariate time series, each of shape (time steps, channels)
     :param window_size: window size
-    :type window_size: int
     :param shift: number of time steps between windows
-    :type shift: int
-    :return: array of windows
-    :rtype: array (number of windows, window size, channels)
+    :return: array of windows of shape (number_of_windows, window_size, channels)
     """
+
+    assert isinstance(input_list, list), 'input_list argument must be a list.'
+    assert isinstance(window_size, int), 'window_size argument must be an integer.'
+    assert isinstance(shift, int), 'shift argument must be an integer.'
+
     # If input is a single array, convert it to a list
     if isinstance(input_list, np.ndarray):
         input_list = [input_list]
@@ -49,19 +55,24 @@ def window_list(input_list, window_size, shift):
     return windows
 
 
-def reverse_window(windows, shift, mode):
+def reverse_window(
+        windows: np.ndarray,
+        shift: int,
+        mode: str,
+) -> np.ndarray:
     """
     This function reconstructs a continuous multivariate time series from windows.
 
-    :param windows: array of windows
-    :type windows: array (number of windows, window size, channels)
+    :param windows: array of windows of shape (number_of_windows, window_size, channels)
     :param shift: time steps between windows
-    :type shift: int
     :param mode: reverse window mode
-    :type mode: str
-    :return: multivariate time series
-    :rtype: array (time_steps, channels)
+    :return: multivariate time series of shape (time steps, channels)
     """
+
+    assert isinstance(input_windows, np.ndarray), 'windows argument must be a numpy array.'
+    assert len(input_windows.shape) == 3, 'windows argument must be a 3D numpy array.'
+    assert isinstance(shift, int), 'shift argument must be an integer.'
+
     num_windows, window_size, num_channels = windows.shape
     data = np.zeros(((num_windows - 1) * shift + window_size, num_channels))  # Pre-allocate array
     if mode == 'last':
@@ -80,15 +91,18 @@ def reverse_window(windows, shift, mode):
     return data
 
 
-def find_scalers(input_list):
+def find_scalers(
+        input_list: List[np.ndarray],
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     This function finds the minimum, maximum, mean and standard deviation for each channel in a list of arrays.
 
     :param input_list: list of multivariate time series
-    :type input_list: list[array (time_steps, channels)]
     :return: list of scalers
-    :rtype: list[array (channels)]
     """
+
+    assert isinstance(input_list, list), 'input_list argument must be a list.'
+
     # Calculate minimum of all time series for each channel
     minimum = np.min(np.vstack(input_list), axis=0)
     # Calculate maximum of all time series for each channel
@@ -101,26 +115,26 @@ def find_scalers(input_list):
     return [minimum, maximum, mean, standard_deviation]
 
 
-def scale_list(input_list, scalers, scale_type):
+def scale_list(
+        input_list: List[np.ndarray],
+        scalers: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray],
+        scale_type: str,
+) -> List[np.ndarray]:
     """
     This function scales a multivariate time series. The scalers input must come from find_scalers() function.
-    :param input_list: list of multivariate time series
-    :type input_list: list[array (time_steps, channels)]
+
+    :param input_list: list of multivariate time series, each of shape (number_of_timesteps, channels)
     :param scalers: list of scalers
-    :type scalers: list[array (channels)]
-    :param scale_type: scaling type
-    :type scale_type: str
-    :return: data_scaled: list of multivariate time series
-    :rtype: list[array (time_steps, channels)]
+    :param scale_type: scaling type, either 'z-score' or 'min-max'
+    :return:
     """
-    # Assign minimum scaler value from scalers input
-    minimum = scalers[0]
-    # Assign maximum scaler value from scalers input
-    maximum = scalers[1]
-    # Assign mean scaler value from scalers input
-    mean = scalers[2]
-    # Assign standard deviation scaler value from scalers input
-    standard_deviation = scalers[3]
+
+    assert isinstance(input_list, list), 'input_list argument must be a list.'
+    assert isinstance(scalers, tuple), 'scalers argument must be a tuple.'
+    assert isinstance(scale_type, str), 'scale_type argument must be a string.'
+
+    # Assign min, max, mean and std scaler value from scalers input
+    minimum, maximum, mean, standard_deviation = scalers
     # If scale type is z-score
     if scale_type == 'z-score':
         data_scaled = [(time_series - mean) / standard_deviation for time_series in input_list]
@@ -134,66 +148,77 @@ def scale_list(input_list, scalers, scale_type):
     return data_scaled
 
 
-def downsample(time_series, cutoff_frequency, sampling_frequency, filter_order):
+def downsample(
+        input_array: np.ndarray,
+        cutoff_frequency: int,
+        sampling_frequency: int,
+        filter_order: int,
+) -> np.ndarray:
     """
     This function applies a low-pass Butterworth filter to a multivariate time series.
-    :param time_series: multivariate time series
-    :type time_series: array (time_steps, channels)
+
+    :param input_array: multivariate time series of shape (number_of_timesteps, channels)
     :param cutoff_frequency: cutoff frequency
-    :type cutoff_frequency: float
     :param sampling_frequency: sampling frequency
-    :type sampling_frequency: float
     :param filter_order: filter order
-    :type filter_order: int
     :return: low-pass filtered multivariate time series
-    :rtype: array (time_steps, channels)
     """
+
+    assert isinstance(input_array, np.ndarray), 'input_array argument must be a numpy array.'
+    assert len(input_array.shape) == 2, 'input_array argument must be a 2D numpy array.'
+    assert isinstance(cutoff_frequency, int), 'cutoff_frequency argument must be an integer.'
+    assert isinstance(sampling_frequency, int), 'sampling_frequency argument must be an integer.'
+    assert isinstance(filter_order, int), 'filter_order argument must be a integer.'
+
     # Calculate Butterworth filter coefficients
     b, a = butter(filter_order, cutoff_frequency, fs=sampling_frequency, btype='low', analog=False)
     # Apply filter to time series
-    filtered_time_series = lfilter(b, a, time_series)
+    filtered_array = lfilter(b, a, input_array)
     # Return filtered time series
-    return filtered_time_series
+    return filtered_array
 
 
-def negative_log_likelihood(mean, standard_deviation, sample):
+def negative_log_likelihood(
+        mean: np.ndarray,
+        standard_deviation: np.ndarray,
+        sample: np.ndarray,
+) -> np.ndarray:
+
     """
     Calculates the negative log likelihood for Gaussian distribution parameters given sample
-    :param mean: Mean parameter of Gaussian distribution
-    :type mean: array (time_steps, features)
-    :param standard_deviation: Standard deviation parameter of Gaussian distribution
-    :type standard_deviation: array (time_steps, features)
-    :param sample: Observed sample
-    :type sample: array (time_steps, features)
-    :return: negative log likelihood
-    :rtype: array (time_steps,)
+
+    :param mean: Mean parameter of Gaussian distribution of shape (time_steps, channels)
+    :param standard_deviation: Standard deviation parameter of Gaussian distribution of shape (time_steps, channels)
+    :param sample: Observed sample of shape (time_steps, channels)
+    :return: negative log likelihood of shape (time_steps, 1)
     """
     outputDist = tfp.distributions.MultivariateNormalDiag(loc=mean, scale_diag=standard_deviation)
     negloglik = tf.expand_dims(-outputDist.log_prob(sample), axis=1)  # (time_steps, 1)
     return negloglik
 
 
-def inference(model, input_array, window_size, rev_mode='mean', batch_size=512, score_function='negloglik'):
+def inference(
+        model: tf.keras.Model,
+        input_array: np.ndarray,
+        window_size: int,
+        rev_mode: Optional[str] = 'mean',
+        batch_size: Optional[int] = 512,
+        score_function: Optional[str] ='negloglik'
+) -> Tuple[np.ndarray, List[np.ndarray]]:
+
     """
     Inference function for stochastic output variational autoencoder.
 
     :param model: trained model
-    :type model: tf.keras.Model
-    :param input_array: multivariate time series
-    :type input_array: array (time_steps, channels)
+    :param input_array: multivariate time series of shape (time_steps, channels)
     :param rev_mode: reverse window mode
-    :type rev_mode: str
     :param window_size: window size
-    :type window_size: int
     :param batch_size: batch size
-    :type batch_size: int
     :param score_function: anomaly score function
-    :type score_function: str
     :return: anomaly score
-    :rtype: array (time_steps, 1)
     :return: model outputs
-    :rtype: list[list[array (time_steps, features), array (time_steps, features), array (time_steps, features)]]
     """
+
     # Window input array
     input_windows = window_list(input_array, window_size, 1)
     # Predict output windows
@@ -237,12 +262,14 @@ def inference(model, input_array, window_size, rev_mode='mean', batch_size=512, 
     return anomaly_score, [Xhat_mean, Xhat_std, Xhat]
 
 
-def find_window_size(series):
+def find_window_size(
+        series: np.ndarray,
+) -> int:
+
     """
     This function plots the autocorrelation for each channel in a multivariate time series.
 
-    :param series: multivariate input time series
-    :type series: array (time_steps, channels)
+    :param series: multivariate time series of shape (time_steps, channels)
     :return window size: integer
     """
 
@@ -260,28 +287,28 @@ def find_window_size(series):
     return np.max(intersection_list)
 
 
-def find_detection_delay(score, threshold, sampling_frequency, rev_mode, window_size, sequence_length, anomaly_start):
+def find_detection_delay(
+        score: np.ndarray,
+        threshold: float,
+        sampling_frequency: float,
+        rev_mode: str,
+        window_size: int,
+        sequence_length: int,
+        anomaly_start: float
+) -> Tuple[float, float]:
+
     """
     This function calculates the total detection delay for a given reverse window mode.
 
-    :param score: anomaly score
-    :type score: array (time_steps, 1)
+    :param score: anomaly score of shape (time_steps, 1)
     :param threshold: anomaly threshold
-    :type threshold: float
     :param sampling_frequency: sampling frequency
-    :type sampling_frequency: float
     :param rev_mode: reverse window mode
-    :type rev_mode: str
     :param window_size: window size
-    :type window_size: int
     :param sequence_length: sequence length
-    :type sequence_length: int
     :param anomaly_start: time step of anomaly start
-    :type anomaly_start: float
     :return: delay
-    :rtype: float
     :return: time of detection
-    :rtype: float
     """
     # Find first time step above threshold
     time_step_detection = np.argwhere(score >= threshold)[0, 0]
