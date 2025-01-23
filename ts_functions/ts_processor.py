@@ -33,9 +33,6 @@ def window_list(
     assert isinstance(window_size, int), 'window_size argument must be an integer.'
     assert isinstance(shift, int), 'shift argument must be an integer.'
 
-    # If input is a single array, convert it to a list
-    if isinstance(input_list, np.ndarray):
-        input_list = [input_list]
     # Pre-allocate list
     window_list_temp = []
     # For each multivariate time series in the list
