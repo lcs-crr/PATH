@@ -69,6 +69,7 @@ def reverse_window(
     assert isinstance(input_windows, np.ndarray), 'windows argument must be a numpy array.'
     assert len(input_windows.shape) == 3, 'windows argument must be a 3D numpy array.'
     assert isinstance(shift, int), 'shift argument must be an integer.'
+    assert isinstance(mode, str), 'mode argument must be an string.'
 
     num_windows, window_size, num_channels = windows.shape
     data = np.zeros(((num_windows - 1) * shift + window_size, num_channels))  # Pre-allocate array
