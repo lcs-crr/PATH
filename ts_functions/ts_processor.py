@@ -19,6 +19,7 @@ def window_list(
         window_size: int,
         shift: int,
 ) -> np.ndarray:
+
     """
     This function generates windows from a list of arrays.
     The windows are concatenated into a single array.
@@ -53,14 +54,15 @@ def window_list(
 
 
 def reverse_window(
-        windows: np.ndarray,
+        input_windows: np.ndarray,
         shift: int,
         mode: str,
 ) -> np.ndarray:
+
     """
     This function reconstructs a continuous multivariate time series from windows.
 
-    :param windows: array of windows of shape (number_of_windows, window_size, channels)
+    :param input_windows: array of windows of shape (number_of_windows, window_size, channels)
     :param shift: time steps between windows
     :param mode: reverse window mode
     :return: multivariate time series of shape (time steps, channels)
@@ -71,20 +73,20 @@ def reverse_window(
     assert isinstance(shift, int), 'shift argument must be an integer.'
     assert isinstance(mode, str), 'mode argument must be an string.'
 
-    num_windows, window_size, num_channels = windows.shape
+    num_windows, window_size, num_channels = input_windows.shape
     data = np.zeros(((num_windows - 1) * shift + window_size, num_channels))  # Pre-allocate array
     if mode == 'last':
-        data[:window_size, :] = windows[0, :, :]  # First window
+        data[:window_size, :] = input_windows[0, :, :]  # First window
         for i in range(1, num_windows):
-            data[(i - 1) * shift + window_size: i * shift + window_size, :] = windows[i, -shift:, :]
+            data[(i - 1) * shift + window_size: i * shift + window_size, :] = input_windows[i, -shift:, :]
     elif mode == 'first':
         for i in range(num_windows - 1):
-            data[i * shift: (i + 1) * shift, :] = windows[i, :shift, :]
-        data[-window_size:, :] = windows[-1, :, :]  # Last window
+            data[i * shift: (i + 1) * shift, :] = input_windows[i, :shift, :]
+        data[-window_size:, :] = input_windows[-1, :, :]  # Last window
     elif mode == 'mean':
         data = np.full((num_windows, (num_windows - 1) * shift + window_size, num_channels), np.nan)  # Pre-allocate array
         for i in range(num_windows):
-            data[i, i * shift: i * shift + window_size] = windows[i]
+            data[i, i * shift: i * shift + window_size] = input_windows[i]
         data = np.nanmean(data, axis=0)
     return data
 
@@ -92,6 +94,7 @@ def reverse_window(
 def find_scalers(
         input_list: List[np.ndarray],
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+
     """
     This function finds the minimum, maximum, mean and standard deviation for each channel in a list of arrays.
 
@@ -110,7 +113,7 @@ def find_scalers(
     # Calculate standard deviation of all time series for each channel
     standard_deviation = np.std(np.vstack(input_list), axis=0)
     # Return scalers
-    return [minimum, maximum, mean, standard_deviation]
+    return minimum, maximum, mean, standard_deviation
 
 
 def scale_list(
@@ -118,6 +121,7 @@ def scale_list(
         scalers: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray],
         scale_type: str,
 ) -> List[np.ndarray]:
+
     """
     This function scales a multivariate time series. The scalers input must come from find_scalers() function.
 
@@ -152,6 +156,7 @@ def downsample(
         sampling_frequency: int,
         filter_order: int,
 ) -> np.ndarray:
+
     """
     This function applies a low-pass Butterworth filter to a multivariate time series.
 
@@ -163,7 +168,7 @@ def downsample(
     """
 
     assert isinstance(input_array, np.ndarray), 'input_array argument must be a numpy array.'
-    assert len(input_array.shape) == 2, 'input_array argument must be a 2D numpy array.'
+    assert len(input_array.shape) == 1, 'input_array argument must be a 1D numpy array.'
     assert isinstance(cutoff_frequency, int), 'cutoff_frequency argument must be an integer.'
     assert isinstance(sampling_frequency, int), 'sampling_frequency argument must be an integer.'
     assert isinstance(filter_order, int), 'filter_order argument must be a integer.'
@@ -190,6 +195,14 @@ def negative_log_likelihood(
     :param sample: Observed sample of shape (time_steps, channels)
     :return: negative log likelihood of shape (time_steps, 1)
     """
+
+    assert isinstance(mean, np.ndarray), 'input_array argument must be a numpy array.'
+    assert len(mean.shape) == 2, 'input_array argument must be a 2D numpy array.'
+    assert isinstance(standard_deviation, np.ndarray), 'input_array argument must be a numpy array.'
+    assert len(standard_deviation.shape) == 2, 'input_array argument must be a 2D numpy array.'
+    assert isinstance(sample, np.ndarray), 'input_array argument must be a numpy array.'
+    assert len(sample.shape) == 2, 'input_array argument must be a 2D numpy array.'
+
     outputDist = tfp.distributions.MultivariateNormalDiag(loc=mean, scale_diag=standard_deviation)
     negloglik = tf.expand_dims(-outputDist.log_prob(sample), axis=1)  # (time_steps, 1)
     return negloglik
@@ -226,7 +239,7 @@ def inference(
     assert isinstance(score_function, str), 'score_function argument must be a string.'
 
     # Window input array
-    input_windows = window_list(input_array, window_size, 1)
+    input_windows = window_list([input_array], window_size, 1)
     # Predict output windows
     output_windows = model.predict(input_windows, batch_size=batch_size, verbose=0, steps=None, callbacks=None)
     if score_function == 'negloglik':
