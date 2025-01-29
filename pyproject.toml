@@ -1,7 +1,7 @@
 [project]
 name = "path"
 version = "0.1.0"
-description = "Add your description here"
+description = "This is the corresponding .toml file required to create the project's uv environment."
 requires-python = ">=3.10"
 dependencies = [
     'openpyxl==3.1.5',
