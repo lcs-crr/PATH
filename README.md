@@ -68,6 +68,6 @@ Custom model classes for each of the tested approaches can be found in the `mode
 
 Typically, a `.env` file should be excluded from version control, though we have added a dummy one (`.env_dummy`) to illustrate the file structure.
 
-`requirements.txt` contains all libraries used.
+`requirements.txt` (venv) and `pyprojects.toml` (uv) contain all libraries used.
 
 `TSADIS` requires a separate environment on Python 3.9 due to incompatibility with Pyton 3.10. See README.md in the `tsadis` folder in this repository for more details.
