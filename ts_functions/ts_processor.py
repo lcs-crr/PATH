@@ -19,7 +19,6 @@ def window_list(
         window_size: int,
         shift: int,
 ) -> np.ndarray:
-
     """
     This function generates windows from a list of arrays.
     The windows are concatenated into a single array.
@@ -34,23 +33,24 @@ def window_list(
     assert isinstance(window_size, int), 'window_size argument must be an integer.'
     assert isinstance(shift, int), 'shift argument must be an integer.'
 
-    # Pre-allocate list
+    # List to store all windows
     window_list_temp = []
-    # For each multivariate time series in the list
+
     for time_series in input_list:
-        # Calculate the number of windows
-        set_window_count = (time_series.shape[0] - window_size) // shift + 1
-        # Pre-allocate array
-        window_data = np.zeros((set_window_count, window_size, time_series.shape[1]))
-        # For each window
-        for j in range(set_window_count):
-            window_data[j] = time_series[j * shift:window_size + j * shift]
-        # Append windows to list
-        window_list_temp.append(window_data)
-    # Concatenate windows into a single array
-    windows = np.concatenate(window_list_temp[:], axis=0)
-    # Return windows
-    return windows
+        # Shape of the time series
+        time_steps, channels = time_series.shape
+        # Calculate number of windows
+        num_windows = (time_steps - window_size) // shift + 1
+        # Use broadcasting to extract all windows in one operation
+        windows = np.lib.stride_tricks.as_strided(
+            time_series,
+            shape=(num_windows, window_size, channels),
+            strides=(shift * time_series.strides[0], time_series.strides[0], time_series.strides[1])
+        )
+        window_list_temp.append(windows)
+
+    # Concatenate all windows into a single array
+    return np.concatenate(window_list_temp, axis=0)
 
 
 def reverse_window(
@@ -58,7 +58,6 @@ def reverse_window(
         shift: int,
         mode: str,
 ) -> np.ndarray:
-
     """
     This function reconstructs a continuous multivariate time series from windows.
 
@@ -84,17 +83,24 @@ def reverse_window(
             data[i * shift: (i + 1) * shift, :] = input_windows[i, :shift, :]
         data[-window_size:, :] = input_windows[-1, :, :]  # Last window
     elif mode == 'mean':
-        data = np.full((num_windows, (num_windows - 1) * shift + window_size, num_channels), np.nan)  # Pre-allocate array
+        total_length = (num_windows - 1) * shift + window_size
+        # Initialize arrays for summing values and counting contributions
+        data_sum = np.zeros((total_length, num_channels), dtype=np.float32)
+        data_count = np.zeros((total_length, num_channels), dtype=np.float32)
+        # Populate data_sum and data_count with overlapping windows
         for i in range(num_windows):
-            data[i, i * shift: i * shift + window_size] = input_windows[i]
-        data = np.nanmean(data, axis=0)
+            start_idx = i * shift
+            end_idx = start_idx + window_size
+            data_sum[start_idx:end_idx] += input_windows[i]
+            data_count[start_idx:end_idx] += 1
+        # Compute the mean where contributions exist
+        data = data_sum / data_count
     return data
 
 
 def find_scalers(
         input_list: List[np.ndarray],
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-
     """
     This function finds the minimum, maximum, mean and standard deviation for each channel in a list of arrays.
 
@@ -121,7 +127,6 @@ def scale_list(
         scalers: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray],
         scale_type: str,
 ) -> List[np.ndarray]:
-
     """
     This function scales a multivariate time series. The scalers input must come from find_scalers() function.
 
@@ -156,7 +161,6 @@ def downsample(
         sampling_frequency: int,
         filter_order: int,
 ) -> np.ndarray:
-
     """
     This function applies a low-pass Butterworth filter to a multivariate time series.
 
@@ -186,7 +190,6 @@ def negative_log_likelihood(
         standard_deviation: np.ndarray,
         sample: np.ndarray,
 ) -> np.ndarray:
-
     """
     Calculates the negative log likelihood for Gaussian distribution parameters given sample
 
@@ -214,9 +217,8 @@ def inference(
         window_size: int,
         rev_mode: Optional[str] = 'mean',
         batch_size: Optional[int] = 512,
-        score_function: Optional[str] ='negloglik'
+        score_function: Optional[str] = 'negloglik'
 ) -> Tuple[np.ndarray, List[np.ndarray]]:
-
     """
     Inference function for stochastic output variational autoencoder.
 
@@ -229,7 +231,7 @@ def inference(
     :return: anomaly score
     :return: model outputs
     """
-    
+
     assert isinstance(model, tf.keras.Model), 'model argument must be a tf.keras.Model.'
     assert isinstance(input_array, np.ndarray), 'input_array argument must be a numpy array.'
     assert len(input_array.shape) == 2, 'input_array argument must be a 2D numpy array.'
@@ -284,14 +286,13 @@ def inference(
 def find_window_size(
         series: np.ndarray,
 ) -> int:
-
     """
     This function plots the autocorrelation for each channel in a multivariate time series.
 
     :param series: multivariate time series of shape (time_steps, channels)
     :return window size: integer
     """
-    
+
     assert isinstance(series, np.ndarray), 'series argument must be a numpy array.'
 
     intersection_list = []
@@ -317,7 +318,6 @@ def find_detection_delay(
         sequence_length: int,
         anomaly_start: float
 ) -> Tuple[float, float]:
-
     """
     This function calculates the total detection delay for a given reverse window mode.
 
@@ -331,16 +331,16 @@ def find_detection_delay(
     :return: delay
     :return: time of detection
     """
-    
+
     assert isinstance(score, np.ndarray), 'score argument must be a numpy array.'
-    assert len(score.shape) == 2, 'score argument must be a 2D numpy array.'
+    assert len(score.shape) == 1, 'score argument must be a 1D numpy array.'
     assert isinstance(threshold, float), 'threshold argument must be a float.'
-    assert isinstance(sampling_frequency, float), 'sampling_frequency argument must be a float.'
+    assert isinstance(sampling_frequency, int), 'sampling_frequency argument must be an integer.'
     assert isinstance(rev_mode, str), 'rev_mode argument must be a string.'
     assert isinstance(window_size, int), 'window_size argument must be a integer.'
     assert isinstance(sequence_length, int), 'sequence_length argument must be a integer.'
     assert isinstance(anomaly_start, float), 'anomaly_start argument must be a float.'
-    
+
     # Find first time step above threshold
     time_step_detection = np.argwhere(score >= threshold)[0, 0]
     # If reverse window mode is mean or first
