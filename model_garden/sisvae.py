@@ -6,7 +6,6 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 Original paper DOI: 10.1109/TNNLS.2020.2980749
 """
 
-import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
 
@@ -14,101 +13,102 @@ tfkl = tf.keras.layers
 tfd = tfp.distributions
 
 
+@tf.keras.saving.register_keras_serializable(package="SISVAE")
 class SISVAE(tf.keras.Model):
-    def __init__(self, encoder, decoder, beta=0.5):
-        super(SISVAE, self).__init__()
-
-        # Model
+    def __init__(
+            self,
+            encoder,
+            decoder,
+            name: str = None,
+            **kwargs
+    ) -> None:
+        super(SISVAE, self).__init__(name=name, **kwargs)
         self.encoder = encoder
         self.decoder = decoder
-
-        # Metrics
-        self.total_loss_tracker = tf.keras.metrics.Mean(name="loss")
-        self.negloglik_loss_tracker = tf.keras.metrics.Mean(name="rec_loss")
+        self.loss_tracker = tf.keras.metrics.Mean(name="loss")
+        self.rec_loss_tracker = tf.keras.metrics.Mean(name="rec_loss")
         self.kl_loss_tracker = tf.keras.metrics.Mean(name="kl_loss")
         self.smooth_loss_tracker = tf.keras.metrics.Mean(name="smooth_loss")
 
-        # Modifiable weight for KL-loss
-        self.beta = tf.Variable(beta, trainable=False)  # Weight for KL-Loss, can be modified with a callback
+    @staticmethod
+    def rec_fn(x, xhat_params, reduce=True):
+        xhat_mean, xhat_logvar = xhat_params
+        # Configure distribution with output parameters
+        output_dist = tfd.Normal(loc=xhat_mean, scale=tf.sqrt(tf.math.exp(xhat_logvar)))
+        # Calculate log probability of input data given output distribution
+        loglik_loss = output_dist.log_prob(x)
+        if reduce:
+            return -tf.reduce_sum(loglik_loss, axis=(-1, -2))
+        else:
+            return -loglik_loss
 
-    @tf.function
-    def loss_fn(self, X, Xhat, Xhat_mean, Xhat_logvar, Z_mean, Z_logvar):
-        # Configure distribution with parameters output from decoder
-        output_dist = tfd.MultivariateNormalDiag(loc=Xhat_mean, scale_diag=tf.sqrt(tf.math.exp(Xhat_logvar)))
-        # Calculate log probability of sample belongs parametrised distribution
-        loglik_loss = output_dist.log_prob(X)
-
-        # Calculate KL Divergence between latent distribution and Gaussian distribution
-        kl_loss = tfd.kl_divergence(
-            tfd.MultivariateNormalDiag(loc=Z_mean, scale_diag=tf.sqrt(tf.math.exp(Z_logvar))),
-            tfd.MultivariateNormalDiag(loc=tf.zeros_like(Z_mean), scale_diag=tf.ones_like(Z_logvar))
+    @staticmethod
+    def kldiv_fn(z_params, reduce=True):
+        z_mean, z_logvar = z_params
+        # Configure distribution with latent parameters
+        latent_dist = tfd.Normal(loc=z_mean, scale=tf.sqrt(tf.math.exp(z_logvar)))
+        # Calculate KL-Divergence between latent distribution and standard Gaussian
+        kl_loss = latent_dist.kl_divergence(
+            tfd.Normal(loc=tf.zeros_like(z_mean), scale=tf.ones_like(z_logvar))
         )
-        
+        if reduce:
+            return tf.reduce_sum(kl_loss, axis=(-1, -2))
+        else:
+            return kl_loss
+
+    @staticmethod
+    def smooth_fn(z_params):
+        z_mean, z_logvar = z_params
         # Calculate KL Divergence between current latent distribution and t-1 latent distribution
-        smooth_loss = [tfd.kl_divergence(
-            tfd.MultivariateNormalDiag(loc=Z_mean[:, time_step - 1], scale_diag=tf.sqrt(tf.math.exp(Z_logvar[:, time_step - 1]))),
-            tfd.MultivariateNormalDiag(loc=Z_mean[:, time_step], scale_diag=tf.sqrt(tf.math.exp(Z_logvar[:, time_step]))),
-        ) for time_step in range(1, kl_loss.shape[1])]
-        smooth_loss = tf.transpose(tf.stack(smooth_loss), perm=[1, 0])
+        smooth_loss = [
+            tfd.Normal(loc=z_mean[:, time_step - 1], scale=tf.sqrt(tf.math.exp(z_logvar[:, time_step - 1]))).kl_divergence(
+                tfd.Normal(loc=z_mean[:, time_step], scale=tf.sqrt(tf.math.exp(z_logvar[:, time_step]))),
+            ) for time_step in range(1, z_mean.shape[1])
+        ]
+        smooth_loss = tf.transpose(tf.stack(smooth_loss), perm=[1, 0, 2])
+        return -tf.reduce_sum(smooth_loss, axis=(-1, -2))
 
-        return -tf.reduce_sum(loglik_loss, axis=1), tf.reduce_sum(kl_loss, axis=1), tf.reduce_sum(smooth_loss, axis=1)
-
-    # @tf.function
-    def train_step(self, X):
-        if isinstance(X, tuple):
-            X = X[0]
+    def train_step(self, x, **kwargs):
         with tf.GradientTape() as tape:
             # Forward pass through encoder
-            Z_mean, Z_logvar, Z = self.encoder(X, training=True)
+            z_mean, z_logvar, z = self.encoder(x, training=True)
             # Forward pass through decoder
-            Xhat_mean, Xhat_logvar, Xhat = self.decoder(Z, training=True)
+            xhat_mean, xhat_logvar, xhat = self.decoder(z, training=True)
             # Calculate losses from parameters
-            negloglik_loss, kl_loss, smooth_loss = self.loss_fn(
-                X,
-                Xhat,
-                Xhat_mean,
-                Xhat_logvar,
-                Z_mean,
-                Z_logvar
-            )
+            rec_loss = self.rec_fn(x, [xhat_mean, xhat_logvar])
+            kl_loss = self.kldiv_fn([z_mean, z_logvar])
+            smooth_loss = self.smooth_fn([z_mean, z_logvar])
             # Calculate total loss from different losses
-            total_loss = negloglik_loss + kl_loss + self.beta * smooth_loss
+            loss = rec_loss + kl_loss + 0.5 * smooth_loss
         # Calculate gradients in backward pass
-        grads = tape.gradient(total_loss, self.trainable_weights)
+        grads = tape.gradient(loss, self.trainable_weights)
         # Apply gradients
         self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
         # Track losses
-        self.total_loss_tracker.update_state(total_loss)
-        self.negloglik_loss_tracker.update_state(negloglik_loss)
+        self.loss_tracker.update_state(loss)
+        self.rec_loss_tracker.update_state(rec_loss)
         self.kl_loss_tracker.update_state(kl_loss)
         self.smooth_loss_tracker.update_state(smooth_loss)
         return {
-            "loss": self.total_loss_tracker.result(),
-            "rec_loss": self.negloglik_loss_tracker.result(),
+            "loss": self.loss_tracker.result(),
+            "rec_loss": self.rec_loss_tracker.result(),
             "kl_loss": self.kl_loss_tracker.result(),
             "smooth_loss": self.smooth_loss_tracker.result(),
         }
 
-    # @tf.function
-    def test_step(self, X):
-        if isinstance(X, tuple):
-            X = X[0]
+    def test_step(self, x, **kwargs):
         # Forward pass through encoder
-        Z_mean, Z_logvar, Z = self.encoder(X, training=False)
+        z_mean, z_logvar, z = self.encoder(x, training=False)
         # Forward pass through decoder
-        Xhat_mean, Xhat_logvar, Xhat = self.decoder(Z, training=False)
+        xhat_mean, xhat_logvar, xhat = self.decoder(z, training=False)
         # Calculate losses from parameters
-        negloglik_loss, kl_loss, smooth_loss = self.loss_fn(
-            X,
-            Xhat,
-            Xhat_mean,
-            Xhat_logvar,
-            Z_mean,
-            Z_logvar
-        )
-        total_loss = negloglik_loss + kl_loss + self.beta * smooth_loss
-        self.total_loss_tracker.update_state(total_loss)
-        self.negloglik_loss_tracker.update_state(negloglik_loss)
+        rec_loss = self.rec_fn(x, [xhat_mean, xhat_logvar])
+        kl_loss = self.kldiv_fn([z_mean, z_logvar])
+        smooth_loss = self.smooth_fn([z_mean, z_logvar])
+        # Calculate total loss from different losses
+        loss = rec_loss + kl_loss + 0.5 * smooth_loss
+        self.loss_tracker.update_state(loss)
+        self.rec_loss_tracker.update_state(rec_loss)
         self.kl_loss_tracker.update_state(kl_loss)
         self.smooth_loss_tracker.update_state(smooth_loss)
         return {m.name: m.result() for m in self.metrics if m.name == 'rec_loss'}
@@ -116,79 +116,145 @@ class SISVAE(tf.keras.Model):
     @property
     def metrics(self):
         return [
-            self.total_loss_tracker,
-            self.negloglik_loss_tracker,
+            self.loss_tracker,
+            self.rec_loss_tracker,
             self.kl_loss_tracker,
             self.smooth_loss_tracker,
         ]
 
     @tf.function
-    def call(self, inputs, **kwargs):
-        Z_mean, Z_logvar, Z = self.encoder(inputs, **kwargs)
-        Xhat_mean, Xhat_logvar, Xhat = self.decoder(Z, **kwargs)
-        return Xhat_mean, Xhat_logvar, Xhat, Z_mean, Z_logvar, Z
+    def call(self, x, **kwargs):
+        z_mean, z_logvar, z = self.encoder(x, training=False)
+        xhat_mean, xhat_logvar, xhat = self.decoder(z, training=False)
+        return xhat_mean, xhat_logvar, xhat, z_mean, z_logvar, z
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "encoder": self.encoder.get_config(),
+            "decoder": self.decoder.get_config(),
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        encoder = SISVAE_Encoder.from_config(config["encoder"])
+        decoder = SISVAE_Decoder.from_config(config["decoder"])
+        return cls(encoder=encoder, decoder=decoder)
 
 
+@tf.keras.saving.register_keras_serializable(package="SISVAE")
 class SISVAE_Encoder(tf.keras.Model):
-    def __init__(self, seq_len, latent_dim, features, seed):
-        super(SISVAE_Encoder, self).__init__()
-
+    def __init__(
+            self,
+            seq_len: int,
+            latent_dim: int,
+            features: int,
+            hidden_units: int,
+            seed: int,
+            name: str = None,
+    ) -> None:
+        super(SISVAE_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
         self.latent_dim = latent_dim
         self.features = features
+        self.hidden_units = hidden_units
         self.seed = seed
         self.encoder = self.build_encoder()
 
     def build_encoder(self):
-        # Input window
         enc_input = tfkl.Input(shape=(self.seq_len, self.features))
-        # GRU layer
-        gru = tfkl.GRU(200, return_sequences=True)(enc_input)
-        # Transform deterministic BiLSTM output into distribution parameters Z_mean and Z_logvar
-        Z_mean = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim, name="Z_mean"))(gru)
-        Z_logvar = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim, name="Z_logvar"))(gru)
-        # Create distribution object for reparametrisation trick
+        gru = tfkl.GRU(self.hidden_units, return_sequences=True)(enc_input)
+        z_mean = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim))(gru)
+        z_logvar = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim))(gru)
         output_dist = tfd.Normal(loc=0., scale=1.)
-        # Get epsilon for reparametrisation trick
-        eps = output_dist.sample(tf.shape(Z_mean), seed=self.seed)
-        # Reparametrisation trick
-        Z = Z_mean + tf.sqrt(tf.math.exp(Z_logvar)) * eps
-        return tf.keras.Model(enc_input, [Z_mean, Z_logvar, Z], name="encoder")
+        eps = output_dist.sample(tf.shape(z_mean), seed=self.seed)
+        z = z_mean + tf.sqrt(tf.math.exp(z_logvar)) * eps
+        return tf.keras.Model(enc_input, [z_mean, z_logvar, z],)
 
     @tf.function
-    def call(self, inputs, **kwargs):
-        return self.encoder(inputs, **kwargs)
+    def call(self, x, **kwargs):
+        return self.encoder(x, **kwargs)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "seq_len": self.seq_len,
+            "latent_dim": self.latent_dim,
+            "features": self.features,
+            "hidden_units": self.hidden_units,
+            "seed": self.seed,
+            "name": self.name,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        return cls(
+            seq_len=config['seq_len'],
+            latent_dim=config['latent_dim'],
+            features=config['features'],
+            hidden_units=config['hidden_units'],
+            seed=config['seed'],
+            name=config['name']
+        )
 
 
+@tf.keras.saving.register_keras_serializable(package="SISVAE")
 class SISVAE_Decoder(tf.keras.Model):
-    def __init__(self, seq_len, latent_dim, features, seed):
-        super(SISVAE_Decoder, self).__init__()
-
+    def __init__(
+            self,
+            seq_len: int,
+            latent_dim: int,
+            features: int,
+            hidden_units: int,
+            seed: int,
+            name: str = None,
+    ) -> None:
+        super(SISVAE_Decoder, self).__init__(name=name)
         self.seq_len = seq_len
         self.latent_dim = latent_dim
         self.features = features
+        self.hidden_units = hidden_units
         self.seed = seed
         self.decoder = self.build_decoder()
 
     def build_decoder(self):
-        # Latent vector input
         latent_input = tfkl.Input(shape=(self.seq_len, self.latent_dim,))
-        # GRU layer
-        gru = tfkl.GRU(200, return_sequences=True)(latent_input)
-        # Transform deterministic GRU output into distribution parameters Z_mean and Z_logvar
-        Xhat_mean = tfkl.TimeDistributed(tfkl.Dense(self.features), name="Xhat_mean")(gru)
-        Xhat_logvar = tfkl.TimeDistributed(tfkl.Dense(self.features), name="Xhat_logvar")(gru)
-        # Create distribution object for reparametrisation trick
+        gru = tfkl.GRU(self.hidden_units, return_sequences=True)(latent_input)
+        xhat_mean = tfkl.TimeDistributed(tfkl.Dense(self.features))(gru)
+        xhat_logvar = tfkl.TimeDistributed(tfkl.Dense(self.features))(gru)
         output_dist = tfd.Normal(loc=0., scale=1.)
-        # Get epsilon for reparametrisation trick
-        eps = output_dist.sample(tf.shape(Xhat_mean), seed=self.seed)
-        # Reparametrisation trick
-        Xhat = Xhat_mean + tf.sqrt(tf.math.exp(Xhat_logvar)) * eps
-        return tf.keras.Model(latent_input, [Xhat_mean, Xhat_logvar, Xhat], name="decoder")
+        eps = output_dist.sample(tf.shape(xhat_mean), seed=self.seed)
+        xhat = xhat_mean + tf.sqrt(tf.math.exp(xhat_logvar)) * eps
+        return tf.keras.Model(latent_input, [xhat_mean, xhat_logvar, xhat])
 
     @tf.function
-    def call(self, inputs, **kwargs):
-        return self.decoder(inputs, **kwargs)
+    def call(self, x, **kwargs):
+        return self.decoder(x, **kwargs)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "seq_len": self.seq_len,
+            "latent_dim": self.latent_dim,
+            "features": self.features,
+            "hidden_units": self.hidden_units,
+            "seed": self.seed,
+            "name": self.name,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        return cls(
+            seq_len=config['seq_len'],
+            latent_dim=config['latent_dim'],
+            features=config['features'],
+            hidden_units=config['hidden_units'],
+            seed=config['seed'],
+            name=config['name']
+        )
 
 
 if __name__ == "__main__":

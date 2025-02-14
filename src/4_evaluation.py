@@ -5,14 +5,16 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 import random
-import openpyxl
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 from dotenv import dotenv_values
+from utilities import detection_class
 from sklearn import metrics
-from ts_functions import ts_processor
+import pandas as pd
 
 # Declare constants
 SEED = 1
@@ -32,12 +34,12 @@ config = dotenv_values("../.env")
 data_path = config['data_path']
 model_path = config['model_path']
 
-# Pre-allocate results dataframes
-results = pd.DataFrame()
-results_best = pd.DataFrame()
+results = []
+results_best = []
 # Iterate over all seeds and folds
 for model_seed in range(1, 6):
     for fold_idx in range(3):
+        # Declare model name and paths
         model_name = MODEL_NAME + '_' + AD_MODE + '_' + str(fold_idx) + '_' + str(model_seed)
         if AD_MODE == 'us':
             data_load_path = os.path.join(data_path, '2_preprocessed', 'unsupervised', 'fold_' + str(fold_idx))
@@ -45,216 +47,105 @@ for model_seed in range(1, 6):
             data_load_path = os.path.join(data_path, '2_preprocessed', 'semisupervised', 'fold_' + str(fold_idx))
         model_load_path = os.path.join(model_path, model_name)
 
+        processor = detection_class.AnomalyDetector(
+            model_path=model_load_path,
+            window_size=256,
+            sampling_rate=2,
+            original_sampling_rate=10,
+            calculate_delay=True,
+        )
+
         # Load data
-        val_list = ts_processor.load_pickle(os.path.join(data_load_path, 'val.pkl'))
-        test_list = ts_processor.load_pickle(os.path.join(data_load_path, 'test.pkl'))
+        val_list = processor.load_pickle(os.path.join(data_load_path, 'val.pkl'))
+        test_list = processor.load_pickle(os.path.join(data_load_path, 'test.pkl'))
 
-        # Declare reverse window mode, window size and sampling rate
-        reverse_window_mode = 'mean'
-        window_size = 256
-        sampling_rate = 2
-        # Load inference results from 3_inference.py
-        val_detection_score = ts_processor.load_pickle(os.path.join(model_load_path, 'val_detection_score_' + reverse_window_mode + '.pkl'))
-        val_output = ts_processor.load_pickle(os.path.join(model_load_path, 'val_output_' + reverse_window_mode + '.pkl'))
+        # Check if detection scores and outputs are already saved else do inference
+        val_detection_score_list = processor.load_pickle(os.path.join(model_load_path, 'val_detection_score.pkl'))
+        val_output = processor.load_pickle(os.path.join(model_load_path, 'val_output.pkl'))
 
-        # Load inference results from 3_inference.py
-        test_detection_score = ts_processor.load_pickle(os.path.join(model_load_path, 'test_detection_score_' + reverse_window_mode + '.pkl'))
-        test_output = ts_processor.load_pickle(os.path.join(model_load_path, 'test_output_' + reverse_window_mode + '.pkl'))
+        # Check if detection scores and outputs are already saved else do inference
+        test_detection_score_list = processor.load_pickle(os.path.join(model_load_path, 'test_detection_score.pkl'))
+        test_output = processor.load_pickle(os.path.join(model_load_path, 'test_output.pkl'))
 
-        percentile = 100
-        # Evaluate validation data to obtain threshold
-        reduced_val_data_error = []
-        for score_ts in val_detection_score:
-            reduced_val_data_error.append(np.percentile(score_ts, percentile))
-        reduced_val_data_error = np.vstack(reduced_val_data_error)
-        threshold = np.percentile(reduced_val_data_error, percentile)
+        groundtruth_labels, groundtruth_start_list = processor.extract_groundtruth(
+            test_list,
+            label_keyword='normal',
+        )
 
-        # Pre-allocate lists
-        total_test_detection_score = []
-        total_delays = []
-        groundtruth_labels = []
-        predicted_labels = []
-        # Iterate over all test time series with unsupervised threshold
-        for idx_test, score_ts in enumerate(test_detection_score):
-            score_ts = score_ts.numpy()[:, 0]
-            # Ground-truth normal time series
-            if test_list[idx_test].dtype.metadata['file_name'].split('_')[-2] == 'normal':
-                # >0 time steps in anomaly score higher than threshold
-                # False positive
-                if np.sum(score_ts >= threshold) > 0:
-                    predicted_anomaly_start = np.argwhere(score_ts >= threshold)[0][0]
-                    predicted_labels.append(True)
-                    groundtruth_labels.append(False)
-                # =0 time steps in anomaly score higher than threshold
-                # True negative
-                else:
-                    predicted_labels.append(False)
-                    groundtruth_labels.append(False)
-            # Ground-truth anomalous time series
-            else:
-                # Extract groundtruth anomaly start from file name and correct it for lower sampling rate
-                groundtruth_anomaly_start = int(test_list[idx_test].dtype.metadata['file_name'].split('_')[-1].split('.')[0]) / (10 / sampling_rate)
-                # >0 time steps in anomaly score higher than threshold
-                # Anomaly predicted
-                if np.sum(score_ts >= threshold) > 0:
-                    predicted_anomaly_start = np.argwhere(score_ts >= threshold)[0][0]
-                    # First predicted anomalous time step is after the groundtruth anomaly start
-                    # True positive
-                    if predicted_anomaly_start >= groundtruth_anomaly_start:
-                        predicted_labels.append(True)
-                        groundtruth_labels.append(True)
-                        delay, _ = ts_processor.find_detection_delay(score_ts, threshold, sampling_rate, reverse_window_mode, window_size, len(score_ts), groundtruth_anomaly_start)
-                        total_delays.append(delay)
-                    # First predicted anomalous time step is before the groundtruth anomaly start
-                    # False positive
-                    else:
-                        predicted_labels.append(True)
-                        groundtruth_labels.append(False)
-                        delay, _ = ts_processor.find_detection_delay(score_ts, threshold, sampling_rate, reverse_window_mode, window_size, len(score_ts), groundtruth_anomaly_start)
-                        total_delays.append(delay)
-                # =0 time steps in anomaly score higher than threshold
-                # False negative
-                else:
-                    predicted_labels.append(False)
-                    groundtruth_labels.append(True)
-                    delay = (len(score_ts) - groundtruth_anomaly_start) / sampling_rate
-                    total_delays.append(delay)
-            total_test_detection_score.append(score_ts)
+        # Evaluate the model
+        threshold = processor.unsupervised_threshold(val_detection_score_list)
 
-        # Store results in dataframe
-        results.loc[(model_seed - 1) * 3 + fold_idx, 'Seed'] = model_seed
-        results.loc[(model_seed - 1) * 3 + fold_idx, 'Fold'] = fold_idx
-        results.loc[(model_seed - 1) * 3 + fold_idx, 'F1'] = metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0)  # TP / (TP + 0.5 * (FP + FN))
-        results.loc[(model_seed - 1) * 3 + fold_idx, 'Precision'] = metrics.precision_score(groundtruth_labels, predicted_labels, zero_division=0.0)  # TP / (TP + FP)
-        results.loc[(model_seed - 1) * 3 + fold_idx, 'Recall'] = metrics.recall_score(groundtruth_labels, predicted_labels, zero_division=0.0)  # TP / (TP + FN)
-        results.loc[(model_seed - 1) * 3 + fold_idx, 'Delay'] = np.mean(total_delays)
-        results.loc[(model_seed - 1) * 3 + fold_idx, 'Threshold'] = threshold
+        predicted_labels, total_delays = processor.evaluate(
+            input_list=test_list,
+            detection_score_list=test_detection_score_list,
+            threshold=threshold,
+            groundtruth_labels=groundtruth_labels,
+            groundtruth_start_list=groundtruth_start_list
+        )
 
-        # Pre-allocate lists
-        precision_list = []
-        recall_list = []
+        results.append({
+            'Seed': model_seed,
+            'Fold': fold_idx,
+            'F1': metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0),
+            'Precision': metrics.precision_score(groundtruth_labels, predicted_labels, zero_division=0.0),
+            'Recall': metrics.recall_score(groundtruth_labels, predicted_labels, zero_division=0.0),
+            'Delay': np.mean(total_delays),
+            'Threshold': threshold
+        })
+
         f1_list = []
-        reduced_test_detection_score = np.concatenate(total_test_detection_score).ravel()
+        reduced_test_detection_score = np.concatenate(test_detection_score_list).ravel()
         percentile_array = np.arange(0, 100.01, 0.01)
-        # Iterate over all percentiles to find the best threshold
         for threshold_percentile in percentile_array:
             threshold_temp = np.percentile(reduced_test_detection_score, threshold_percentile)
-            groundtruth_labels = []
-            predicted_labels = []
-            for idx_test, score_ts in enumerate(test_detection_score):
-                score_ts = score_ts.numpy()[:, 0]
-                # Ground-truth normal time series
-                if test_list[idx_test].dtype.metadata['file_name'].split('_')[-2] == 'normal':
-                    # >0 time steps in anomaly score higher than threshold
-                    # False positive
-                    if np.sum(score_ts >= threshold_temp) > 0:
-                        predicted_labels.append(True)
-                        groundtruth_labels.append(False)
-                    # =0 time steps in anomaly score higher than threshold
-                    # True negative
-                    else:
-                        predicted_labels.append(False)
-                        groundtruth_labels.append(False)
-                # Ground-truth anomalous time series
-                else:
-                    groundtruth_anomaly_start = int(test_list[idx_test].dtype.metadata['file_name'].split('_')[-1].split('.')[0]) // (10 / sampling_rate)
-                    # >0 time steps in anomaly score higher than threshold
-                    # Anomaly predicted
-                    if np.sum(score_ts >= threshold_temp) > 0:
-                        predicted_anomaly_start = np.argwhere(score_ts >= threshold_temp)[0][0]
-                        # First predicted anomalous time step is after the groundtruth anomaly start
-                        # True positive
-                        if predicted_anomaly_start > groundtruth_anomaly_start:
-                            predicted_labels.append(True)
-                            groundtruth_labels.append(True)
-                        # First predicted anomalous time step is before the groundtruth anomaly start
-                        # False positive
-                        else:
-                            predicted_labels.append(True)
-                            groundtruth_labels.append(False)
-                    # =0 time steps in anomaly score higher than threshold
-                    # False negative
-                    else:
-                        predicted_labels.append(False)
-                        groundtruth_labels.append(True)
-            precision = metrics.precision_score(groundtruth_labels, predicted_labels, zero_division=0.0)
-            recall = metrics.recall_score(groundtruth_labels, predicted_labels, zero_division=0.0)
-            f1 = metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0)
-            precision_list.append(precision)
-            recall_list.append(recall)
-            f1_list.append(f1)
+            predicted_labels, _ = processor.evaluate(
+                input_list=test_list,
+                detection_score_list=test_detection_score_list,
+                threshold=threshold_temp,
+                groundtruth_labels=groundtruth_labels,
+                groundtruth_start_list=groundtruth_start_list
+            )
+            f1_list.append(metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0))
         f1_list = np.vstack(f1_list)
-        threshold_best = np.percentile(reduced_test_detection_score, percentile_array[np.argmax(f1_list)])
+        threshold_best = np.percentile(reduced_test_detection_score, percentile_array[np.argmax(f1_list)]).astype(float)
 
-        # Pre-allocate lists
-        total_delays_best = []
-        groundtruth_labels_best = []
-        predicted_labels_best = []
-        # Iterate over all test time series with the best threshold
-        for idx_test, score_ts in enumerate(test_detection_score):
-            score_ts = score_ts.numpy()[:, 0]
-            # Ground-truth normal time series
-            if test_list[idx_test].dtype.metadata['file_name'].split('_')[-2] == 'normal':
-                # >0 time steps in anomaly score higher than threshold
-                # False positive
-                if np.sum(score_ts >= threshold_best) > 0:
-                    predicted_labels_best.append(True)
-                    groundtruth_labels_best.append(False)
-                    predicted_anomaly_start = np.argwhere(score_ts >= threshold_best)[0][0]
-                # =0 time steps in anomaly score higher than threshold
-                # True negative
-                else:
-                    predicted_labels_best.append(False)
-                    groundtruth_labels_best.append(False)
-            # Ground-truth anomalous time series
-            else:
-                # Extract groundtruth anomaly start from file name
-                groundtruth_anomaly_start = int(test_list[idx_test].dtype.metadata['file_name'].split('_')[-1].split('.')[0]) // (10 / sampling_rate)
-                # >0 time steps in anomaly score higher than threshold
-                # Anomaly predicted
-                if np.sum(score_ts >= threshold_best) > 0:
-                    predicted_anomaly_start = np.argwhere(score_ts >= threshold_best)[0][0]
-                    # First predicted anomalous time step is after the groundtruth anomaly start
-                    # True positive
-                    if predicted_anomaly_start >= groundtruth_anomaly_start:
-                        predicted_labels_best.append(True)
-                        groundtruth_labels_best.append(True)
-                        delay, _ = ts_processor.find_detection_delay(score_ts, threshold_best, sampling_rate, reverse_window_mode, window_size, len(score_ts), groundtruth_anomaly_start)
-                        total_delays_best.append(delay)
-                    # First predicted anomalous time step is before the groundtruth anomaly start
-                    # False positive
-                    else:
-                        predicted_labels_best.append(True)
-                        groundtruth_labels_best.append(False)
-                        delay, _ = ts_processor.find_detection_delay(score_ts, threshold_best, sampling_rate, reverse_window_mode, window_size, len(score_ts), groundtruth_anomaly_start)
-                        total_delays_best.append(delay)
-                # =0 time steps in anomaly score higher than threshold
-                # False negative
-                else:
-                    predicted_labels_best.append(False)
-                    groundtruth_labels_best.append(True)
-                    delay = (len(score_ts) - groundtruth_anomaly_start) / sampling_rate
-                    total_delays_best.append(delay)
+        predicted_labels_best, total_delays_best = processor.evaluate(
+            input_list=test_list,
+            detection_score_list=test_detection_score_list,
+            threshold=threshold_best,
+            groundtruth_labels=groundtruth_labels,
+            groundtruth_start_list=groundtruth_start_list
+        )
 
-        results_best.loc[(model_seed - 1) * 3 + fold_idx, 'Seed'] = model_seed
-        results_best.loc[(model_seed - 1) * 3 + fold_idx, 'Fold'] = fold_idx
-        results_best.loc[(model_seed - 1) * 3 + fold_idx, 'F1'] = metrics.f1_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0)  # TP / (TP + 0.5 * (FP + FN))
-        results_best.loc[(model_seed - 1) * 3 + fold_idx, 'Precision'] = metrics.precision_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0)  # TP / (TP + FP)
-        results_best.loc[(model_seed - 1) * 3 + fold_idx, 'Recall'] = metrics.recall_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0)  # TP / (TP + FN)
-        results_best.loc[(model_seed - 1) * 3 + fold_idx, 'Delay'] = np.mean(total_delays_best)
-        results_best.loc[(model_seed - 1) * 3 + fold_idx, 'Threshold'] = threshold_best
+        results_best.append({
+            'Seed': model_seed,
+            'Fold': fold_idx,
+            'F1': metrics.f1_score(groundtruth_labels, predicted_labels_best, zero_division=0.0),
+            'Precision': metrics.precision_score(groundtruth_labels, predicted_labels_best, zero_division=0.0),
+            'Recall': metrics.recall_score(groundtruth_labels, predicted_labels_best, zero_division=0.0),
+            'Delay': np.mean(total_delays_best),
+            'Threshold': threshold_best
+        })
 
-# Check if results file exists
+results = pd.DataFrame(results)
+results_best = pd.DataFrame(results_best)
+
 if not os.path.isfile(os.path.join(model_path, 'results.xlsx')):
-    openpyxl.Workbook().save(filename=os.path.join(model_path, 'results.xlsx'))
-# Save results and results_best in Excel file
-with pd.ExcelWriter(os.path.join(model_path, 'results.xlsx'), mode='a', if_sheet_exists='replace') as writer:
-    results.to_excel(writer, index=False, sheet_name=MODEL_NAME + '_' + AD_MODE)
-    results_best.to_excel(writer, index=False, sheet_name=MODEL_NAME + '_' + AD_MODE + '_best')
+    # Create and save a valid Excel file
+    wb = openpyxl.Workbook()
+    wb.save(os.path.join(model_path, 'results.xlsx'))
+
+# Use a try-finally block to ensure proper handling
 try:
-    workbook = openpyxl.load_workbook(os.path.join(model_path, 'results.xlsx'))
-    if 'Sheet' in workbook.sheetnames:
-        workbook.remove(workbook['Sheet'])
-    workbook.save(os.path.join(model_path, 'results.xlsx'))
-except:
-    pass
+    with pd.ExcelWriter(os.path.join(model_path, 'results.xlsx'), mode='a', if_sheet_exists='overlay') as writer:
+        results.to_excel(writer, index=False, sheet_name=MODEL_NAME + '_' + AD_MODE)
+        results_best.to_excel(writer, index=False, sheet_name=MODEL_NAME + '_' + AD_MODE + '_best')
+finally:
+    # Cleanup: Remove default 'Sheet' if it exists
+    try:
+        workbook = openpyxl.load_workbook(os.path.join(model_path, 'results.xlsx'))
+        if 'Sheet' in workbook.sheetnames:
+            del workbook['Sheet']
+        workbook.save(os.path.join(model_path, 'results.xlsx'))
+    except Exception as e:
+        print(f"Error cleaning up sheets: {e}")

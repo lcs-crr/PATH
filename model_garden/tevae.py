@@ -2,11 +2,8 @@
 Lucas Correia
 LIACS | Leiden University
 Einsteinweg 55 | 2333 CC Leiden | The Netherlands
-
-Original paper DOI: arXiv:2407.06849
 """
 
-import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
 
@@ -14,99 +11,141 @@ tfkl = tf.keras.layers
 tfd = tfp.distributions
 
 
-class TeVAE(tf.keras.Model):
-    def __init__(self, encoder, decoder, ma, beta=1e0):
-        super(TeVAE, self).__init__()
+@tf.keras.saving.register_keras_serializable(package="TEVAE")
+class KLAnnealing(tf.keras.callbacks.Callback):
+    def __init__(
+            self,
+            annealing_epochs: int = 25,
+            annealing_type: str = "normal",
+            grace_period: int = 25,
+            start: float = 1e-3,
+            end: float = 1e0
+    ) -> None:
+        super(KLAnnealing, self).__init__()
+        self.annealing_epochs = annealing_epochs
+        self.annealing_type = annealing_type
+        self.grace_period = grace_period
+        self.grace_period_idx = tf.math.maximum(0.0, grace_period - 1)  # Starting from 0
+        self.start = start
+        self.end = end
+        if annealing_type in ["cyclical", "monotonic"]:
+            self.beta_values = tf.linspace(start, end, annealing_epochs)
 
-        # Model
+    def on_epoch_begin(self, epoch, logs=None):
+        shifted_epochs = tf.math.maximum(0.0, epoch - self.grace_period_idx)
+        if epoch < self.grace_period_idx or self.annealing_type == "normal":
+            new_value = self.start
+            self.model.beta.assign(new_value)
+        elif self.annealing_type == "monotonic":
+            new_value = self.beta_values[min(epoch, self.annealing_epochs - 1)]
+            self.model.beta.assign(new_value)
+        elif self.annealing_type == "cyclical":
+            new_value = self.beta_values[int(shifted_epochs % self.annealing_epochs)]
+            self.model.beta.assign(new_value)
+
+    def get_config(self):
+        return {
+            "annealing_epochs": self.annealing_epochs,
+            "annealing_type": self.annealing_type,
+            "grace_period": self.grace_period,
+            "start": self.start,
+            "end": self.end,
+        }
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+
+@tf.keras.saving.register_keras_serializable(package="TEVAE")
+class TEVAE(tf.keras.Model):
+    def __init__(
+            self,
+            encoder: tf.keras.Model,
+            decoder: tf.keras.Model,
+            ma: tf.keras.Model,
+            beta: float = 1.0,
+            name: str = None,
+            **kwargs,
+    ) -> None:
+        super(TEVAE, self).__init__(name=name, **kwargs)
         self.encoder = encoder
         self.decoder = decoder
         self.ma = ma
-
-        # Metrics
         self.beta_tracker = tf.keras.metrics.Mean(name="beta")
-        self.total_loss_tracker = tf.keras.metrics.Mean(name="loss")
-        self.negloglik_loss_tracker = tf.keras.metrics.Mean(name="rec_loss")
+        self.loss_tracker = tf.keras.metrics.Mean(name="loss")
+        self.rec_loss_tracker = tf.keras.metrics.Mean(name="rec_loss")
         self.kl_loss_tracker = tf.keras.metrics.Mean(name="kl_loss")
-
-        # Modifiable weight for KL-loss
         self.beta = tf.Variable(beta, trainable=False)  # Weight for KL-Loss, can be modified with a callback
 
-    @tf.function
-    def loss_fn(self, X, Xhat, Xhat_mean, Xhat_logvar, Z_mean, Z_logvar):
-        # Configure distribution with parameters output from decoder
-        output_dist = tfd.MultivariateNormalDiag(loc=Xhat_mean, scale_diag=tf.sqrt(tf.math.exp(Xhat_logvar)))
-        # Calculate log probability of sample belongs parametrised distribution
-        loglik_loss = output_dist.log_prob(X)
+    @staticmethod
+    def rec_fn(x, xhat_params, reduce=True):
+        xhat_mean, xhat_logvar = xhat_params
+        # Configure distribution with output parameters
+        output_dist = tfd.Normal(loc=xhat_mean, scale=tf.sqrt(tf.math.exp(xhat_logvar)))
+        # Calculate log probability of input data given output distribution
+        loglik_loss = output_dist.log_prob(x)
+        if reduce:
+            return -tf.reduce_sum(loglik_loss, axis=(-1, -2))
+        else:
+            return -loglik_loss
 
-        # Calculate KL Divergence between latent distribution and Gaussian distribution
-        kl_loss = tfd.kl_divergence(
-            tfd.MultivariateNormalDiag(loc=Z_mean, scale_diag=tf.sqrt(tf.math.exp(Z_logvar))),
-            tfd.MultivariateNormalDiag(loc=tf.zeros_like(Z_mean), scale_diag=tf.ones_like(Z_logvar))
+    @staticmethod
+    def kldiv_fn(z_params, reduce=True):
+        z_mean, z_logvar = z_params
+        # Configure distribution with latent parameters
+        latent_dist = tfd.Normal(loc=z_mean, scale=tf.sqrt(tf.math.exp(z_logvar)))
+        # Calculate KL-Divergence between latent distribution and standard Gaussian
+        kl_loss = latent_dist.kl_divergence(
+            tfd.Normal(loc=tf.zeros_like(z_mean), scale=tf.ones_like(z_logvar))
         )
+        if reduce:
+            return tf.reduce_sum(kl_loss, axis=(-1, -2))
+        else:
+            return kl_loss
 
-        return -tf.reduce_sum(loglik_loss, axis=1), tf.reduce_sum(kl_loss, axis=1)
-
-    # @tf.function
-    def train_step(self, X):
-        if isinstance(X, tuple):
-            X = X[0]
+    def train_step(self, x, **kwargs):
         with tf.GradientTape() as tape:
             # Forward pass through encoder
-            Z_mean, Z_logvar, Z, states = self.encoder(X, training=True)
+            z_mean, z_logvar, z = self.encoder(x, training=True)
             # Forward pass through MA
-            C = self.ma([X, Z], training=True)
+            c = self.ma([x, z], training=True)
             # Forward pass through decoder
-            Xhat_mean, Xhat_logvar, Xhat = self.decoder(C, training=True)
+            xhat_mean, xhat_logvar, xhat = self.decoder(c, training=True)
             # Calculate losses from parameters
-            negloglik_loss, kl_loss = self.loss_fn(
-                X,
-                Xhat,
-                Xhat_mean,
-                Xhat_logvar,
-                Z_mean,
-                Z_logvar
-            )
+            rec_loss = self.rec_fn(x, [xhat_mean, xhat_logvar])
+            kl_loss = self.kldiv_fn([z_mean, z_logvar])
             # Calculate total loss from different losses
-            total_loss = negloglik_loss + self.beta * kl_loss
+            loss = rec_loss + self.beta * kl_loss
         # Calculate gradients in backward pass
-        grads = tape.gradient(total_loss, self.trainable_weights)
+        grads = tape.gradient(loss, self.trainable_weights)
         # Apply gradients
         self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
         # Track losses
         self.beta_tracker.update_state(self.beta)
-        self.total_loss_tracker.update_state(total_loss)
-        self.negloglik_loss_tracker.update_state(negloglik_loss)
+        self.loss_tracker.update_state(loss)
+        self.rec_loss_tracker.update_state(rec_loss)
         self.kl_loss_tracker.update_state(kl_loss)
         return {
             "beta": self.beta_tracker.result(),
-            "loss": self.total_loss_tracker.result(),
-            "rec_loss": self.negloglik_loss_tracker.result(),
+            "loss": self.loss_tracker.result(),
+            "rec_loss": self.rec_loss_tracker.result(),
             "kl_loss": self.kl_loss_tracker.result(),
         }
 
-    # @tf.function
-    def test_step(self, X):
-        if isinstance(X, tuple):
-            X = X[0]
+    def test_step(self, x, **kwargs):
         # Forward pass through encoder
-        Z_mean, Z_logvar, Z, states = self.encoder(X, training=False)
+        z_mean, z_logvar, z = self.encoder(x, training=False)
         # Forward pass through MA
-        C = self.ma([X, Z_mean], training=False)
+        c = self.ma([x, z_mean], training=False)
         # Forward pass through decoder
-        Xhat_mean, Xhat_logvar, Xhat = self.decoder(C, training=False)
+        xhat_mean, xhat_logvar, xhat = self.decoder(c, training=False)
         # Calculate losses from parameters
-        negloglik_loss, kl_loss = self.loss_fn(
-            X,
-            Xhat,
-            Xhat_mean,
-            Xhat_logvar,
-            Z_mean,
-            Z_logvar
-        )
-        total_loss = negloglik_loss + self.beta * kl_loss
-        self.total_loss_tracker.update_state(total_loss)
-        self.negloglik_loss_tracker.update_state(negloglik_loss)
+        rec_loss = self.rec_fn(x, [xhat_mean, xhat_logvar])
+        kl_loss = self.kldiv_fn([z_mean, z_logvar])
+        loss = rec_loss + self.beta * kl_loss
+        self.loss_tracker.update_state(loss)
+        self.rec_loss_tracker.update_state(rec_loss)
         self.kl_loss_tracker.update_state(kl_loss)
         return {m.name: m.result() for m in self.metrics if m.name == 'rec_loss'}
 
@@ -114,22 +153,48 @@ class TeVAE(tf.keras.Model):
     def metrics(self):
         return [
             self.beta_tracker,
-            self.total_loss_tracker,
-            self.negloglik_loss_tracker,
+            self.loss_tracker,
+            self.rec_loss_tracker,
             self.kl_loss_tracker,
         ]
 
     @tf.function
-    def call(self, inputs, **kwargs):
-        Z_mean, Z_logvar, Z, states = self.encoder(inputs, training=False)
-        C = self.ma([inputs, Z_mean], training=False)
-        Xhat_mean, Xhat_logvar, Xhat = self.decoder(C, training=False)
-        return Xhat_mean, Xhat_logvar, Xhat, Z_mean, Z_logvar, Z, C
+    def call(self, x, **kwargs):
+        z_mean, z_logvar, z = self.encoder(x, training=False)
+        c = self.ma([x, z_mean], training=False)
+        xhat_mean, xhat_logvar, xhat = self.decoder(c, training=False)
+        return xhat_mean, xhat_logvar, xhat, z_mean, z_logvar, z, c
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "encoder": self.encoder.get_config(),
+            "decoder": self.decoder.get_config(),
+            "ma": self.ma.get_config(),
+            "beta": float(self.beta.numpy()),
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        encoder = TEVAE_Encoder.from_config(config["encoder"])
+        decoder = TEVAE_Decoder.from_config(config["decoder"])
+        ma = MA.from_config(config["ma"])
+        return cls(encoder=encoder, decoder=decoder, ma=ma, beta=config["beta"])
 
 
-class TeVAE_Encoder(tf.keras.Model):
-    def __init__(self, seq_len, latent_dim, features, hidden_units, seed):
-        super(TeVAE_Encoder, self).__init__()
+@tf.keras.saving.register_keras_serializable(package="TEVAE")
+class TEVAE_Encoder(tf.keras.Model):
+    def __init__(
+            self,
+            seq_len: int,
+            latent_dim: int,
+            features: int,
+            hidden_units: int,
+            seed: int,
+            name: str = None,
+    ) -> None:
+        super(TEVAE_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
         self.latent_dim = latent_dim
         self.features = features
@@ -139,24 +204,56 @@ class TeVAE_Encoder(tf.keras.Model):
 
     def build_encoder(self):
         enc_input = tfkl.Input(shape=(self.seq_len, self.features))
-        enc_input = tfkl.GaussianNoise(0.01, seed=self.seed)(enc_input)
-        bilstm = tfkl.Bidirectional(tfkl.LSTM(self.hidden_units*2, return_sequences=True))(enc_input)
+        noise_layer = tfkl.GaussianNoise(0.01, seed=self.seed)(enc_input)
+        bilstm = tfkl.Bidirectional(tfkl.LSTM(self.hidden_units * 2, return_sequences=True))(noise_layer)
         bilstm = tfkl.Bidirectional(tfkl.LSTM(self.hidden_units, return_sequences=True))(bilstm)
-        Z_mean = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim, name="Z_mean"))(bilstm)
-        Z_logvar = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim, name="Z_logvar"))(bilstm)
+        z_mean = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim))(bilstm)
+        z_logvar = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim))(bilstm)
         output_dist = tfd.Normal(loc=0., scale=1.)
-        eps = output_dist.sample(tf.shape(Z_mean), seed=self.seed)
-        Z = Z_mean + tf.sqrt(tf.math.exp(Z_logvar)) * eps
-        return tf.keras.Model(enc_input, [Z_mean, Z_logvar, Z, bilstm], name="encoder")
+        eps = output_dist.sample(tf.shape(z_mean), seed=self.seed)
+        z = z_mean + tf.sqrt(tf.math.exp(z_logvar)) * eps
+        return tf.keras.Model(enc_input, [z_mean, z_logvar, z])
 
     @tf.function
-    def call(self, inputs, **kwargs):
-        return self.encoder(inputs, **kwargs)
+    def call(self, x, **kwargs):
+        return self.encoder(x, **kwargs)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "seq_len": self.seq_len,
+            "latent_dim": self.latent_dim,
+            "features": self.features,
+            "hidden_units": self.hidden_units,
+            "seed": self.seed,
+            "name": self.name,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        return cls(
+            seq_len=config['seq_len'],
+            latent_dim=config['latent_dim'],
+            features=config['features'],
+            hidden_units=config['hidden_units'],
+            seed=config['seed'],
+            name=config['name']
+        )
 
 
-class TeVAE_Decoder(tf.keras.Model):
-    def __init__(self, seq_len, latent_dim, features, hidden_units, seed):
-        super(TeVAE_Decoder, self).__init__()
+@tf.keras.saving.register_keras_serializable(package="TEVAE")
+class TEVAE_Decoder(tf.keras.Model):
+    def __init__(
+            self,
+            seq_len: int,
+            latent_dim: int,
+            features: int,
+            hidden_units: int,
+            seed: int,
+            name: str = None,
+    ) -> None:
+        super(TEVAE_Decoder, self).__init__(name=name)
         self.seq_len = seq_len
         self.latent_dim = latent_dim
         self.features = features
@@ -165,25 +262,55 @@ class TeVAE_Decoder(tf.keras.Model):
         self.decoder = self.build_decoder()
 
     def build_decoder(self):
-        attention_input = tfkl.Input(shape=(self.seq_len, self.latent_dim))
-        bilstm = tfkl.Bidirectional(tfkl.LSTM(self.hidden_units, return_sequences=True))(attention_input)
-        bilstm = tfkl.Bidirectional(tfkl.LSTM(self.hidden_units*2, return_sequences=True))(bilstm)
-        Xhat_mean = tfkl.TimeDistributed(tfkl.Dense(self.features), name="Xhat_mean")(bilstm)
-        Xhat_logvar = tfkl.TimeDistributed(tfkl.Dense(self.features), name="Xhat_logvar")(bilstm)
+        dec_input = tfkl.Input(shape=(self.seq_len, self.latent_dim))
+        bilstm = tfkl.Bidirectional(tfkl.LSTM(self.hidden_units, return_sequences=True))(dec_input)
+        bilstm = tfkl.Bidirectional(tfkl.LSTM(self.hidden_units * 2, return_sequences=True))(bilstm)
+        xhat_mean = tfkl.TimeDistributed(tfkl.Dense(self.features))(bilstm)
+        xhat_logvar = tfkl.TimeDistributed(tfkl.Dense(self.features))(bilstm)
         output_dist = tfd.Normal(loc=0., scale=1.)
-        eps = output_dist.sample(tf.shape(Xhat_mean), seed=self.seed)
-        Xhat = Xhat_mean + tf.sqrt(tf.math.exp(Xhat_logvar)) * eps
-        return tf.keras.Model(attention_input, [Xhat_mean, Xhat_logvar, Xhat], name="decoder")
+        eps = output_dist.sample(tf.shape(xhat_mean), seed=self.seed)
+        xhat = xhat_mean + tf.sqrt(tf.math.exp(xhat_logvar)) * eps
+        return tf.keras.Model(dec_input, [xhat_mean, xhat_logvar, xhat])
 
     @tf.function
-    def call(self, inputs, **kwargs):
-        return self.decoder(inputs, **kwargs)
+    def call(self, x, **kwargs):
+        return self.decoder(x, **kwargs)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "seq_len": self.seq_len,
+            "latent_dim": self.latent_dim,
+            "features": self.features,
+            "hidden_units": self.hidden_units,
+            "seed": self.seed,
+            "name": self.name,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        return cls(
+            seq_len=config['seq_len'],
+            latent_dim=config['latent_dim'],
+            features=config['features'],
+            hidden_units=config['hidden_units'],
+            seed=config['seed'],
+            name=config['name']
+        )
 
 
+@tf.keras.saving.register_keras_serializable(package="TEVAE")
 class MA(tf.keras.Model):
-    def __init__(self, seq_len, latent_dim, key_dim, features):
-        super(MA, self).__init__()
-
+    def __init__(
+            self,
+            seq_len: int,
+            latent_dim: int,
+            key_dim: int,
+            features: int,
+            name: str = None
+    ) -> None:
+        super(MA, self).__init__(name=name)
         self.seq_len = seq_len
         self.features = features
         self.latent_dim = latent_dim
@@ -195,17 +322,37 @@ class MA(tf.keras.Model):
             num_heads=8,
             key_dim=self.key_dim,
             output_shape=self.latent_dim,
-            name="C"
         )
 
         raw_input = tfkl.Input(shape=(self.seq_len, self.features))
         latent_input = tfkl.Input(shape=(self.seq_len, self.latent_dim))
-        C = attention(query=raw_input, key=raw_input, value=latent_input)
-        return tf.keras.Model([raw_input, latent_input], C, name="MA")
+        c = attention(query=raw_input, key=raw_input, value=latent_input)
+        return tf.keras.Model([raw_input, latent_input], c)
 
     @tf.function
-    def call(self, inputs, **kwargs):
-        return self.ma(inputs, **kwargs)
+    def call(self, x, **kwargs):
+        return self.ma(x, **kwargs)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "seq_len": self.seq_len,
+            "latent_dim": self.latent_dim,
+            "key_dim": self.key_dim,
+            "features": self.features,
+            "name": self.name,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        return cls(
+            seq_len=config['seq_len'],
+            latent_dim=config['latent_dim'],
+            key_dim=config['key_dim'],
+            features=config['features'],
+            name=config['name']
+        )
 
 
 if __name__ == "__main__":

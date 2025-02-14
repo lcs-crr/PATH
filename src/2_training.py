@@ -5,17 +5,22 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import random
 from dotenv import dotenv_values
-from model_garden.klAnnealing import *
 from model_garden.tevae import *
 from model_garden.tcnae import *
 from model_garden.omnianomaly import *
 from model_garden.sisvae import *
 from model_garden.lwvae import *
+from utilities import data_class
 
 strategy = tf.distribute.MirroredStrategy()
 print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
+
+# tf.config.run_functions_eagerly(True)
 
 for seed in range(1, 6):
     # Declare constants
@@ -41,7 +46,7 @@ for seed in range(1, 6):
             data_load_path = os.path.join(data_path, '2_preprocessed', 'unsupervised')
         else:
             data_load_path = os.path.join(data_path, '2_preprocessed', 'semisupervised')
-        model_save_path = os.path.join(model_path, 'tevae' + '_' + AD_MODE + '_' + str(fold_idx) + '_' + str(seed))
+        model_save_path = os.path.join(model_path, MODEL_NAME + '_' + AD_MODE + '_' + str(fold_idx) + '_' + str(seed))
 
         # Load data
         tfdata_train = tf.data.Dataset.load(os.path.join(data_load_path, 'fold_' + str(fold_idx), 'train'))
@@ -60,12 +65,8 @@ for seed in range(1, 6):
         )
 
         # KL Annealing
-        annealing = KL_annealing(
-            annealing_epochs=25,
+        annealing = KLAnnealing(
             annealing_type="cyclical",
-            grace_period=25,
-            start=1e-3,
-            end=1e-0,
         )
 
         # Define model
@@ -76,10 +77,10 @@ for seed in range(1, 6):
                 latent_dim = features // 2
                 key_dim = features // 8
                 hidden_units = features * 16
-                encoder = TeVAE_Encoder(seq_len=window_size, latent_dim=latent_dim, features=features, hidden_units=hidden_units, seed=seed)
-                decoder = TeVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, features=features, hidden_units=hidden_units, seed=seed)
+                encoder = TEVAE_Encoder(seq_len=window_size, latent_dim=latent_dim, features=features, hidden_units=hidden_units, seed=seed)
+                decoder = TEVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, features=features, hidden_units=hidden_units, seed=seed)
                 ma = MA(seq_len=window_size, latent_dim=latent_dim, key_dim=key_dim, features=features)
-                model = TeVAE(encoder, decoder, ma)
+                model = TEVAE(encoder, decoder, ma)
                 callback_list = [early_stopping, annealing]
 
             elif MODEL_NAME == 'tcnae':
@@ -96,31 +97,33 @@ for seed in range(1, 6):
 
             elif MODEL_NAME == 'omnianomaly':
                 latent_dim = 3
-                encoder = OmniAnomaly_Encoder(seq_len=window_size, latent_dim=latent_dim, features=features, seed=seed)
-                decoder = OmniAnomaly_Decoder(seq_len=window_size, latent_dim=latent_dim, features=features, seed=seed)
+                hidden_units = 500
+                encoder = OmniAnomaly_Encoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
+                decoder = OmniAnomaly_Decoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
                 model = OmniAnomaly(encoder, decoder)
                 callback_list = [early_stopping]
 
             elif MODEL_NAME == 'sisvae':
                 latent_dim = 40
-                encoder = SISVAE_Encoder(seq_len=window_size, latent_dim=latent_dim, features=features, seed=seed)
-                decoder = SISVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, features=features, seed=seed)
+                hidden_units = 200
+                encoder = SISVAE_Encoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
+                decoder = SISVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
                 model = SISVAE(encoder, decoder)
                 callback_list = [early_stopping]
 
             elif MODEL_NAME == 'lwvae':
                 latent_dim = 64
-                encoder = LWVAE_Encoder(seq_len=window_size, latent_dim=latent_dim, features=features, seed=seed)
-                decoder = LWVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, features=features, seed=seed)
+                hidden_units = 128
+                encoder = LWVAE_Encoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
+                decoder = LWVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
                 model = LWVAE(encoder, decoder)
                 callback_list = [early_stopping]
 
-            optimiser = tf.keras.optimizers.Adam(amsgrad=True)
-            model.compile(optimizer=optimiser)
+            model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=True))
 
         # Fit vae model
         history = model.fit(tfdata_train,
-                            epochs=10000,
+                            epochs=1,
                             callbacks=callback_list,
                             validation_data=tfdata_val,
                             verbose=2
@@ -128,7 +131,10 @@ for seed in range(1, 6):
 
         # Run and save model
         model.predict(tf.random.normal((32, window_size, features)), verbose=0)
-        model.save(model_save_path)
-        with open(os.path.join(model_save_path, 'final_loss.txt'), 'x') as f:
-            f.write(str(min(history.history['val_rec_loss'])))
+        try:
+            os.mkdir(os.path.join(model_save_path))
+        except FileExistsError:
+            pass
+        model.save(os.path.join(model_save_path, 'model.keras'))
+        data_class.DataProcessor().dump_pickle(history, os.path.join(model_save_path, 'losses.pkl'))
         tf.keras.backend.clear_session()

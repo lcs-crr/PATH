@@ -5,13 +5,16 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import scipy
 import numpy as np
 import random
 import tensorflow as tf
 from sklearn.model_selection import RepeatedKFold
 from dotenv import dotenv_values
-from ts_functions import ts_processor
+from utilities import data_class
 
 # Declare constants
 SEED = 1
@@ -32,6 +35,7 @@ model_path = config['model_path']
 # Specify paths for loading and saving data
 data_load_path = os.path.join(data_path, '0_simulation')
 data_save_path = os.path.join(data_path, '1_postsim')
+os.makedirs(data_save_path, exist_ok=True)
 
 # Load file names of normal and anomalous time series
 normal_file_name_list = sorted([f for f in os.listdir(data_load_path) if f.endswith('_normal_0.mat')])
@@ -82,7 +86,7 @@ control_list = [control_ts for control_idx, control_ts in enumerate(control_list
 normal_list = [normal_ts[int(len(normal_ts) * round(np.random.uniform(0, 0.1), 2)):, :] for normal_ts in normal_list]
 
 # Find standard deviation of all time series
-_, _, _, stddev = ts_processor.find_scalers(normal_list + anomalous_list)
+stddev = np.std(np.vstack(normal_list + anomalous_list), axis=0)
 
 for anomalous_idx, anomalous_ts in enumerate(anomalous_list):
     anomalous_file_name = anomalous_ts.dtype.metadata['file_name']
@@ -119,18 +123,18 @@ for fold_idx, (train_indices, test_indices) in enumerate(rkf.split(total_list)):
 # Create clean versions of train_list and test_list for semi-supervised anomaly detection, time-series prediction or time-series generation
 train_list_fold_clean = []
 for train_idx, train_list in enumerate(train_list_fold):
-    train_list_fold_clean.append([train_ts for train_ts in train_list if train_ts.dtype.metadata['file_name'][-13:] == '_normal_0.mat'])
+    train_list_fold_clean.append([train_ts for train_ts in train_list if 'normal' in train_ts.dtype.metadata['file_name'][-13:]])
 test_list_fold_clean = []
 for test_idx, test_list in enumerate(test_list_fold):
-    test_list_fold_clean.append([test_ts for test_ts in test_list if test_ts.dtype.metadata['file_name'][-13:] == '_normal_0.mat'])
+    test_list_fold_clean.append([test_ts for test_ts in test_list if 'normal' in test_ts.dtype.metadata['file_name'][-13:]])
 
 # Save normal_list, anomalous_list and control_list as pickle files
-ts_processor.dump_pickle(normal_list, os.path.join(data_save_path, 'normal.pkl'))
-ts_processor.dump_pickle(anomalous_list, os.path.join(data_save_path, 'anomalous.pkl'))
-ts_processor.dump_pickle(control_list, os.path.join(data_save_path, 'control.pkl'))
+data_class.DataProcessor().dump_pickle(normal_list, os.path.join(data_save_path, 'normal.pkl'))
+data_class.DataProcessor().dump_pickle(anomalous_list, os.path.join(data_save_path, 'anomalous.pkl'))
+data_class.DataProcessor().dump_pickle(control_list, os.path.join(data_save_path, 'control.pkl'))
 
 # Save train_list, test_list, train_list_clean and test_list_clean as pickle files
-ts_processor.dump_pickle(train_list_fold, os.path.join(data_save_path, 'train.pkl'))
-ts_processor.dump_pickle(test_list_fold, os.path.join(data_save_path, 'test.pkl'))
-ts_processor.dump_pickle(train_list_fold_clean, os.path.join(data_save_path, 'train_clean.pkl'))
-ts_processor.dump_pickle(test_list_fold_clean, os.path.join(data_save_path, 'test_clean.pkl'))
+data_class.DataProcessor().dump_pickle(train_list_fold, os.path.join(data_save_path, 'train.pkl'))
+data_class.DataProcessor().dump_pickle(test_list_fold, os.path.join(data_save_path, 'test.pkl'))
+data_class.DataProcessor().dump_pickle(train_list_fold_clean, os.path.join(data_save_path, 'train_clean.pkl'))
+data_class.DataProcessor().dump_pickle(test_list_fold_clean, os.path.join(data_save_path, 'test_clean.pkl'))

@@ -5,12 +5,15 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
+
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import random
 import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
 from dotenv import dotenv_values
-from ts_functions import ts_processor
+from utilities import inference_class
 
 # Declare constants
 SEED = 1
@@ -41,58 +44,28 @@ for model_seed in range(1, 6):
             data_load_path = os.path.join(data_path, '2_preprocessed', 'semisupervised', 'fold_' + str(fold_idx))
         model_load_path = os.path.join(model_path, model_name)
 
+        inferencer = inference_class.Inferencer(
+            model_path=model_load_path,
+            window_size=256,
+            window_shift=1,
+        )
+
         # Load data
-        val_list = ts_processor.load_pickle(os.path.join(data_load_path, 'val.pkl'))
-        test_list = ts_processor.load_pickle(os.path.join(data_load_path, 'test.pkl'))
+        val_list = inferencer.load_pickle(os.path.join(data_load_path, 'val.pkl'))
+        test_list = inferencer.load_pickle(os.path.join(data_load_path, 'test.pkl'))
 
-        # Declare reverse window mode, window size and sampling rate
-        reverse_window_mode = 'mean'
-        window_size = 256
-        sampling_rate = 2
-        # Check if detection scores and outputs are already saved
-        if os.path.isfile(os.path.join(model_load_path, 'val_detection_score_' + reverse_window_mode + '.pkl')) \
-                and os.path.isfile(os.path.join(model_load_path, 'val_output_' + reverse_window_mode + '.pkl')):
-            pass
-        else:
-            # Load model
-            model = tf.keras.models.load_model(model_load_path)
-            val_detection_score = []
-            val_output = []
-            # Iterate over all validation time series
-            for val_ts in tqdm(val_list):
-                # Do inference on each validation time series in val_list. Key for score_function argument:
-                # - tevae: 'negloglik'
-                # - tcnae: 'logcosh'
-                # - omnianomaly: 'negloglik'
-                # - sisvae: 'negloglik'
-                # - lwvae: 'rss'
-                detection_score, output = ts_processor.inference(model, val_ts, window_size, score_function='negloglik')
-                val_detection_score.append(detection_score)
-                val_output.append(output)
-            # Save detection scores and outputs
-            ts_processor.dump_pickle(val_detection_score, os.path.join(model_load_path, 'val_detection_score_' + reverse_window_mode + '.pkl'))
-            ts_processor.dump_pickle(val_output, os.path.join(model_load_path, 'val_output_' + reverse_window_mode + '.pkl'))
+        # Check if detection scores and outputs are already saved else do inference
+        subset_name = 'val'
+        val_detection_score_list, val_output = inferencer.inference_list(
+            val_list,
+            subset_name=subset_name,
+            save_inference_results=True
+        )
 
-        # Process test data
-        if os.path.isfile(os.path.join(model_load_path, 'test_detection_score_' + reverse_window_mode + '.pkl')) \
-                and os.path.isfile(os.path.join(model_load_path, 'test_output_' + reverse_window_mode + '.pkl')):
-            pass
-        else:
-            # Load model
-            model = tf.keras.models.load_model(model_load_path)
-            test_detection_score = []
-            test_output = []
-            # Iterate over all test time series
-            for test_ts in tqdm(test_list):
-                # Do inference on each test time series in test_list. Key for score_function argument:
-                # - tevae: 'negloglik'
-                # - tcnae: 'logcosh'
-                # - omnianomaly: 'negloglik'
-                # - sisvae: 'negloglik'
-                # - lwvae: 'rss'
-                detection_score, output = ts_processor.inference(model, test_ts, window_size, score_function='negloglik')
-                test_detection_score.append(detection_score)
-                test_output.append(output)
-            # Save detection scores and outputs
-            ts_processor.dump_pickle(test_detection_score, os.path.join(model_load_path, 'test_detection_score_' + reverse_window_mode + '.pkl'))
-            ts_processor.dump_pickle(test_output, os.path.join(model_load_path, 'test_output_' + reverse_window_mode + '.pkl'))
+        # Check if detection scores and outputs are already saved else do inference
+        subset_name = 'test'
+        test_detection_score_list, test_output = inferencer.inference_list(
+            test_list,
+            subset_name=subset_name,
+            save_inference_results=True
+        )

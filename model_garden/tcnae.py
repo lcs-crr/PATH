@@ -12,30 +12,33 @@ import tensorflow as tf
 tfkl = tf.keras.layers
 
 
+@tf.keras.saving.register_keras_serializable(package="TCNAE")
 class TCNAE(tf.keras.Model):
-    def __init__(self, encoder, decoder):
-        super(TCNAE, self).__init__()
-
-        # Model
+    def __init__(
+            self,
+            encoder: tf.keras.Model,
+            decoder: tf.keras.Model,
+            name: str = None,
+            **kwargs,
+    ) -> None:
+        super(TCNAE, self).__init__(name=name, **kwargs)
         self.encoder = encoder
         self.decoder = decoder
-
-        # Metrics
         self.loss_tracker = tf.keras.metrics.Mean(name="rec_loss")
 
-    @tf.function
-    def loss_fn(self, X, X_hat):
-        return tf.losses.LogCosh()(X, X_hat)
+    @staticmethod
+    def rec_fn(x, x_hat, reduce=True):
+        if reduce:
+            return tf.reduce_sum(tf.losses.LogCosh('none')(x, x_hat), axis=-1)
+        else:
+            return tf.losses.LogCosh('none')(x, x_hat)
 
-    # @tf.function
-    def train_step(self, X):
-        if isinstance(X, tuple):
-            X = X[0]
-        # Forward pass through models
+    def train_step(self, x, **kwargs):
         with tf.GradientTape() as tape:
-            Z = self.encoder(X)
-            X_hat = self.decoder(Z)
-            loss = self.loss_fn(X, X_hat)
+            # Forward pass through models
+            z = self.encoder(x)
+            x_hat = self.decoder(z)
+            loss = self.rec_fn(x, x_hat)
         # Calculate gradients in backward pass
         grads = tape.gradient(loss, self.trainable_weights)
         # Apply gradients
@@ -46,14 +49,11 @@ class TCNAE(tf.keras.Model):
             "rec_loss": self.loss_tracker.result(),
         }
 
-    # @tf.function
-    def test_step(self, X):
-        if isinstance(X, tuple):
-            X = X[0]
+    def test_step(self, x, **kwargs):
         # Forward pass through encoder
-        Z = self.encoder(X)
-        X_hat = self.decoder(Z)
-        loss = self.loss_fn(X, X_hat)
+        z = self.encoder(x, training=False)
+        x_hat = self.decoder(z, training=False)
+        loss = self.rec_fn(x, x_hat)
         self.loss_tracker.update_state(loss)
         return {m.name: m.result() for m in self.metrics}
 
@@ -64,16 +64,42 @@ class TCNAE(tf.keras.Model):
         ]
 
     @tf.function
-    def call(self, X, **kwargs):
-        Z = self.encoder(X)
-        X_hat = self.decoder(Z)
-        return X_hat, Z
+    def call(self, x, **kwargs):
+        z = self.encoder(x, training=False)
+        x_hat = self.decoder(z, training=False)
+        return x_hat, z
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "encoder": self.encoder.get_config(),
+            "decoder": self.decoder.get_config(),
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        encoder = TCNAE_Encoder.from_config(config["encoder"])
+        decoder = TCNAE_Decoder.from_config(config["decoder"])
+        return cls(encoder=encoder, decoder=decoder)
 
 
+@tf.keras.saving.register_keras_serializable(package="TCNAE")
 class TCNAE_Encoder(tf.keras.Model):
-    def __init__(self, seq_len, latent_dim, features, hidden_units, dilations, kernel_size, padding, sampling_factor, seed):
-        super(TCNAE_Encoder, self).__init__()
-
+    def __init__(
+            self,
+            seq_len: int,
+            latent_dim: int,
+            features: int,
+            hidden_units: int,
+            dilations: list,
+            kernel_size: int,
+            padding: str,
+            sampling_factor: int,
+            seed: int,
+            name: str = None,
+    ) -> None:
+        super(TCNAE_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
         self.latent_dim = latent_dim
         self.features = features
@@ -89,24 +115,67 @@ class TCNAE_Encoder(tf.keras.Model):
         enc_input = tfkl.Input(shape=(self.seq_len, self.features))
         e = enc_input
         dil_layers = []
-        for k in self.dilations:
-            e = tfkl.Conv1D(filters=self.hidden_units*4, kernel_size=self.kernel_size, activation="relu", padding=self.padding, dilation_rate=k)(e)
+        for diltation_size in self.dilations:
+            e = tfkl.Conv1D(filters=self.hidden_units * 4, kernel_size=self.kernel_size, activation="relu", padding=self.padding, dilation_rate=diltation_size)(e)
             e = tfkl.Conv1D(filters=self.hidden_units, kernel_size=1, activation="relu", padding=self.padding)(e)
             dil_layers.append(e)
         e = tfkl.Concatenate(axis=-1)(dil_layers)
-        enc_flat = tfkl.Conv1D(filters=self.latent_dim, kernel_size=self.kernel_size, activation="relu", padding=self.padding)(e)
-        enc_output = tfkl.MaxPooling1D(pool_size=self.sampling_factor, strides=None, padding='valid')(enc_flat)
-        return tf.keras.Model(enc_input, enc_output, name="encoder")
+        enc_flattened = tfkl.Conv1D(filters=self.latent_dim, kernel_size=self.kernel_size, activation="relu", padding=self.padding)(e)
+        enc_output = tfkl.MaxPooling1D(pool_size=self.sampling_factor, strides=None, padding='valid')(enc_flattened)
+        return tf.keras.Model(enc_input, enc_output)
 
     @tf.function
-    def call(self, inputs, **kwargs):
-        return self.encoder(inputs, **kwargs)
+    def call(self, x, **kwargs):
+        return self.encoder(x, **kwargs)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "seq_len": self.seq_len,
+            "latent_dim": self.latent_dim,
+            "features": self.features,
+            "hidden_units": self.hidden_units,
+            "dilations": self.dilations,
+            "kernel_size": self.kernel_size,
+            "padding": self.padding,
+            "sampling_factor": self.sampling_factor,
+            "seed": self.seed,
+            "name": self.name,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        return cls(
+            seq_len=config['seq_len'],
+            latent_dim=config['latent_dim'],
+            features=config['features'],
+            hidden_units=config['hidden_units'],
+            dilations=config['dilations'],
+            kernel_size=config['kernel_size'],
+            padding=config['padding'],
+            sampling_factor=config['sampling_factor'],
+            seed=config['seed'],
+            name=config['name']
+        )
 
 
+@tf.keras.saving.register_keras_serializable(package="TCNAE")
 class TCNAE_Decoder(tf.keras.Model):
-    def __init__(self, seq_len, latent_dim, features, hidden_units, dilations, kernel_size, padding, sampling_factor, seed):
-        super(TCNAE_Decoder, self).__init__()
-
+    def __init__(
+            self,
+            seq_len: int,
+            latent_dim: int,
+            features: int,
+            hidden_units: int,
+            dilations: list,
+            kernel_size: int,
+            padding: str,
+            sampling_factor: int,
+            seed: int,
+            name: str = None,
+    ) -> None:
+        super(TCNAE_Decoder, self).__init__(name=name)
         self.seq_len = seq_len
         self.latent_dim = latent_dim
         self.features = features
@@ -122,17 +191,48 @@ class TCNAE_Decoder(tf.keras.Model):
         dec_input = tfkl.Input(shape=(self.seq_len // self.sampling_factor, self.latent_dim))
         d = tfkl.UpSampling1D(size=self.sampling_factor)(dec_input)
         dil_layers = []
-        for k in reversed(self.dilations):
-            d = tfkl.Conv1DTranspose(filters=self.hidden_units*4, kernel_size=self.kernel_size, activation="relu", padding=self.padding, dilation_rate=k)(d)
+        for dilation_size in reversed(self.dilations):
+            d = tfkl.Conv1DTranspose(filters=self.hidden_units * 4, kernel_size=self.kernel_size, activation="relu", padding=self.padding, dilation_rate=dilation_size)(d)
             d = tfkl.Conv1DTranspose(filters=self.hidden_units, kernel_size=1, activation="relu", padding=self.padding)(d)
             dil_layers.append(d)
         d = tfkl.Concatenate(axis=-1)(dil_layers)
         dec_output = tfkl.Conv1D(filters=self.features, kernel_size=1, activation='linear', padding=self.padding)(d)
-        return tf.keras.Model(dec_input, dec_output, name="decoder")
+        return tf.keras.Model(dec_input, dec_output)
 
     @tf.function
     def call(self, inputs, **kwargs):
         return self.decoder(inputs, **kwargs)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "seq_len": self.seq_len,
+            "latent_dim": self.latent_dim,
+            "features": self.features,
+            "hidden_units": self.hidden_units,
+            "dilations": self.dilations,
+            "kernel_size": self.kernel_size,
+            "padding": self.padding,
+            "sampling_factor": self.sampling_factor,
+            "seed": self.seed,
+            "name": self.name,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config, **kwargs):
+        return cls(
+            seq_len=config['seq_len'],
+            latent_dim=config['latent_dim'],
+            features=config['features'],
+            hidden_units=config['hidden_units'],
+            dilations=config['dilations'],
+            kernel_size=config['kernel_size'],
+            padding=config['padding'],
+            sampling_factor=config['sampling_factor'],
+            seed=config['seed'],
+            name=config['name']
+        )
 
 
 if __name__ == "__main__":
