@@ -47,7 +47,7 @@ for model_seed in range(1, 6):
             data_load_path = os.path.join(data_path, '2_preprocessed', 'semisupervised', 'fold_' + str(fold_idx))
         model_load_path = os.path.join(model_path, model_name)
 
-        processor = detection_class.AnomalyDetector(
+        detector = detection_class.AnomalyDetector(
             model_path=model_load_path,
             window_size=256,
             sampling_rate=2,
@@ -56,26 +56,26 @@ for model_seed in range(1, 6):
         )
 
         # Load data
-        val_list = processor.load_pickle(os.path.join(data_load_path, 'val.pkl'))
-        test_list = processor.load_pickle(os.path.join(data_load_path, 'test.pkl'))
+        val_list = detector.load_pickle(os.path.join(data_load_path, 'val.pkl'))
+        test_list = detector.load_pickle(os.path.join(data_load_path, 'test.pkl'))
 
         # Check if detection scores and outputs are already saved else do inference
-        val_detection_score_list = processor.load_pickle(os.path.join(model_load_path, 'val_detection_score.pkl'))
-        val_output = processor.load_pickle(os.path.join(model_load_path, 'val_output.pkl'))
+        val_detection_score_list = detector.load_pickle(os.path.join(model_load_path, 'val_detection_score.pkl'))
+        val_output = detector.load_pickle(os.path.join(model_load_path, 'val_output.pkl'))
 
         # Check if detection scores and outputs are already saved else do inference
-        test_detection_score_list = processor.load_pickle(os.path.join(model_load_path, 'test_detection_score.pkl'))
-        test_output = processor.load_pickle(os.path.join(model_load_path, 'test_output.pkl'))
+        test_detection_score_list = detector.load_pickle(os.path.join(model_load_path, 'test_detection_score.pkl'))
+        test_output = detector.load_pickle(os.path.join(model_load_path, 'test_output.pkl'))
 
-        groundtruth_labels, groundtruth_start_list = processor.extract_groundtruth(
+        groundtruth_labels, groundtruth_start_list = detector.extract_groundtruth(
             test_list,
             label_keyword='normal',
         )
 
         # Evaluate the model
-        threshold = processor.unsupervised_threshold(val_detection_score_list)
+        threshold = detector.unsupervised_threshold(val_detection_score_list)
 
-        predicted_labels, total_delays = processor.evaluate(
+        predicted_labels, total_delays = detector.evaluate(
             input_list=test_list,
             detection_score_list=test_detection_score_list,
             threshold=threshold,
@@ -98,7 +98,7 @@ for model_seed in range(1, 6):
         percentile_array = np.arange(0, 100.01, 0.01)
         for threshold_percentile in percentile_array:
             threshold_temp = np.percentile(reduced_test_detection_score, threshold_percentile)
-            predicted_labels, _ = processor.evaluate(
+            predicted_labels, _ = detector.evaluate(
                 input_list=test_list,
                 detection_score_list=test_detection_score_list,
                 threshold=threshold_temp,
@@ -109,7 +109,7 @@ for model_seed in range(1, 6):
         f1_list = np.vstack(f1_list)
         threshold_best = np.percentile(reduced_test_detection_score, percentile_array[np.argmax(f1_list)]).astype(float)
 
-        predicted_labels_best, total_delays_best = processor.evaluate(
+        predicted_labels_best, total_delays_best = detector.evaluate(
             input_list=test_list,
             detection_score_list=test_detection_score_list,
             threshold=threshold_best,
