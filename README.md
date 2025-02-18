@@ -33,12 +33,14 @@ Note that to generate the data set, [Matlab](https://www.mathworks.com/products/
 The Matlab version used for simulation is 23.2, which applies to Simulink and all toolboxes as well. After simulation all processes (data processing, model training, inference, evaluation) are done using Python 3.10. 
 
 ## Data Set Download
-The data set and consists of three states, each with a folder associated with it:
+The data set consists of three states, each with a folder associated with it:
 - `0_simulation`, where the raw simulation output is saved
 - `1_postsim`, where files are saved after post-simulation processing 
 - `2_preprocessed`, where files are saved after downsampling, standardising, and windowing
 
-The contents of the `1_postsim` folder can be found on [Zenodo](https://zenodo.org/records/13255121), which consists of the following pickle files:
+The contents of the `0_simulation` and `1_postsim` folders can be found on [Zenodo](https://zenodo.org/records/13255121).
+`0_simulation` just consists of multiple `.mat` files, each representing a multivariate time series.
+`1_postsim` consists of the following pickle files:
 - `normal.pkl`, which contains all nominal sequences 
 - `anomalous.pkl`, which contains all anomalous sequences 
 - `control.pkl`, which contains all control-counterparts to anomalous.pkl
@@ -47,14 +49,13 @@ The contents of the `1_postsim` folder can be found on [Zenodo](https://zenodo.o
 - `testing.pkl`, which contains all pre-determined folds for testing
 - `testing_clean.pkl`, a version of testing.pkl without anomalous sequences
 
-Each pickle file is a list of several 2D NumPy arrays, each representing a multivariate time series. The name of the corresponding .mat file (and, by extension, the label) is present in the metadata. For NumPy object `array`, it can be read by calling `array.dtype.metadata['file_name']`.
+Each pickle file is a list of several 2D NumPy arrays, each representing a multivariate time series. The name of the corresponding `.mat` file (and, by extension, the label) is present in the metadata. For NumPy object `array`, it can be read by calling `array.dtype.metadata['file_name']`.
 
-The raw simulation output sequences in the `0_simulation` folder are not provided due to data host limitations.
 We decided to omit the data belonging to the `2_preprocessed` folder as the contents are specific to the TensorFlow data pipeline and the same data host limitations would apply. If needed, the contents can be obtained by running `1_data.py`; for more details, see the **Reproducing Results** section below.
 
 ## Reproducing Results 
 Working scripts for `OmniAnomaly`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can be found in the `src` folder: 
-- `0_postsim.py` performs post simulation processing (trimming, adding noise, comparing with control simulations, splitting into folds and training/test subsets) on outputs of the simulation (.mat files). This script is only relevant if you want to generate the data set yourself and want to process it after simulation.
+- `0_postsim.py` performs post simulation processing (trimming, adding noise, comparing with control simulations, splitting into folds and training/test subsets) on outputs of the simulation (`.mat` files). This script is only relevant if you want to generate the data set yourself and want to process it after simulation.
 - `1_data.py` performs data processing prior to training (downsampling, standardising, windowing, converting to tf.data).
 - `2_training.py` performs model training.
 - `3_inference.py` does the inference on the validation and testing subsets.
