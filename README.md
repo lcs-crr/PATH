@@ -15,7 +15,7 @@ Simulation is both financially and computationally expensive, but if you do real
 
 The scripts are written to leverage multi-core CPUs to run multiple simulations at once.
 
-Each simulation yields a multivariate time series and is saved as a .mat file in the format `A_B_C_D_E.mat`, where:
+Each simulation yields a multivariate time series and is saved as a `.mat` file in the format `A_B_C_D_E.mat`, where:
 - `A` = drive cycle
 - `B` = battery temperature in °C multiplied by 10
 - `C` = battery state of charge in % multiplied by 10
@@ -33,12 +33,12 @@ Note that to generate the data set, [Matlab](https://www.mathworks.com/products/
 The Matlab version used for simulation is 23.2, which applies to Simulink and all toolboxes as well. After simulation all processes (data processing, model training, inference, evaluation) are done using Python 3.10. 
 
 ## Data Set Download
-The data set and consists of three states, each with a folder associated with it:
+The data set consists of three states, each with a folder associated with it:
 - `0_simulation`, where the raw simulation output is saved
 - `1_postsim`, where files are saved after post-simulation processing 
 - `2_preprocessed`, where files are saved after downsampling, standardising, and windowing
 
-The contents of the `1_postsim` folder can be found on [Zenodo](https://zenodo.org/records/13255121), which consists of the following pickle files:
+The contents of `1_postsim` folder can be found on [Zenodo](https://zenodo.org/records/13255121) and consists of the following pickle files:
 - `normal.pkl`, which contains all nominal sequences 
 - `anomalous.pkl`, which contains all anomalous sequences 
 - `control.pkl`, which contains all control-counterparts to anomalous.pkl
@@ -47,14 +47,13 @@ The contents of the `1_postsim` folder can be found on [Zenodo](https://zenodo.o
 - `testing.pkl`, which contains all pre-determined folds for testing
 - `testing_clean.pkl`, a version of testing.pkl without anomalous sequences
 
-Each pickle file is a list of several 2D NumPy arrays, each representing a multivariate time series. The name of the corresponding .mat file (and, by extension, the label) is present in the metadata. For NumPy object `array`, it can be read by calling `array.dtype.metadata['file_name']`.
+Each pickle file is a list of several 2D NumPy arrays, each representing a multivariate time series. The name of the corresponding `.mat` file (and, by extension, the label) is present in the metadata. For NumPy object `array`, it can be read by calling `array.dtype.metadata['file_name']`.
 
-The raw simulation output sequences in the `0_simulation` folder are not provided due to data host limitations.
-We decided to omit the data belonging to the `2_preprocessed` folder as the contents are specific to the TensorFlow data pipeline and the same data host limitations would apply. If needed, the contents can be obtained by running `1_data.py`; for more details, see the **Reproducing Results** section below.
+The raw simulation output sequences in the `0_simulation` folder are not provided due to the Zenodo file number limit of 100 files. We decided to omit the data belonging to the `2_preprocessed` folder as the contents are specific to the TensorFlow data pipeline and the same data host limitations would apply. If needed, the contents can be obtained by running `1_data.py`; for more details, see the **Reproducing Results** section below.
 
 ## Reproducing Results 
 Working scripts for `OmniAnomaly`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can be found in the `src` folder: 
-- `0_postsim.py` performs post simulation processing (trimming, adding noise, comparing with control simulations, splitting into folds and training/test subsets) on outputs of the simulation (.mat files). This script is only relevant if you want to generate the data set yourself and want to process it after simulation.
+- `0_postsim.py` performs post simulation processing (trimming, adding noise, comparing with control simulations, splitting into folds and training/test subsets) on outputs of the simulation (`.mat` files). This script is only relevant if you want to generate the data set yourself and want to process it after simulation.
 - `1_data.py` performs data processing prior to training (downsampling, standardising, windowing, converting to tf.data).
 - `2_training.py` performs model training.
 - `3_inference.py` does the inference on the validation and testing subsets.
@@ -64,7 +63,7 @@ Working scripts for `OmniAnomaly`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can
 
 The remaining scripts can be executed in that order to obtain the results in the paper.
 
-Utility functions can be found in the `ts_processor` script in the `ts_functions` folder in this repository.
+Utility functions can be found in the `utilities` folder in this repository. It contains all the classes and the corresponding methods used throughout this work.
 
 Custom model classes for each of the tested approaches can be found in the `model_garden` folder in this repository.
 
@@ -73,3 +72,6 @@ Typically, a `.env` file should be excluded from version control, though we have
 `requirements.txt` (venv) and `pyprojects.toml` (uv) contain all libraries used.
 
 `TSADIS` requires a separate environment on Python 3.9 due to incompatibility with Pyton 3.10. See README.md in the `tsadis` folder in this repository for more details.
+
+## Questions?
+If any questions or doubts persist, feel free to contact `Lucas Correia` via [Email](mailto:l.ferreira.correia@liacs.leidenuniv.nl) or [LinkedIn](https://www.linkedin.com/in/lcs-crr/).
