@@ -74,3 +74,6 @@ Typically, a `.env` file should be excluded from version control, though we have
 `requirements.txt` (venv) and `pyprojects.toml` (uv) contain all libraries used.
 
 `TSADIS` requires a separate environment on Python 3.9 due to incompatibility with Pyton 3.10. See README.md in the `tsadis` folder in this repository for more details.
+
+## Questions?
+If any questions or doubts persist, feel free to contact `Lucas Correia` via [Email](mailto:l.ferreira.correia@liacs.leidenuniv.nl) or [LinkedIn](https://www.linkedin.com/in/lcs-crr/).
