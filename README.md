@@ -15,7 +15,7 @@ Simulation is both financially and computationally expensive, but if you do real
 
 The scripts are written to leverage multi-core CPUs to run multiple simulations at once.
 
-Each simulation yields a multivariate time series and is saved as a .mat file in the format `A_B_C_D_E.mat`, where:
+Each simulation yields a multivariate time series and is saved as a `.mat` file in the format `A_B_C_D_E.mat`, where:
 - `A` = drive cycle
 - `B` = battery temperature in °C multiplied by 10
 - `C` = battery state of charge in % multiplied by 10
