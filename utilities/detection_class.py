@@ -16,7 +16,8 @@ class AnomalyDetector(base_class.BaseProcessor):
             window_size: int = None,
             sampling_rate: int = None,
             original_sampling_rate: int = None,
-            calculate_delay: bool = None
+            calculate_delay: bool = None,
+            reverse_window_penalty: bool = True,
     ) -> None:
         """
         This class comprises all required functions to evaluate the anomaly detection performance of a given model.
@@ -26,7 +27,7 @@ class AnomalyDetector(base_class.BaseProcessor):
         :param sampling_rate: sampling rate of input signal
         :param original_sampling_rate: sampling rate of the original data
         :param calculate_delay: boolean indicating to calculate delay
-
+        :param reverse_window_penalty: boolean indicating to apply reverse window penalty
         """
 
         super().__init__()
@@ -35,6 +36,7 @@ class AnomalyDetector(base_class.BaseProcessor):
         self.sampling_rate = sampling_rate
         self.original_sampling_rate = original_sampling_rate
         self.calculate_delay = calculate_delay
+        self.reverse_window_penalty = reverse_window_penalty
 
     @staticmethod
     def unsupervised_threshold(
@@ -145,7 +147,6 @@ class AnomalyDetector(base_class.BaseProcessor):
 
         assert self.sampling_rate is not None, 'sampling_rate must be provided!'
         assert self.original_sampling_rate is not None, 'original_sampling_rate must be provided!'
-        assert self.calculate_delay is not None, 'calculate_delay must be provided!'
 
         total_delays = []
         predicted_labels = []
@@ -157,7 +158,6 @@ class AnomalyDetector(base_class.BaseProcessor):
                 # >0 time steps in anomaly score higher than threshold
                 # False positive
                 if np.sum(detection_score >= threshold) > 0:
-                    predicted_anomaly_start = np.argwhere(detection_score >= threshold)[0][0]
                     predicted_labels.append(True)
                 # =0 time steps in anomaly score higher than threshold
                 # True negative
@@ -175,16 +175,16 @@ class AnomalyDetector(base_class.BaseProcessor):
                     # True positive
                     if predicted_anomaly_start >= groundtruth_start:
                         predicted_labels.append(True)
-                        if self.calculate_delay:
-                            delay, _ = self._find_detection_delay(detection_score, threshold, len(detection_score), groundtruth_start)
-                            total_delays.append(delay)
                     # First predicted anomalous time step is before the groundtruth anomaly start
                     # False positive
                     else:
                         predicted_labels.append(True)
-                        if self.calculate_delay:
+                    if self.calculate_delay:
+                        if self.reverse_window_penalty:
                             delay, _ = self._find_detection_delay(detection_score, threshold, len(detection_score), groundtruth_start)
-                            total_delays.append(delay)
+                        else:
+                            delay = abs(predicted_anomaly_start - groundtruth_start) / self.sampling_rate
+                        total_delays.append(delay)
                 # =0 time steps in anomaly score higher than threshold
                 # False negative
                 else:

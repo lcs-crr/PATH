@@ -231,7 +231,7 @@ class Inferencer(base_class.BaseProcessor):
             'tcnae': self._tcnae_inference,
             'sisvae': self._sisvae_inference,
             'omnianomaly': self._omnianomaly_inference,
-            'lwvae': self._lwvae_inference
+            'lwvae': self._lwvae_inference,
         }
 
         model_name = self._get_model_name_from_path()
