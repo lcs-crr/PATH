@@ -65,7 +65,7 @@ Working scripts for `OmniAnomaly`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can
 
 The remaining scripts can be executed in that order to obtain the results in the paper.
 
-Utility functions can be found in the `ts_processor` script in the `ts_functions` folder in this repository.
+Utility functions can be found in the `utilities` folder in this repository. It contains all the classes and the corresponding methods used throughout this work.
 
 Custom model classes for each of the tested approaches can be found in the `model_garden` folder in this repository.
 
