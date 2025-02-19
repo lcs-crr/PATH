@@ -8,7 +8,6 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import random
 from dotenv import dotenv_values
 from model_garden.tevae import *
 from model_garden.tcnae import *
@@ -28,7 +27,6 @@ for seed in range(1, 6):
     MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae'
 
     # Set fixed seed for random operations
-    random.seed(seed)
     np.random.seed(seed)
     tf.random.set_seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)

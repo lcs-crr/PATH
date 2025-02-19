@@ -8,7 +8,6 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
-import random
 import numpy as np
 import tensorflow as tf
 from dotenv import dotenv_values
@@ -22,7 +21,6 @@ AD_MODE = 'us'  # or 'ss'
 MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae'
 
 # Set fixed seed for random operations
-random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 os.environ['PYTHONHASHSEED'] = str(SEED)

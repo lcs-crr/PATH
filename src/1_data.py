@@ -10,7 +10,6 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import numpy as np
 import tensorflow as tf
-import random
 import math
 from sklearn.model_selection import train_test_split
 from dotenv import dotenv_values
@@ -23,7 +22,6 @@ FREQ_ORIG = 10
 AD_MODE = 'us'  # or 'ss'
 
 # Set fixed seed for random operations
-random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 os.environ['PYTHONHASHSEED'] = str(SEED)

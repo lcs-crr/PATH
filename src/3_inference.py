@@ -21,7 +21,6 @@ AD_MODE = 'us'  # or 'ss'
 MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae'
 
 # Set fixed seed for random operations
-random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 os.environ['PYTHONHASHSEED'] = str(SEED)
