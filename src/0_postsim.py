@@ -11,7 +11,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import scipy
 import numpy as np
 import random
-import tensorflow as tf
 from sklearn.model_selection import RepeatedKFold
 from dotenv import dotenv_values
 from utilities import data_class
@@ -22,7 +21,6 @@ SEED = 1
 # Set fixed seed for random operations
 random.seed(SEED)
 np.random.seed(SEED)
-tf.random.set_seed(SEED)
 os.environ['PYTHONHASHSEED'] = str(SEED)
 
 # Load variables in .env file
