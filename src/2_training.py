@@ -6,7 +6,7 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from dotenv import dotenv_values
 from model_garden.tevae import *
@@ -21,7 +21,7 @@ print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 
 # tf.config.run_functions_eagerly(True)
 
-for seed in range(1, 6):
+for seed in range(1, 4):
     # Declare constants
     AD_MODE = 'us'  # or 'ss'
     MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae'
@@ -74,7 +74,7 @@ for seed in range(1, 6):
             if MODEL_NAME == 'tevae':
                 latent_dim = features // 2
                 key_dim = features // 8
-                hidden_units = features * 16
+                hidden_units = features * 8
                 encoder = TEVAE_Encoder(seq_len=window_size, latent_dim=latent_dim, features=features, hidden_units=hidden_units, seed=seed)
                 decoder = TEVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, features=features, hidden_units=hidden_units, seed=seed)
                 ma = MA(seq_len=window_size, latent_dim=latent_dim, key_dim=key_dim, features=features)
@@ -121,7 +121,7 @@ for seed in range(1, 6):
 
         # Fit vae model
         history = model.fit(tfdata_train,
-                            epochs=1,
+                            epochs=10000,
                             callbacks=callback_list,
                             validation_data=tfdata_val,
                             verbose=2
