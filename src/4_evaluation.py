@@ -13,6 +13,7 @@ from dotenv import dotenv_values
 from utilities import detection_class
 from sklearn import metrics
 import pandas as pd
+import openpyxl
 
 # Declare constants
 SEED = 1

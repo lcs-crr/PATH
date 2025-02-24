@@ -21,7 +21,7 @@ print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 
 # tf.config.run_functions_eagerly(True)
 
-for seed in range(1, 4):
+for seed in range(1, 6):
     # Declare constants
     AD_MODE = 'us'  # or 'ss'
     MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae'
@@ -74,7 +74,7 @@ for seed in range(1, 4):
             if MODEL_NAME == 'tevae':
                 latent_dim = features // 2
                 key_dim = features // 8
-                hidden_units = features * 8
+                hidden_units = features * 16
                 encoder = TEVAE_Encoder(seq_len=window_size, latent_dim=latent_dim, features=features, hidden_units=hidden_units, seed=seed)
                 decoder = TEVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, features=features, hidden_units=hidden_units, seed=seed)
                 ma = MA(seq_len=window_size, latent_dim=latent_dim, key_dim=key_dim, features=features)
