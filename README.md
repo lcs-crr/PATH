@@ -1,6 +1,6 @@
 # PATH: A Dataset for Evaluating Online Anomaly Detection Approaches for Discrete Multivariate Time Series
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13255121.svg)](https://doi.org/10.5281/zenodo.13255121)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13255120.svg)](https://doi.org/10.5281/zenodo.13255120)
 
 We propose a diverse, extensive, and non-trivial data set generated via state-of-the-art simulation tools that reflect realistic behaviour of an automotive powertrain, including its multivariate, dynamic and variable-state properties. 
 To cater for both unsupervised and semi-supervised anomaly detection settings, as well as time series generation and forecasting, different versions of the data set are made available, where training and test subsets are offered in contaminated and clean versions, depending on the task.
@@ -30,7 +30,7 @@ Note that to generate the data set, [Matlab](https://www.mathworks.com/products/
 - [Simscape Fluids](https://de.mathworks.com/products/simscape-fluids.html)
 - [Simscape Electric Plant](https://www.mathworks.com/products/simscape-electrical.html)
 
-The Matlab version used for simulation is 23.2, which applies to Simulink and all toolboxes as well. After simulation all processes (data processing, model training, inference, evaluation) are done using Python 3.10. 
+For simulation `Matlab 23.2` was used, which applies to Simulink and all toolboxes as well. After simulation all processes (data processing, model training, inference, evaluation) are done using `Python 3.10`. 
 
 ## Data Set Download
 The data set consists of three states, each with a folder associated with it:
@@ -38,7 +38,7 @@ The data set consists of three states, each with a folder associated with it:
 - `1_postsim`, where files are saved after post-simulation processing 
 - `2_preprocessed`, where files are saved after downsampling, standardising, and windowing
 
-The contents of `1_postsim` folder can be found on [Zenodo](https://zenodo.org/records/13255121) and consists of the following pickle files:
+The `0_simulation` and `1_postsim` folders can be found on [Zenodo](https://doi.org/10.5281/zenodo.13255120). The `0_simulation` folder consists of the raw `.mat` files, each representing a multivariate time series, whereas the `1_postsim folder` consists of the following pickle files:
 - `normal.pkl`, which contains all nominal sequences 
 - `anomalous.pkl`, which contains all anomalous sequences 
 - `control.pkl`, which contains all control-counterparts to anomalous.pkl
@@ -49,7 +49,7 @@ The contents of `1_postsim` folder can be found on [Zenodo](https://zenodo.org/r
 
 Each pickle file is a list of several 2D NumPy arrays, each representing a multivariate time series. The name of the corresponding `.mat` file (and, by extension, the label) is present in the metadata. For NumPy object `array`, it can be read by calling `array.dtype.metadata['file_name']`.
 
-The raw simulation output sequences in the `0_simulation` folder are not provided due to the Zenodo file number limit of 100 files. We decided to omit the data belonging to the `2_preprocessed` folder as the contents are specific to the TensorFlow data pipeline and the same data host limitations would apply. If needed, the contents can be obtained by running `1_data.py`; for more details, see the **Reproducing Results** section below.
+We decided to omit the data belonging to the `2_preprocessed` folder as the contents are specific to the TensorFlow data pipeline and the same data host limitations would apply. If needed, the contents can be obtained by running `1_data.py`; for more details, see the **Reproducing Results** section below.
 
 ## Reproducing Results 
 Working scripts for `OmniAnomaly`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can be found in the `src` folder: 
