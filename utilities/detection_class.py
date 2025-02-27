@@ -18,6 +18,7 @@ class AnomalyDetector(base_class.BaseProcessor):
             original_sampling_rate: int = None,
             calculate_delay: bool = None,
             reverse_window_penalty: bool = True,
+            label_keyword: str = 'normal',
     ) -> None:
         """
         This class comprises all required functions to evaluate the anomaly detection performance of a given model.
@@ -28,6 +29,7 @@ class AnomalyDetector(base_class.BaseProcessor):
         :param original_sampling_rate: sampling rate of the original data
         :param calculate_delay: boolean indicating to calculate delay
         :param reverse_window_penalty: boolean indicating to apply reverse window penalty
+        :param label_keyword: label to identify nominal data
         """
 
         super().__init__()
@@ -37,6 +39,7 @@ class AnomalyDetector(base_class.BaseProcessor):
         self.original_sampling_rate = original_sampling_rate
         self.calculate_delay = calculate_delay
         self.reverse_window_penalty = reverse_window_penalty
+        self.label_keyword = label_keyword
 
     @staticmethod
     def unsupervised_threshold(
@@ -93,26 +96,21 @@ class AnomalyDetector(base_class.BaseProcessor):
         delay = abs((time_step_detection + rev_window_penalty - anomaly_start) / self.sampling_rate)
         return delay, time_step_detection + rev_window_penalty
 
-    def extract_groundtruth(
+    def _extract_groundtruth(
             self,
             input_list: List[np.ndarray],
-            label_keyword: str = None,
     ) -> Tuple[List[int], List[float]]:
         """
         This function extracts the groundtruth labels and start times from the file names.
 
         :param input_list: list of multivariate time series, each of shape (number_of_timesteps, channels)
-        :param label_keyword: label to identify nominal data
-        :return:
         """
 
         assert isinstance(input_list, list), 'input_list must be a list!'
         assert all(isinstance(input_array, np.ndarray) for input_array in input_list), 'All items in input_list must be numpy arrays!'
-        assert all(input_array.ndim == 2 for input_array in input_list), 'All items in input_list must be 2D numpy arrays!'
-        assert isinstance(label_keyword, str), 'label_keyword must be a string!'
 
-        groundtruth_labels = [data_ts.dtype.metadata['file_name'].split('_')[-2] != label_keyword for idx_data, data_ts in enumerate(input_list)]
-        groundtruth_start_list = [int(data_ts.dtype.metadata['file_name'].split('_')[-1].split('.')[0]) / (self.original_sampling_rate / self.sampling_rate) for
+        groundtruth_labels = [data_ts.dtype.metadata['file_name'].split('_')[-2] != self.label_keyword for idx_data, data_ts in enumerate(input_list)]
+        groundtruth_start_list = [int(data_ts.dtype.metadata['file_name'].split('_')[-1].split('.')[0]) // (self.original_sampling_rate / self.sampling_rate) for
                                   idx_data, data_ts in enumerate(input_list)]
         return groundtruth_labels, groundtruth_start_list
 
@@ -121,17 +119,13 @@ class AnomalyDetector(base_class.BaseProcessor):
             input_list: List[np.ndarray],
             detection_score_list: List[np.ndarray],
             threshold: float = None,
-            groundtruth_labels: List[int] = None,
-            groundtruth_start_list: List[float] = None,
-    ) -> Tuple[List[int], List[float]]:
+    ) -> Tuple[List[int], List[int], List[float]]:
         """
         This function evaluates the anomaly detection performance of a given model.
 
         :param input_list: list of multivariate time series, each of shape (number_of_timesteps, channels)
         :param detection_score_list: list of detection scores, each of shape (number_of_timesteps, channels)
         :param threshold: detection threshold
-        :param groundtruth_labels: list of groundtruth labels
-        :param groundtruth_start_list: list of groundtruth anomaly start times
         """
 
         assert isinstance(input_list, list), 'input_list must be a list!'
@@ -140,13 +134,11 @@ class AnomalyDetector(base_class.BaseProcessor):
         assert isinstance(detection_score_list, list), 'detection_score_list must be a list!'
         assert all(isinstance(detection_score, np.ndarray) for detection_score in detection_score_list), 'All items in detection_score_list must be numpy arrays!'
         assert isinstance(threshold, float), 'threshold must be a float!'
-        assert isinstance(groundtruth_labels, list), 'groundtruth_labels must be a list!'
-        assert all(isinstance(groundtruth_label, int) for groundtruth_label in groundtruth_labels), 'All items in groundtruth_labels must be integers!'
-        assert isinstance(groundtruth_start_list, list), 'groundtruth_start_list must be a list!'
-        assert all(isinstance(groundtruth_start, float) for groundtruth_start in groundtruth_start_list), 'All items in groundtruth_start_list must be floats!'
 
         assert self.sampling_rate is not None, 'sampling_rate must be provided!'
         assert self.original_sampling_rate is not None, 'original_sampling_rate must be provided!'
+
+        groundtruth_labels, groundtruth_start_list = self._extract_groundtruth(input_list)
 
         total_delays = []
         predicted_labels = []
@@ -178,7 +170,7 @@ class AnomalyDetector(base_class.BaseProcessor):
                     # First predicted anomalous time step is before the groundtruth anomaly start
                     # False positive
                     else:
-                        predicted_labels.append(True)
+                        predicted_labels.append(np.NaN)  # Append np.Nan to indicate change to groundtruth labels
                     if self.calculate_delay:
                         if self.reverse_window_penalty:
                             delay, _ = self._find_detection_delay(detection_score, threshold, len(detection_score), groundtruth_start)
@@ -192,4 +184,30 @@ class AnomalyDetector(base_class.BaseProcessor):
                     if self.calculate_delay:
                         delay = (len(detection_score) - groundtruth_start) / self.sampling_rate
                         total_delays.append(delay)
-        return predicted_labels, total_delays
+
+        groundtruth_labels, predicted_labels = self._correct_labels(groundtruth_labels, predicted_labels)
+
+        return groundtruth_labels, predicted_labels, total_delays
+
+    @staticmethod
+    def _correct_labels(
+            groundtruth_labels: List[int],
+            predicted_labels: List[int],
+    ) -> Tuple[List[int], List[int]]:
+        """
+        This method finds false positives due to premature positive predictions and corrects groundtruth_labels and predicted_labels.
+
+        :param groundtruth_labels: List of groundtruth labels
+        :param predicted_labels: List of predicted labels
+        """
+
+        assert isinstance(groundtruth_labels, list), 'groundtruth_labels must be a list!'
+        assert all(isinstance(groundtruth_label, bool) for groundtruth_label in groundtruth_labels), 'All items in groundtruth_labels must be booleans!'
+        assert isinstance(predicted_labels, list), 'predicted_labels must be a list!'
+
+        nan_indices = np.where(np.isnan(predicted_labels))[0]
+        for nan_idx in nan_indices:
+            assert groundtruth_labels[nan_idx] is True
+            groundtruth_labels[nan_idx] = False
+            predicted_labels[nan_idx] = True
+        return groundtruth_labels, predicted_labels

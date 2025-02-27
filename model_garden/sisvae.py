@@ -59,7 +59,7 @@ class SISVAE(tf.keras.Model):
     @staticmethod
     def smooth_fn(z_params):
         z_mean, z_logvar = z_params
-        # Calculate KL Divergence between current latent distribution and t-1 latent distribution
+        # Calculate KL Divergence between t-1 latent distribution and current latent distribution
         smooth_loss = [
             tfd.Normal(loc=z_mean[:, time_step - 1], scale=tf.sqrt(tf.math.exp(z_logvar[:, time_step - 1]))).kl_divergence(
                 tfd.Normal(loc=z_mean[:, time_step], scale=tf.sqrt(tf.math.exp(z_logvar[:, time_step]))),
