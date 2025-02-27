@@ -92,7 +92,7 @@ for fold_idx in range(3):
 
     f1_list = []
     reduced_test_detection_score = np.concatenate(test_detection_score_list).ravel()
-    percentile_array = np.arange(0, 100.01, 0.01)
+    percentile_array = np.arange(0, 100.1, 0.1)
     for threshold_percentile in percentile_array:
         threshold_temp = np.percentile(reduced_test_detection_score, threshold_percentile)
         groundtruth_labels, predicted_labels, _ = detector.evaluate(
