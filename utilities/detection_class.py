@@ -195,7 +195,7 @@ class AnomalyDetector(base_class.BaseProcessor):
             predicted_labels: List[int],
     ) -> Tuple[List[int], List[int]]:
         """
-        This method finds false positives due to premature positive predictions and corrects groundtruth_labels and predicted_labels.
+        This method finds false positives due to premature positive predictions and corrects the corresponding labels in groundtruth_labels and predicted_labels.
 
         :param groundtruth_labels: List of groundtruth labels
         :param predicted_labels: List of predicted labels
