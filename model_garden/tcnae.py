@@ -55,7 +55,7 @@ class TCNAE(tf.keras.Model):
         x_hat = self.decoder(z, training=False)
         loss = self.rec_fn(x, x_hat)
         self.loss_tracker.update_state(loss)
-        return {m.name: m.result() for m in self.metrics}
+        return {m.name: m.result() for m in self.metrics if m.name == 'rec_loss'}
 
     @property
     def metrics(self):

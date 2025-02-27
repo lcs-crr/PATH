@@ -66,7 +66,7 @@ class SISVAE(tf.keras.Model):
             ) for time_step in range(1, z_mean.shape[1])
         ]
         smooth_loss = tf.transpose(tf.stack(smooth_loss), perm=[1, 0, 2])
-        return -tf.reduce_sum(smooth_loss, axis=(-1, -2))
+        return tf.reduce_sum(smooth_loss, axis=(-1, -2))
 
     def train_step(self, x, **kwargs):
         with tf.GradientTape() as tape:

@@ -3,7 +3,7 @@ Lucas Correia
 LIACS | Leiden University
 Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 
-Original paper DOI: 10.3390/s22082886
+Original paper DOI: 10.1016/j.engappai.2021.104354
 """
 
 import tensorflow as tf
@@ -13,8 +13,8 @@ tfkl = tf.keras.layers
 tfd = tfp.distributions
 
 
-@tf.keras.saving.register_keras_serializable(package="LWVAE")
-class LWVAE(tf.keras.Model):
+@tf.keras.saving.register_keras_serializable(package="VASP")
+class VASP(tf.keras.Model):
     def __init__(
             self,
             encoder: tf.keras.Model,
@@ -22,7 +22,7 @@ class LWVAE(tf.keras.Model):
             name: str = None,
             **kwargs
     ) -> None:
-        super(LWVAE, self).__init__(name=name, **kwargs)
+        super(VASP, self).__init__(name=name, **kwargs)
         self.encoder = encoder
         self.decoder = decoder
         self.loss_tracker = tf.keras.metrics.Mean(name="loss")
@@ -79,7 +79,7 @@ class LWVAE(tf.keras.Model):
         # Forward pass through encoder
         z_mean, z_logvar, z = self.encoder(x, training=False)
         # Forward pass through decoder
-        xhat = self.decoder(z, training=False)
+        xhat = self.decoder(z_mean, training=False)
         # Calculate losses from parameters
         rec_loss = self.rec_fn(x, xhat)
         kl_loss = self.kldiv_fn([z_mean, z_logvar])
@@ -101,7 +101,7 @@ class LWVAE(tf.keras.Model):
     @tf.function
     def call(self, x, **kwargs):
         z_mean, z_logvar, z = self.encoder(x, training=False)
-        xhat = self.decoder(z, training=False)
+        xhat = self.decoder(z_mean, training=False)
         return xhat, z_mean, z_logvar, z
 
     def get_config(self):
@@ -114,13 +114,13 @@ class LWVAE(tf.keras.Model):
 
     @classmethod
     def from_config(cls, config, **kwargs):
-        encoder = LWVAE_Encoder.from_config(config["encoder"])
-        decoder = LWVAE_Decoder.from_config(config["decoder"])
+        encoder = VASP_Encoder.from_config(config["encoder"])
+        decoder = VASP_Decoder.from_config(config["decoder"])
         return cls(encoder=encoder, decoder=decoder)
 
 
-@tf.keras.saving.register_keras_serializable(package="LWVAE")
-class LWVAE_Encoder(tf.keras.Model):
+@tf.keras.saving.register_keras_serializable(package="VASP")
+class VASP_Encoder(tf.keras.Model):
     def __init__(
             self,
             seq_len: int,
@@ -130,7 +130,7 @@ class LWVAE_Encoder(tf.keras.Model):
             seed: int,
             name: str = None,
     ) -> None:
-        super(LWVAE_Encoder, self).__init__(name=name)
+        super(VASP_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
         self.latent_dim = latent_dim
         self.features = features
@@ -140,9 +140,11 @@ class LWVAE_Encoder(tf.keras.Model):
 
     def build_encoder(self):
         enc_input = tfkl.Input(shape=(self.seq_len, self.features))
-        lstm = tfkl.LSTM(self.hidden_units, return_sequences=False)(enc_input)
-        z_mean = tfkl.Dense(self.latent_dim)(lstm)
-        z_logvar = tfkl.Dense(self.latent_dim)(lstm)
+        fc = tfkl.TimeDistributed(tfkl.Dense(80))(enc_input)
+        lstm = tfkl.LSTM(self.hidden_units, return_sequences=False, dropout=0.2, recurrent_dropout=0.1)(fc)
+        fc = tfkl.Dense(13)(lstm)
+        z_mean = tfkl.Dense(self.latent_dim)(fc)
+        z_logvar = tfkl.Dense(self.latent_dim)(fc)
         output_dist = tfd.Normal(loc=0., scale=1.)
         eps = output_dist.sample(tf.shape(z_mean), seed=self.seed)
         z = z_mean + tf.sqrt(tf.math.exp(z_logvar)) * eps
@@ -176,8 +178,8 @@ class LWVAE_Encoder(tf.keras.Model):
         )
 
 
-@tf.keras.saving.register_keras_serializable(package="LWVAE")
-class LWVAE_Decoder(tf.keras.Model):
+@tf.keras.saving.register_keras_serializable(package="VASP")
+class VASP_Decoder(tf.keras.Model):
     def __init__(
             self,
             seq_len: int,
@@ -187,7 +189,7 @@ class LWVAE_Decoder(tf.keras.Model):
             seed: int,
             name: str = None,
     ) -> None:
-        super(LWVAE_Decoder, self).__init__(name=name)
+        super(VASP_Decoder, self).__init__(name=name)
         self.seq_len = seq_len
         self.latent_dim = latent_dim
         self.features = features
@@ -197,8 +199,10 @@ class LWVAE_Decoder(tf.keras.Model):
 
     def build_decoder(self):
         latent_input = tfkl.Input(shape=(self.latent_dim,))
-        repeat_latent = tfkl.RepeatVector(self.seq_len)(latent_input)
-        lstm = tfkl.LSTM(self.hidden_units, return_sequences=True)(repeat_latent)
+        fc = (tfkl.Dense(13))(latent_input)
+        fc = (tfkl.Dense(self.hidden_units))(fc)
+        rep = tfkl.RepeatVector(self.seq_len)(fc)
+        lstm = tfkl.LSTM(self.hidden_units, return_sequences=True, dropout=0.2, recurrent_dropout=0.1)(rep)
         xhat = tfkl.TimeDistributed(tfkl.Dense(self.features))(lstm)
         return tf.keras.Model(latent_input, xhat)
 
