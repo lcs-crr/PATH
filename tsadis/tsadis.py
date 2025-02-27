@@ -71,20 +71,13 @@ for fold_idx in range(3):
         detection_score = get_score(kdps, 'sum')
         test_detection_score_list.append(detection_score)
 
-    groundtruth_labels, groundtruth_start_list = detector.extract_groundtruth(
-        test_list,
-        label_keyword='normal',
-    )
-
     # Evaluate the model
     threshold = detector.unsupervised_threshold(val_detection_score_list)
 
-    predicted_labels, total_delays = detector.evaluate(
+    groundtruth_labels, predicted_labels, total_delays = detector.evaluate(
         input_list=test_list,
         detection_score_list=test_detection_score_list,
         threshold=threshold,
-        groundtruth_labels=groundtruth_labels,
-        groundtruth_start_list=groundtruth_start_list
     )
 
     results.append({
@@ -102,31 +95,27 @@ for fold_idx in range(3):
     percentile_array = np.arange(0, 100.01, 0.01)
     for threshold_percentile in percentile_array:
         threshold_temp = np.percentile(reduced_test_detection_score, threshold_percentile)
-        predicted_labels, _ = detector.evaluate(
+        groundtruth_labels, predicted_labels, _ = detector.evaluate(
             input_list=test_list,
             detection_score_list=test_detection_score_list,
             threshold=threshold_temp,
-            groundtruth_labels=groundtruth_labels,
-            groundtruth_start_list=groundtruth_start_list
         )
         f1_list.append(metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0))
     f1_list = np.vstack(f1_list)
     threshold_best = np.percentile(reduced_test_detection_score, percentile_array[np.argmax(f1_list)]).astype(float)
 
-    predicted_labels_best, total_delays_best = detector.evaluate(
+    groundtruth_labels_best, predicted_labels_best, total_delays_best = detector.evaluate(
         input_list=test_list,
         detection_score_list=test_detection_score_list,
         threshold=threshold_best,
-        groundtruth_labels=groundtruth_labels,
-        groundtruth_start_list=groundtruth_start_list
     )
 
     results_best.append({
         'Seed': model_seed,
         'Fold': fold_idx,
-        'F1': metrics.f1_score(groundtruth_labels, predicted_labels_best, zero_division=0.0),
-        'Precision': metrics.precision_score(groundtruth_labels, predicted_labels_best, zero_division=0.0),
-        'Recall': metrics.recall_score(groundtruth_labels, predicted_labels_best, zero_division=0.0),
+        'F1': metrics.f1_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
+        'Precision': metrics.precision_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
+        'Recall': metrics.recall_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
         'Delay': np.mean(total_delays_best),
         'Threshold': threshold_best
     })
