@@ -6,7 +6,7 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 
 import os
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import random
 import numpy as np
@@ -18,7 +18,7 @@ from utilities import inference_class
 # Declare constants
 SEED = 1
 AD_MODE = 'us'  # or 'ss'
-MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae'
+MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae', 'vsvae', 'vasp'
 
 # Set fixed seed for random operations
 np.random.seed(SEED)
@@ -33,7 +33,7 @@ data_path = config['data_path']
 model_path = config['model_path']
 
 # Iterate over all seeds and folds
-for model_seed in range(1, 6):
+for model_seed in range(1, 4):
     for fold_idx in range(3):
         # Declare model name and paths
         model_name = MODEL_NAME + '_' + AD_MODE + '_' + str(fold_idx) + '_' + str(model_seed)
@@ -53,7 +53,7 @@ for model_seed in range(1, 6):
         val_list = inferencer.load_pickle(os.path.join(data_load_path, 'val.pkl'))
         test_list = inferencer.load_pickle(os.path.join(data_load_path, 'test.pkl'))
 
-        # Check if detection scores and outputs are already saved else do inference
+        # Inference
         subset_name = 'val'
         val_detection_score_list, val_output = inferencer.inference_list(
             val_list,
@@ -61,7 +61,7 @@ for model_seed in range(1, 6):
             save_inference_results=True
         )
 
-        # Check if detection scores and outputs are already saved else do inference
+        # Inference
         subset_name = 'test'
         test_detection_score_list, test_output = inferencer.inference_list(
             test_list,
