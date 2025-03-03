@@ -36,6 +36,7 @@ model_path = config['model_path']
 data_processor = data_class.DataProcessor(
     original_sampling_rate=FREQ_ORIG,
     target_sampling_rate=FREQ_TARGET,
+    scale_method='z-score'
 )
 
 # Specify paths for loading and saving data

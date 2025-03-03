@@ -8,7 +8,7 @@ dependencies = [
     'plotly',
     'python-dotenv',
     'scikit-learn',
-    'statsmodel',
+    'statsmodels',
     'tensorflow[and-cuda]==2.15.1',
     'tensorflow-probability==0.23.0',
     'tqdm',

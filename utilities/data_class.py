@@ -18,7 +18,7 @@ class DataProcessor(base_class.BaseProcessor):
             window_size: int = None,
             original_sampling_rate: int = None,
             target_sampling_rate: int = None,
-            scale_method: str = 'z-score',
+            scale_method: str = None,
             window_shift: Union[int, str] = 'half',
     ) -> None:
         """
@@ -94,6 +94,7 @@ class DataProcessor(base_class.BaseProcessor):
         assert isinstance(input_list, list), 'input_list argument must be a list!'
         assert all(isinstance(input_array, np.ndarray) for input_array in input_list), 'All items in input_list must be numpy arrays!'
         assert all(input_array.ndim == 2 for input_array in input_list), 'All items in input_list must be 2D numpy arrays!'
+        assert self.scale_method is not None, 'scale_method must be provided!'
 
         self._find_scalers_from_list(input_list)
 
