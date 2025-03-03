@@ -57,11 +57,11 @@ for model_seed in range(1, 4):
         val_list = detector.load_pickle(os.path.join(data_load_path, 'val.pkl'))
         test_list = detector.load_pickle(os.path.join(data_load_path, 'test.pkl'))
 
-        # Check if detection scores and outputs are already saved else do inference
+        # Load inference results for validation data
         val_detection_score_list = detector.load_pickle(os.path.join(model_load_path, 'val_detection_score.pkl'))
         val_output = detector.load_pickle(os.path.join(model_load_path, 'val_output.pkl'))
 
-        # Check if detection scores and outputs are already saved else do inference
+        # Load inference results for test data
         test_detection_score_list = detector.load_pickle(os.path.join(model_load_path, 'test_detection_score.pkl'))
         test_output = detector.load_pickle(os.path.join(model_load_path, 'test_output.pkl'))
 
