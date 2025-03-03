@@ -114,7 +114,7 @@ class AnomalyDetector(base_class.BaseProcessor):
                                   idx_data, data_ts in enumerate(input_list)]
         return groundtruth_labels, groundtruth_start_list
 
-    def evaluate(
+    def evaluate_online(
             self,
             input_list: List[np.ndarray],
             detection_score_list: List[np.ndarray],
@@ -187,6 +187,56 @@ class AnomalyDetector(base_class.BaseProcessor):
 
         groundtruth_labels, predicted_labels = self._correct_labels(groundtruth_labels, predicted_labels)
 
+        return groundtruth_labels, predicted_labels, total_delays
+
+    def evaluate_offline(
+            self,
+            input_list: List[np.ndarray],
+            detection_score_list: List[np.ndarray],
+            threshold: float = None,
+    ) -> Tuple[List[int], List[int], List[float]]:
+        """
+        This function evaluates the anomaly detection performance of a given model.
+
+        :param input_list: list of multivariate time series, each of shape (number_of_timesteps, channels)
+        :param detection_score_list: list of detection scores, each of shape (number_of_timesteps, channels)
+        :param threshold: detection threshold
+        """
+
+        assert isinstance(input_list, list), 'input_list must be a list!'
+        assert all(isinstance(input_array, np.ndarray) for input_array in input_list), 'All items in input_list must be numpy arrays!'
+        assert all(input_array.ndim == 2 for input_array in input_list), 'All items in input_list must be 2D numpy arrays!'
+        assert isinstance(detection_score_list, list), 'detection_score_list must be a list!'
+        assert all(isinstance(detection_score, np.ndarray) for detection_score in detection_score_list), 'All items in detection_score_list must be numpy arrays!'
+        assert isinstance(threshold, float), 'threshold must be a float!'
+
+        groundtruth_labels, _ = self._extract_groundtruth(input_list)
+
+        total_delays = []
+        predicted_labels = []
+        for idx_detection_score, detection_score in enumerate(detection_score_list):
+            if len(detection_score.shape) == 2:
+                detection_score = detection_score.sum(axis=-1)
+            # Ground-truth normal time series
+            if not groundtruth_labels[idx_detection_score]:
+                # False positive
+                if np.sum(detection_score >= threshold) > 0:
+                    predicted_labels.append(True)
+                # True negative
+                else:
+                    predicted_labels.append(False)
+            # Ground-truth anomalous time series
+            else:
+                # True positive
+                if np.sum(detection_score >= threshold) > 0:
+                    predicted_labels.append(True)
+                    if self.calculate_delay:
+                        total_delays.append(0)
+                # False negative
+                else:
+                    predicted_labels.append(False)
+                    if self.calculate_delay:
+                        total_delays.append(0)
         return groundtruth_labels, predicted_labels, total_delays
 
     @staticmethod
