@@ -28,7 +28,7 @@ Note that to generate the data set, [Matlab](https://www.mathworks.com/products/
 - [Powertrain Blockset](https://de.mathworks.com/products/powertrain.html)
 - [Simscape](https://de.mathworks.com/products/simscape.html)
 - [Simscape Fluids](https://de.mathworks.com/products/simscape-fluids.html)
-- [Simscape Electric Plant](https://www.mathworks.com/products/simscape-electrical.html)
+- [Simscape Electrical](https://www.mathworks.com/products/simscape-electrical.html)
 
 For simulation `Matlab 23.2` was used, which applies to Simulink and all toolboxes as well. After simulation all processes (data processing, model training, inference, evaluation) are done using `Python 3.10`. 
 
@@ -59,7 +59,7 @@ Working scripts for `OmniAnomaly`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can
 - `3_inference.py` does the inference on the validation and testing subsets.
 - `4_evaluation.py` evaluates the results from inference.
 
-### :exclamation: **Important** :exclamation: **Users that do not wish to generate the data set themselves, can skip `0_postsim.py` and use the `train(_clean).pkl` and `test(_clean).pkl` pickle files in the `1_postsim` data folder.** ### 
+### **Important**:exclamation: **Users that do not wish to generate the data set themselves, can skip `0_postsim.py` and use the `train(_clean).pkl` and `test(_clean).pkl` pickle files in the `1_postsim` data folder.** ### 
 
 The remaining scripts can be executed in that order to obtain the results in the paper.
 
