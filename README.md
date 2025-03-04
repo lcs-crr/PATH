@@ -59,7 +59,7 @@ Working scripts for `OmniAnomaly`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can
 - `3_inference.py` does the inference on the validation and testing subsets.
 - `4_evaluation.py` evaluates the results from inference.
 
-### :exclamation: **Important** :exclamation: **Users that do not wish to generate the data set themselves, can skip `0_postsim.py` and use the `train(_clean).pkl` and `test(_clean).pkl` pickle files in the `1_postsim` data folder.** ### 
+### **Important**:exclamation: **Users that do not wish to generate the data set themselves, can skip `0_postsim.py` and use the `train(_clean).pkl` and `test(_clean).pkl` pickle files in the `1_postsim` data folder.** ### 
 
 The remaining scripts can be executed in that order to obtain the results in the paper.
 
