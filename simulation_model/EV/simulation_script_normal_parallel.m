@@ -8,9 +8,9 @@ clc
 rng(1)
 
 open("EV.prj")
-load("Battery Cooling\CoolingParameters.mat")
+load("Battery Cooling/CoolingParameters.mat")
 
-save_path = "Y:\Correia\Remote Daten\OMTSAD_Benchmark\0_simulation_outputs";
+save_path = "../../data/0_simulation";
 
 cycle_name_list = {
     % 'FTP72'
