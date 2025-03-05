@@ -370,6 +370,7 @@ class VS(tf.keras.Model):
             "seq_len": self.seq_len,
             "latent_dim": self.latent_dim,
             "features": self.features,
+            "seed": self.seed,
             "name": self.name,
         })
         return config
@@ -380,7 +381,8 @@ class VS(tf.keras.Model):
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],
             features=config['features'],
-            name=config['name']
+            seed=config['seed'],
+            name=config['name'],
         )
 
 
