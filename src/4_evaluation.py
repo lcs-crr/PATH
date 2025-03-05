@@ -86,7 +86,7 @@ for model_seed in range(1, 4):
 
         f1_list = []
         reduced_test_detection_score = np.concatenate(test_detection_score_list).ravel()
-        percentile_array = np.arange(0, 100.1, 0.1)
+        percentile_array = np.arange(0, 100.01, 0.01)
         for threshold_percentile in percentile_array:
             threshold_temp = np.percentile(reduced_test_detection_score, threshold_percentile)
 

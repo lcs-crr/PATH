@@ -9,7 +9,7 @@ from typing import Optional, List, Tuple
 import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
-from model_garden import tevae, tcnae, sisvae, omnianomaly, lwvae
+from model_garden import tevae, tcnae, sisvae, omnianomaly, lwvae, vsvae, vasp
 from utilities import base_class
 
 
@@ -201,6 +201,19 @@ class Inferencer(base_class.BaseProcessor):
                 'LWVAE_Encoder': lwvae.LWVAE_Encoder,
                 'LWVAE_Decoder': lwvae.LWVAE_Decoder,
             })
+        elif model_name == 'vsvae':
+            model = tf.keras.models.load_model(os.path.join(self.model_path, 'model.keras'), custom_objects={
+                'VSVAE': vsvae.VSVAE,
+                'VSVAE_Encoder': vsvae.VSVAE_Encoder,
+                'VSVAE_Decoder': vsvae.VSVAE_Decoder,
+                'VS': vsvae.VS,
+            })
+        elif model_name == 'vasp':
+            model = tf.keras.models.load_model(os.path.join(self.model_path, 'model.keras'), custom_objects={
+                'VASP': vasp.VASP,
+                'VASP_Encoder': vasp.VASP_Encoder,
+                'VASP_Decoder': vasp.VASP_Decoder,
+            })
         else:
             raise ValueError('Model name not found!')
         return model
@@ -232,6 +245,8 @@ class Inferencer(base_class.BaseProcessor):
             'sisvae': self._sisvae_inference,
             'omnianomaly': self._omnianomaly_inference,
             'lwvae': self._lwvae_inference,
+            'vsvae': self._vsvae_inference,
+            'vasp': self._tevae_inference,
         }
 
         model_name = self._get_model_name_from_path()
@@ -254,7 +269,7 @@ class Inferencer(base_class.BaseProcessor):
             input_array: np.ndarray,
     ) -> Tuple[np.ndarray, List[np.ndarray]]:
         """
-        Private inference function TeVAE.
+        Private inference function for TeVAE.
 
         :param input_array: multivariate time series of shape (number_of_timesteps, channels)
         :return: detection score
@@ -292,7 +307,7 @@ class Inferencer(base_class.BaseProcessor):
             input_array: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
-        Private inference function TCN-AE.
+        Private inference function for TCN-AE.
 
         :param model: trained model
         :param input_array: multivariate time series of shape (number_of_timesteps, channels)
@@ -323,7 +338,7 @@ class Inferencer(base_class.BaseProcessor):
             input_array: np.ndarray,
     ) -> Tuple[np.ndarray, List[np.ndarray]]:
         """
-        Private inference function SISVAE.
+        Private inference function for SISVAE.
 
         :param model: trained model
         :param input_array: multivariate time series of shape (number_of_timesteps, channels)
@@ -362,7 +377,7 @@ class Inferencer(base_class.BaseProcessor):
             input_array: np.ndarray,
     ) -> Tuple[np.ndarray, List[np.ndarray]]:
         """
-        Private inference function OmniAnomaly.
+        Private inference function for OmniAnomaly.
 
         :param model: trained model
         :param input_array: multivariate time series of shape (number_of_timesteps, channels)
@@ -401,7 +416,76 @@ class Inferencer(base_class.BaseProcessor):
             input_array: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
-        Private inference function LW-VAE.
+        Private inference function for LW-VAE.
+
+        :param model: trained model
+        :param input_array: multivariate time series of shape (number_of_timesteps, channels)
+        :return: detection score
+        :return: list of model outputs (mean, std, sample)
+        """
+
+        assert input_array.ndim == 2, 'input_array must be a 2D numpy array (time_steps, channels)!'
+        assert self.window_size is not None, 'window_size must be provided!'
+        assert self.window_shift is not None, 'window_shift must be provided!'
+
+        # Window input array
+        input_windows = self.window_array(input_array, self.window_size, self.window_shift)
+        # Predict output windows
+        xhat, _, _, _, = model.predict(input_windows, batch_size=self.batch_size, verbose=0)
+        # Reverse window reconstruction
+        xhat = self._reverse_window_array(xhat)
+        # Calculate negative log likelihood
+        anomaly_score = model.rec_fn(input_array, xhat, reduce=False).numpy()
+        # Clear GPU memory before next call
+        tf.keras.backend.clear_session()
+        # Return anomaly score and model outputs
+        return anomaly_score, xhat
+
+    def _vsvae_inference(
+            self,
+            model: tf.keras.Model,
+            input_array: np.ndarray,
+    ) -> Tuple[np.ndarray, List[np.ndarray]]:
+        """
+        Private inference function for VS-VAE.
+
+        :param input_array: multivariate time series of shape (number_of_timesteps, channels)
+        :return: detection score
+        :return: list of model outputs (mean, std, sample)
+        """
+
+        assert input_array.ndim == 2, 'input_array must be a 2D numpy array (time_steps, channels)!'
+        assert self.window_size is not None, 'window_size must be provided!'
+        assert self.window_shift is not None, 'window_shift must be provided!'
+
+        # Window input array
+        input_windows = self.window_array(input_array, self.window_size, self.window_shift)
+        # Predict output windows
+        xhat_mean, xhat_logvar, xhat, _, _, _, _ = model.predict(input_windows, batch_size=self.batch_size, verbose=0)
+        # Calculate variance parameter
+        xhat_var = np.exp(xhat_logvar)
+        # Reverse window mean parameter
+        xhat_mean = self._reverse_window_array(xhat_mean)
+        # Reverse window variance parameter
+        xhat_var = self._reverse_window_array(xhat_var)
+        # Reverse window reconstruction
+        xhat = self._reverse_window_array(xhat)
+        # Calculate standard deviation parameter
+        xhat_std = np.sqrt(xhat_var)
+        # Calculate negative log likelihood
+        anomaly_score = model.rec_fn(input_array, [xhat_mean, np.log(xhat_var)], reduce=False).numpy()
+        # Clear GPU memory before next call
+        tf.keras.backend.clear_session()
+        # Return anomaly score and model outputs
+        return anomaly_score, [xhat_mean, xhat_std, xhat]
+
+    def _vasp_inference(
+            self,
+            model: tf.keras.Model,
+            input_array: np.ndarray,
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Private inference function for VASP.
 
         :param model: trained model
         :param input_array: multivariate time series of shape (number_of_timesteps, channels)

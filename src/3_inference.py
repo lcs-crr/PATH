@@ -6,7 +6,7 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import random
 import numpy as np
