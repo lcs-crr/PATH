@@ -30,14 +30,14 @@ class LWVAE(tf.keras.Model):
         self.kl_loss_tracker = tf.keras.metrics.Mean(name="kl_loss")
 
     @staticmethod
-    def rec_fn(x, x_hat, reduce=True):
-        if reduce:
+    def rec_fn(x, x_hat, reduce_time=True):
+        if reduce_time:
             return tf.reduce_sum(tf.losses.MeanSquaredError('none')(x, x_hat), axis=-1)
         else:
             return tf.losses.MeanSquaredError('none')(x, x_hat)
 
     @staticmethod
-    def kldiv_fn(z_params, reduce=True):
+    def kldiv_fn(z_params, reduce_features=True):
         z_mean, z_logvar = z_params
         # Configure distribution with latent parameters
         latent_dist = tfd.Normal(loc=z_mean, scale=tf.sqrt(tf.math.exp(z_logvar)))
@@ -45,8 +45,8 @@ class LWVAE(tf.keras.Model):
         kl_loss = latent_dist.kl_divergence(
             tfd.Normal(loc=tf.zeros_like(z_mean), scale=tf.ones_like(z_logvar))
         )
-        if reduce:
-            return tf.reduce_sum(kl_loss, axis=(-1, -2))
+        if reduce_features:
+            return tf.reduce_sum(kl_loss, axis=-1)
         else:
             return kl_loss
 

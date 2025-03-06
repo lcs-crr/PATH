@@ -31,19 +31,25 @@ class OmniAnomaly(tf.keras.Model):
         self.lgssm_loss_tracker = tf.keras.metrics.Mean(name="lgssm_loss")
 
     @staticmethod
-    def rec_fn(x, xhat_params, reduce=True):
+    def rec_fn(x, xhat_params, reduce_time=True, reduce_features=True):
         xhat_mean, xhat_logvar = xhat_params
         # Configure distribution with output parameters
         output_dist = tfd.Normal(loc=xhat_mean, scale=tf.sqrt(tf.math.exp(xhat_logvar)))
         # Calculate log probability of input data given output distribution
         loglik_loss = output_dist.log_prob(x)
-        if reduce:
-            return -tf.reduce_sum(loglik_loss, axis=(-1, -2))
+        if reduce_time:
+            if reduce_features:
+                return -tf.reduce_sum(loglik_loss, axis=(1, 2))
+            else:
+                return -tf.reduce_sum(loglik_loss, axis=1)
         else:
-            return -loglik_loss
+            if reduce_features:
+                return -tf.reduce_sum(loglik_loss, axis=2)
+            else:
+                return -loglik_loss
 
     @staticmethod
-    def kldiv_fn(z_params, reduce=True):
+    def kldiv_fn(z_params, reduce_time=True, reduce_features=True):
         z_mean, z_logvar = z_params
         # Configure distribution with latent parameters
         latent_dist = tfd.Normal(loc=z_mean, scale=tf.sqrt(tf.math.exp(z_logvar)))
@@ -51,10 +57,16 @@ class OmniAnomaly(tf.keras.Model):
         kl_loss = latent_dist.kl_divergence(
             tfd.Normal(loc=tf.zeros_like(z_mean), scale=tf.ones_like(z_logvar))
         )
-        if reduce:
-            return tf.reduce_sum(kl_loss, axis=(-1, -2))
+        if reduce_time:
+            if reduce_features:
+                return tf.reduce_sum(kl_loss, axis=(1, 2))
+            else:
+                return tf.reduce_sum(kl_loss, axis=1)
         else:
-            return kl_loss
+            if reduce_features:
+                return tf.reduce_sum(kl_loss, axis=2)
+            else:
+                return kl_loss
 
     @staticmethod
     def lgssm_fn(z):
