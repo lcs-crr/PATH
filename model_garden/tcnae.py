@@ -29,7 +29,7 @@ class TCNAE(tf.keras.Model):
     @staticmethod
     def rec_fn(x, x_hat, reduce_time=True):
         if reduce_time:
-            return tf.reduce_sum(tf.losses.LogCosh('none')(x, x_hat), axis=-1)
+            return tf.reduce_sum(tf.losses.LogCosh('none')(x, x_hat), axis=1)
         else:
             return tf.losses.LogCosh('none')(x, x_hat)
 
