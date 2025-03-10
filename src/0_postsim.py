@@ -121,10 +121,10 @@ for fold_idx, (train_indices, test_indices) in enumerate(rkf.split(total_list)):
 # Create clean versions of train_list and test_list for semi-supervised anomaly detection, time-series prediction or time-series generation
 train_list_fold_clean = []
 for train_idx, train_list in enumerate(train_list_fold):
-    train_list_fold_clean.append([train_ts for train_ts in train_list if 'normal' in train_ts.dtype.metadata['file_name'][-13:]])
+    train_list_fold_clean.append([train_ts for train_ts in train_list if 'normal' in train_ts.dtype.metadata['file_name']])
 test_list_fold_clean = []
 for test_idx, test_list in enumerate(test_list_fold):
-    test_list_fold_clean.append([test_ts for test_ts in test_list if 'normal' in test_ts.dtype.metadata['file_name'][-13:]])
+    test_list_fold_clean.append([test_ts for test_ts in test_list if 'normal' in test_ts.dtype.metadata['file_name']])
 
 # Save normal_list, anomalous_list and control_list as pickle files
 data_class.DataProcessor().dump_pickle(normal_list, os.path.join(data_save_path, 'normal.pkl'))

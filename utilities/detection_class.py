@@ -109,7 +109,7 @@ class AnomalyDetector(base_class.BaseProcessor):
         assert isinstance(input_list, list), 'input_list must be a list!'
         assert all(isinstance(input_array, np.ndarray) for input_array in input_list), 'All items in input_list must be numpy arrays!'
 
-        groundtruth_labels = [data_ts.dtype.metadata['file_name'].split('_')[-2] != self.label_keyword for idx_data, data_ts in enumerate(input_list)]
+        groundtruth_labels = [self.label_keyword not in data_ts.dtype.metadata['file_name'] for idx_data, data_ts in enumerate(input_list)]
         groundtruth_start_list = [int(data_ts.dtype.metadata['file_name'].split('_')[-1].split('.')[0]) // (self.original_sampling_rate / self.sampling_rate) for
                                   idx_data, data_ts in enumerate(input_list)]
         return groundtruth_labels, groundtruth_start_list

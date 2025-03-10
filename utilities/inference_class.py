@@ -246,7 +246,7 @@ class Inferencer(base_class.BaseProcessor):
             'omnianomaly': self._omnianomaly_inference,
             'lwvae': self._lwvae_inference,
             'vsvae': self._vsvae_inference,
-            'vasp': self._tevae_inference,
+            'vasp': self._vasp_inference,
         }
 
         model_name = self._get_model_name_from_path()
@@ -295,7 +295,7 @@ class Inferencer(base_class.BaseProcessor):
         # Calculate standard deviation parameter
         xhat_std = np.sqrt(xhat_var)
         # Calculate negative log likelihood
-        anomaly_score = model.rec_fn(input_array, [xhat_mean, np.log(xhat_var)], reduce=False).numpy()
+        anomaly_score = model.rec_fn(input_array, [xhat_mean, np.log(xhat_var)], reduce_time=False).numpy()
         # Clear GPU memory before next call
         tf.keras.backend.clear_session()
         # Return anomaly score and model outputs
@@ -326,7 +326,7 @@ class Inferencer(base_class.BaseProcessor):
         # Reverse window reconstruction
         xhat = self._reverse_window_array(xhat)
         # Calculate negative log likelihood
-        anomaly_score = model.rec_fn(input_array, xhat, reduce=False).numpy()
+        anomaly_score = model.rec_fn(input_array, xhat, reduce_time=False).numpy()
         # Clear GPU memory before next call
         tf.keras.backend.clear_session()
         # Return anomaly score and model outputs
@@ -365,7 +365,7 @@ class Inferencer(base_class.BaseProcessor):
         # Calculate standard deviation parameter
         xhat_std = np.sqrt(xhat_var)
         # Calculate negative log likelihood
-        anomaly_score = model.rec_fn(input_array, [xhat_mean, np.log(xhat_var)], reduce=False).numpy()
+        anomaly_score = model.rec_fn(input_array, [xhat_mean, np.log(xhat_var)], reduce_time=False).numpy()
         # Clear GPU memory before next call
         tf.keras.backend.clear_session()
         # Return anomaly score and model outputs
@@ -404,7 +404,7 @@ class Inferencer(base_class.BaseProcessor):
         # Calculate standard deviation parameter
         xhat_std = np.sqrt(xhat_var)
         # Calculate negative log likelihood
-        anomaly_score = model.rec_fn(input_array, [xhat_mean, np.log(xhat_var)], reduce=False).numpy()
+        anomaly_score = model.rec_fn(input_array, [xhat_mean, np.log(xhat_var)], reduce_time=False).numpy()
         # Clear GPU memory before next call
         tf.keras.backend.clear_session()
         # Return anomaly score and model outputs
@@ -435,7 +435,7 @@ class Inferencer(base_class.BaseProcessor):
         # Reverse window reconstruction
         xhat = self._reverse_window_array(xhat)
         # Calculate negative log likelihood
-        anomaly_score = model.rec_fn(input_array, xhat, reduce=False).numpy()
+        anomaly_score = model.rec_fn(input_array, xhat, reduce_time=False).numpy()
         # Clear GPU memory before next call
         tf.keras.backend.clear_session()
         # Return anomaly score and model outputs
@@ -473,7 +473,7 @@ class Inferencer(base_class.BaseProcessor):
         # Calculate standard deviation parameter
         xhat_std = np.sqrt(xhat_var)
         # Calculate negative log likelihood
-        anomaly_score = model.rec_fn(input_array, [xhat_mean, np.log(xhat_var)], reduce=False).numpy()
+        anomaly_score = model.rec_fn(input_array, [xhat_mean, np.log(xhat_var)], reduce_time=False).numpy()
         # Clear GPU memory before next call
         tf.keras.backend.clear_session()
         # Return anomaly score and model outputs
@@ -504,7 +504,7 @@ class Inferencer(base_class.BaseProcessor):
         # Reverse window reconstruction
         xhat = self._reverse_window_array(xhat)
         # Calculate negative log likelihood
-        anomaly_score = model.rec_fn(input_array, xhat, reduce=False).numpy()
+        anomaly_score = model.rec_fn(input_array, xhat, reduce_time=False).numpy()
         # Clear GPU memory before next call
         tf.keras.backend.clear_session()
         # Return anomaly score and model outputs
