@@ -16,13 +16,8 @@ import pandas as pd
 import openpyxl
 
 # Declare constants
-SEED = 1
 AD_MODE = 'us'  # or 'ss'
 MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae', 'vsvae', 'vasp'
-
-# Set fixed seed for random operations
-np.random.seed(SEED)
-os.environ['PYTHONHASHSEED'] = str(SEED)
 
 # Load variables in .env file
 config = dotenv_values("../.env")
