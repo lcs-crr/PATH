@@ -185,9 +185,7 @@ class OmniAnomaly_Encoder(tf.keras.Model):
         output_dist = tfd.Normal(loc=0., scale=1.)
         eps = output_dist.sample(tf.shape(z_mean), seed=self.seed)
         z = z_mean + tf.sqrt(tf.math.exp(z_logvar)) * eps + 1e-4
-        K = 20
-        # planar normalizing flow
-        for k in range(K):
+        for k in range(20):
             z = z + tfkl.Dense(self.latent_dim, use_bias=False)(tfkl.Dense(self.latent_dim, activation='tanh')(z))
         return tf.keras.Model(enc_input, [z_mean, z_logvar, z])
 
