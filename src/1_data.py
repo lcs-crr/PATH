@@ -22,9 +22,8 @@ FREQ_ORIG = 10
 AD_MODE = 'us'  # or 'ss'
 
 # Set fixed seed for random operations
-np.random.seed(SEED)
-tf.random.set_seed(SEED)
-os.environ['PYTHONHASHSEED'] = str(SEED)
+tf.keras.utils.set_random_seed(SEED)
+tf.config.experimental.enable_op_determinism()
 
 # Load variables in .env file
 config = dotenv_values("../.env")

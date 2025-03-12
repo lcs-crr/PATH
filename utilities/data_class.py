@@ -67,18 +67,14 @@ class DataProcessor(base_class.BaseProcessor):
             input_list: List[np.ndarray],
     ) -> None:
         """
-        This function finds the minimum, maximum, mean and standard deviation for each channel in a list of arrays.
+        This function finds the channel-wise minimum, maximum, mean and standard deviation for each channel in a list of arrays.
 
         :param input_list: list of multivariate time series, each of shape (number_of_timesteps, channels)
         """
 
-        # Calculate minimum of all time series for each channel
         self.minimum = np.min(np.vstack(input_list), axis=0)
-        # Calculate maximum of all time series for each channel
         self.maximum = np.max(np.vstack(input_list), axis=0)
-        # Calculate mean of all time series for each channel
         self.mean = np.mean(np.vstack(input_list), axis=0)
-        # Calculate standard deviation of all time series for each channel
         self.standard_deviation = np.std(np.vstack(input_list), axis=0)
 
     def scale_list(
