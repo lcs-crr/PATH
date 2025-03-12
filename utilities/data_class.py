@@ -22,7 +22,7 @@ class DataProcessor(base_class.BaseProcessor):
             window_shift: Union[int, str] = 'half',
     ) -> None:
         """
-        This class comprises all required functions to evaluate the anomaly detection performance of a given model.
+        This class comprises all required functions to process the data.
 
         :param window_size: window size
         :param original_sampling_rate: original sampling rate of raw data
