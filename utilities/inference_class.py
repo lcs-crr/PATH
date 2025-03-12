@@ -23,7 +23,7 @@ class Inferencer(base_class.BaseProcessor):
             batch_size: int = None,
     ) -> None:
         """
-        This class comprises all required functions to evaluate the anomaly detection performance of a given model.
+        This class comprises all required functions to perform inference with a given model.
 
         :param model_path: path to the trained model
         :param window_size: window size
