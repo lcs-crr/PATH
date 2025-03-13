@@ -52,7 +52,7 @@ Each pickle file is a list of several 2D NumPy arrays, each representing a multi
 We decided to omit the data belonging to the `2_preprocessed` folder as the contents are specific to the TensorFlow data pipeline and the same data host limitations would apply. If needed, the contents can be obtained by running `1_data.py`; for more details, see the **Reproducing Results** section below.
 
 ## Reproducing Results 
-Working scripts for `OmniAnomaly`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can be found in the `src` folder: 
+Working scripts for `VS-VAE`, `OmniAnomaly`, `VASP`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can be found in the `src` folder: 
 - `0_postsim.py` performs post simulation processing (trimming, adding noise, comparing with control simulations, splitting into folds and training/test subsets) on outputs of the simulation (`.mat` files). This script is only relevant if you want to generate the data set yourself and want to process it after simulation.
 - `1_data.py` performs data processing prior to training (downsampling, standardising, windowing, converting to tf.data).
 - `2_training.py` performs model training.
