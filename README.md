@@ -9,7 +9,7 @@ The preprint of the paper corresponding to this repository can be found on [arXi
 ## Simulation
 The multivariate time series composing the proposed data set are generated using a Simulink simulation model and are provided so you don't have to simulate yourself. 
 
-Simulation is both financially and computationally expensive, but if you do really want to simulate yourself, find relevant scripts for data set generation under `simulation_model/EV` folder, which should be set as the working directory:
+Simulation is computationally very expensive, but if you do really want to simulate yourself, find relevant scripts for data set generation under `simulation_model/EV` folder, which should be set as the working directory:
 - `simulation_script_normal_parallel.m` performs the simulation of normal sequences
 - `simulation_script_anomaly_parallel.m` performs the simulation of anomalous sequences
 
@@ -22,15 +22,16 @@ Each simulation yields a multivariate time series and is saved as a `.mat` file 
 - `D` = label (anomaly type, control or normal)
 - `E` = start of anomaly, if applicable 
 
-Note that to generate the data set, [Matlab](https://www.mathworks.com/products/matlab.html) and [Simulink](https://www.mathworks.com/products/simulink.html) as well as the following toolboxes are required:
+Note that to generate the data set, [MATLAB](https://www.mathworks.com/products/matlab.html) and [Simulink](https://www.mathworks.com/products/simulink.html) as well as the following toolboxes are required:
 - [Parallel Computing Toolbox](https://de.mathworks.com/products/parallel-computing.html)
 - [Statistics and Machine Learning Toolbox](https://de.mathworks.com/products/statistics.html)
 - [Powertrain Blockset](https://de.mathworks.com/products/powertrain.html)
 - [Simscape](https://de.mathworks.com/products/simscape.html)
 - [Simscape Fluids](https://de.mathworks.com/products/simscape-fluids.html)
 - [Simscape Electrical](https://www.mathworks.com/products/simscape-electrical.html)
+- [MinGW-w64 C Compiler](https://de.mathworks.com/matlabcentral/fileexchange/52848-matlab-support-for-mingw-w64-c-c-fortran-compiler)
 
-For simulation `Matlab 23.2` was used, which applies to Simulink and all toolboxes as well. After simulation all processes (data processing, model training, inference, evaluation) are done using `Python 3.10`. 
+`MATLAB R2023b (23.2)` was used, which applies to Simulink and all toolboxes as well, though simulations were also successfully tested with `MATLAB R2024b (24.2)`. After simulation all processes (data processing, model training, inference, evaluation) are done using `Python 3.10`. 
 
 ## Data Set Download
 The data set consists of three states, each with a folder associated with it:
