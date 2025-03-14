@@ -21,7 +21,7 @@ AD_MODE = 'us'  # or 'ss'
 MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae', 'vsvae', 'vasp'
 
 # Set fixed seed for random operations
-tf.keras.utils.set_random_seed(seed)
+tf.keras.utils.set_random_seed(SEED)
 tf.config.experimental.enable_op_determinism()
 
 # Load variables in .env file
