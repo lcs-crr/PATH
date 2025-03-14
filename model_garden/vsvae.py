@@ -84,56 +84,41 @@ class VSVAE(tf.keras.Model):
         self.att_beta = tf.constant(att_beta)  # Is not modified
 
     @staticmethod
-    def rec_fn(x, xhat_params, reduce_time=True, reduce_features=True):
+    def rec_fn(x, xhat_params, reduce_time=True):
         xhat_mean, xhat_logvar = xhat_params
         # Configure distribution with output parameters
         output_dist = tfd.Laplace(loc=xhat_mean, scale=tf.sqrt(tf.math.exp(xhat_logvar)))
         # Calculate log probability of input data given output distribution
-        loglik_loss = output_dist.log_prob(x)
+        loglik_loss = tf.reduce_sum(output_dist.log_prob(x), axis=-1)
         if reduce_time:
-            if reduce_features:
-                return -tf.reduce_sum(loglik_loss, axis=(1, 2))
-            else:
-                return -tf.reduce_sum(loglik_loss, axis=1)
+            return -tf.reduce_sum(loglik_loss, axis=1)
         else:
-            if reduce_features:
-                return -tf.reduce_sum(loglik_loss, axis=2)
-            else:
-                return -loglik_loss
+            return -loglik_loss
 
     @staticmethod
-    def kldiv_fn(z_params, reduce_features=True):
+    def kldiv_fn(z_params):
         z_mean, z_logvar = z_params
         # Configure distribution with latent parameters
-        latent_dist = tfd.Normal(loc=z_mean, scale=tf.sqrt(tf.math.exp(z_logvar)))
+        latent_dist = tfd.MultivariateNormalDiag(loc=z_mean, scale_diag=tf.sqrt(tf.math.exp(z_logvar)))
         # Calculate KL-Divergence between latent distribution and standard Gaussian
         kl_loss = latent_dist.kl_divergence(
-            tfd.Normal(loc=tf.zeros_like(z_mean), scale=tf.ones_like(z_logvar))
+            tfd.MultivariateNormalDiag(loc=tf.zeros_like(z_mean), scale_diag=tf.ones_like(z_logvar))
         )
-        if reduce_features:
-            return tf.reduce_sum(kl_loss, axis=-1)
-        else:
-            return kl_loss
+        return kl_loss
 
     @staticmethod
-    def att_fn(att_params, reduce_time=True, reduce_features=True):
+    def att_fn(att_params, reduce_time=True):
         a_mean, a_logvar = att_params
         # Configure distribution with latent parameters
-        latent_dist = tfd.Normal(loc=a_mean, scale=tf.sqrt(tf.math.exp(a_logvar)))
+        latent_dist = tfd.MultivariateNormalDiag(loc=a_mean, scale=tf.sqrt(tf.math.exp(a_logvar)))
         # Calculate KL-Divergence between latent distribution and standard Gaussian
         att_loss = latent_dist.kl_divergence(
-            tfd.Normal(loc=tf.zeros_like(a_mean), scale=tf.ones_like(a_logvar))
+            tfd.MultivariateNormalDiag(loc=tf.zeros_like(a_mean), scale=tf.ones_like(a_logvar))
         )
         if reduce_time:
-            if reduce_features:
-                return tf.reduce_sum(att_loss, axis=(1, 2))
-            else:
-                return tf.reduce_sum(att_loss, axis=1)
+            return tf.reduce_sum(att_loss, axis=1)
         else:
-            if reduce_features:
-                return tf.reduce_sum(att_loss, axis=2)
-            else:
-                return att_loss
+            return att_loss
 
     def train_step(self, x, **kwargs):
         with tf.GradientTape() as tape:
@@ -248,8 +233,7 @@ class VSVAE_Encoder(tf.keras.Model):
         last_states = bilstm[:, -1, :]
         z_mean = tfkl.Dense(self.latent_dim)(last_states)
         z_logvar = tfkl.Dense(self.latent_dim)(last_states)
-        output_dist = tfp.distributions.Normal(loc=0., scale=1.)
-        eps = output_dist.sample(tf.shape(z_mean), seed=self.seed)
+        eps = tf.random.normal(tf.shape(z_mean), seed=self.seed)
         z = z_mean + tf.sqrt(tf.math.exp(z_logvar)) * eps
         return tf.keras.Model(enc_input, [z_mean, z_logvar, z, bilstm])
 
@@ -367,8 +351,7 @@ class VS(tf.keras.Model):
         a_det = tf.matmul(tf.nn.softmax(s_det), vs_input)
         a_mean = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim))(a_det)
         a_logvar = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim))(a_det)
-        output_dist = tfp.distributions.Normal(loc=0., scale=1.)
-        eps = output_dist.sample(tf.shape(a_mean), seed=self.seed)
+        eps = tf.random.normal(tf.shape(a_mean), seed=self.seed)
         a = a_mean + tf.sqrt(tf.math.exp(a_logvar)) * eps
         return tf.keras.Model(vs_input, [a_mean, a_logvar, a])
 

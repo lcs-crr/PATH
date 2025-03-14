@@ -31,42 +31,30 @@ class OmniAnomaly(tf.keras.Model):
         self.lgssm_loss_tracker = tf.keras.metrics.Mean(name="lgssm_loss")
 
     @staticmethod
-    def rec_fn(x, xhat_params, reduce_time=True, reduce_features=True):
+    def rec_fn(x, xhat_params, reduce_time=True):
         xhat_mean, xhat_logvar = xhat_params
         # Configure distribution with output parameters
-        output_dist = tfd.Normal(loc=xhat_mean, scale=tf.sqrt(tf.math.exp(xhat_logvar)))
+        output_dist = tfd.MultivariateNormalDiag(loc=xhat_mean, scale_diag=tf.sqrt(tf.math.exp(xhat_logvar)))
         # Calculate log probability of input data given output distribution
         loglik_loss = output_dist.log_prob(x)
         if reduce_time:
-            if reduce_features:
-                return -tf.reduce_sum(loglik_loss, axis=(1, 2))
-            else:
-                return -tf.reduce_sum(loglik_loss, axis=1)
+            return -tf.reduce_sum(loglik_loss, axis=1)
         else:
-            if reduce_features:
-                return -tf.reduce_sum(loglik_loss, axis=2)
-            else:
-                return -loglik_loss
+            return -loglik_loss
 
     @staticmethod
-    def kldiv_fn(z_params, reduce_time=True, reduce_features=True):
+    def kldiv_fn(z_params, reduce_time=True):
         z_mean, z_logvar = z_params
         # Configure distribution with latent parameters
-        latent_dist = tfd.Normal(loc=z_mean, scale=tf.sqrt(tf.math.exp(z_logvar)))
+        latent_dist = tfd.MultivariateNormalDiag(loc=z_mean, scale_diag=tf.sqrt(tf.math.exp(z_logvar)))
         # Calculate KL-Divergence between latent distribution and standard Gaussian
         kl_loss = latent_dist.kl_divergence(
-            tfd.Normal(loc=tf.zeros_like(z_mean), scale=tf.ones_like(z_logvar))
+            tfd.MultivariateNormalDiag(loc=tf.zeros_like(z_mean), scale_diag=tf.ones_like(z_logvar))
         )
         if reduce_time:
-            if reduce_features:
-                return tf.reduce_sum(kl_loss, axis=(1, 2))
-            else:
-                return tf.reduce_sum(kl_loss, axis=1)
+            return tf.reduce_sum(kl_loss, axis=1)
         else:
-            if reduce_features:
-                return tf.reduce_sum(kl_loss, axis=2)
-            else:
-                return kl_loss
+            return kl_loss
 
     @staticmethod
     def lgssm_fn(z):
@@ -182,8 +170,7 @@ class OmniAnomaly_Encoder(tf.keras.Model):
         h = tfkl.TimeDistributed(tfkl.Dense(self.hidden_units, activation="relu", activity_regularizer=tf.keras.regularizers.L2(l2=1e-4)))(x)
         z_mean = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim, activity_regularizer=tf.keras.regularizers.L2(l2=1e-4)))(h)
         z_logvar = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim, activity_regularizer=tf.keras.regularizers.L2(l2=1e-4)))(h)
-        output_dist = tfd.Normal(loc=0., scale=1.)
-        eps = output_dist.sample(tf.shape(z_mean), seed=self.seed)
+        eps = tf.random.normal(tf.shape(z_mean), seed=self.seed)
         z = z_mean + tf.sqrt(tf.math.exp(z_logvar)) * eps + 1e-4
         for k in range(20):
             z = z + tfkl.Dense(self.latent_dim, use_bias=False)(tfkl.Dense(self.latent_dim, activation='tanh')(z))
@@ -242,8 +229,7 @@ class OmniAnomaly_Decoder(tf.keras.Model):
         h = tfkl.TimeDistributed(tfkl.Dense(self.hidden_units, activation="relu", activity_regularizer=tf.keras.regularizers.L2(l2=1e-4)))(x)
         xhat_mean = tfkl.TimeDistributed(tfkl.Dense(self.features, activity_regularizer=tf.keras.regularizers.L2(l2=1e-4)))(h)
         xhat_logvar = tfkl.TimeDistributed(tfkl.Dense(self.features, activity_regularizer=tf.keras.regularizers.L2(l2=1e-4)))(h)
-        output_dist = tfd.Normal(loc=0., scale=1.)
-        eps = output_dist.sample(tf.shape(xhat_mean), seed=self.seed)
+        eps = tf.random.normal(tf.shape(xhat_mean), seed=self.seed)
         xhat = xhat_mean + tf.sqrt(tf.math.exp(xhat_logvar)) * eps
         return tf.keras.Model(dec_input, [xhat_mean, xhat_logvar, xhat])
 

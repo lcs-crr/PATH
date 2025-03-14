@@ -37,18 +37,15 @@ class LWVAE(tf.keras.Model):
             return tf.losses.MeanSquaredError('none')(x, x_hat)
 
     @staticmethod
-    def kldiv_fn(z_params, reduce_features=True):
+    def kldiv_fn(z_params):
         z_mean, z_logvar = z_params
         # Configure distribution with latent parameters
-        latent_dist = tfd.Normal(loc=z_mean, scale=tf.sqrt(tf.math.exp(z_logvar)))
+        latent_dist = tfd.MultivariateNormalDiag(loc=z_mean, scale_diag=tf.sqrt(tf.math.exp(z_logvar)))
         # Calculate KL-Divergence between latent distribution and standard Gaussian
         kl_loss = latent_dist.kl_divergence(
-            tfd.Normal(loc=tf.zeros_like(z_mean), scale=tf.ones_like(z_logvar))
+            tfd.MultivariateNormalDiag(loc=tf.zeros_like(z_mean), scale_diag=tf.ones_like(z_logvar))
         )
-        if reduce_features:
-            return tf.reduce_sum(kl_loss, axis=-1)
-        else:
-            return kl_loss
+        return kl_loss
 
     def train_step(self, x, **kwargs):
         with tf.GradientTape() as tape:
@@ -143,8 +140,7 @@ class LWVAE_Encoder(tf.keras.Model):
         lstm = tfkl.LSTM(self.hidden_units, return_sequences=False)(enc_input)
         z_mean = tfkl.Dense(self.latent_dim)(lstm)
         z_logvar = tfkl.Dense(self.latent_dim)(lstm)
-        output_dist = tfd.Normal(loc=0., scale=1.)
-        eps = output_dist.sample(tf.shape(z_mean), seed=self.seed)
+        eps = tf.random.normal(tf.shape(z_mean), seed=self.seed)
         z = z_mean + tf.sqrt(tf.math.exp(z_logvar)) * eps
         return tf.keras.Model(enc_input, [z_mean, z_logvar, z])
 

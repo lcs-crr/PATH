@@ -209,8 +209,7 @@ class TEVAE_Encoder(tf.keras.Model):
         bilstm = tfkl.Bidirectional(tfkl.LSTM(self.hidden_units, return_sequences=True))(bilstm)
         z_mean = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim))(bilstm)
         z_logvar = tfkl.TimeDistributed(tfkl.Dense(self.latent_dim))(bilstm)
-        output_dist = tfd.Normal(loc=0., scale=1.)
-        eps = output_dist.sample(tf.shape(z_mean), seed=self.seed)
+        eps = tf.random.normal(tf.shape(z_mean), seed=self.seed)
         z = z_mean + tf.sqrt(tf.math.exp(z_logvar)) * eps
         return tf.keras.Model(enc_input, [z_mean, z_logvar, z])
 
@@ -267,8 +266,7 @@ class TEVAE_Decoder(tf.keras.Model):
         bilstm = tfkl.Bidirectional(tfkl.LSTM(self.hidden_units * 2, return_sequences=True))(bilstm)
         xhat_mean = tfkl.TimeDistributed(tfkl.Dense(self.features))(bilstm)
         xhat_logvar = tfkl.TimeDistributed(tfkl.Dense(self.features))(bilstm)
-        output_dist = tfd.Normal(loc=0., scale=1.)
-        eps = output_dist.sample(tf.shape(xhat_mean), seed=self.seed)
+        eps = tf.random.normal(tf.shape(xhat_mean), seed=self.seed)
         xhat = xhat_mean + tf.sqrt(tf.math.exp(xhat_logvar)) * eps
         return tf.keras.Model(dec_input, [xhat_mean, xhat_logvar, xhat])
 
