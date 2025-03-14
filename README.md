@@ -9,7 +9,7 @@ The preprint of the paper corresponding to this repository can be found on [arXi
 ## Simulation
 The multivariate time series composing the proposed data set are generated using a Simulink simulation model and are provided so you don't have to simulate yourself. 
 
-Simulation is both financially and computationally expensive, but if you do really want to simulate yourself, find relevant scripts for data set generation under `simulation_model/EV` folder, which should be set as the working directory:
+Simulation is computationally very expensive, but if you do really want to simulate yourself, find relevant scripts for data set generation under `simulation_model/EV` folder, which should be set as the working directory:
 - `simulation_script_normal_parallel.m` performs the simulation of normal sequences
 - `simulation_script_anomaly_parallel.m` performs the simulation of anomalous sequences
 
@@ -22,15 +22,17 @@ Each simulation yields a multivariate time series and is saved as a `.mat` file 
 - `D` = label (anomaly type, control or normal)
 - `E` = start of anomaly, if applicable 
 
-Note that to generate the data set, [Matlab](https://www.mathworks.com/products/matlab.html) and [Simulink](https://www.mathworks.com/products/simulink.html) as well as the following toolboxes are required:
+Note that to generate the data set, [MATLAB](https://www.mathworks.com/products/matlab.html) and [Simulink](https://www.mathworks.com/products/simulink.html) as well as the following toolboxes and extensions are required:
 - [Parallel Computing Toolbox](https://de.mathworks.com/products/parallel-computing.html)
 - [Statistics and Machine Learning Toolbox](https://de.mathworks.com/products/statistics.html)
 - [Powertrain Blockset](https://de.mathworks.com/products/powertrain.html)
 - [Simscape](https://de.mathworks.com/products/simscape.html)
 - [Simscape Fluids](https://de.mathworks.com/products/simscape-fluids.html)
 - [Simscape Electrical](https://www.mathworks.com/products/simscape-electrical.html)
+- [Powertrain Blockset Drive Cycle Data](https://de.mathworks.com/matlabcentral/fileexchange/59683-powertrain-blockset-drive-cycle-data)
+- [MinGW-w64 C Compiler](https://de.mathworks.com/matlabcentral/fileexchange/52848-matlab-support-for-mingw-w64-c-c-fortran-compiler)
 
-For simulation `Matlab 23.2` was used, which applies to Simulink and all toolboxes as well. After simulation all processes (data processing, model training, inference, evaluation) are done using `Python 3.10`. 
+`MATLAB R2023b (23.2)` was used, which applies to Simulink and all toolboxes as well, though simulations were also successfully tested with `MATLAB R2024b (24.2)`. After simulation all processes (data processing, model training, inference, evaluation) are done using `Python 3.10`. 
 
 ## Data Set Download
 The data set consists of three states, each with a folder associated with it:
@@ -52,7 +54,7 @@ Each pickle file is a list of several 2D NumPy arrays, each representing a multi
 We decided to omit the data belonging to the `2_preprocessed` folder as the contents are specific to the TensorFlow data pipeline and the same data host limitations would apply. If needed, the contents can be obtained by running `1_data.py`; for more details, see the **Reproducing Results** section below.
 
 ## Reproducing Results 
-Working scripts for `OmniAnomaly`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can be found in the `src` folder: 
+Working scripts for `VS-VAE`, `OmniAnomaly`, `VASP`, `TCN-AE`, `SISVAE`, `LW-VAE`, and `TeVAE` can be found in the `src` folder: 
 - `0_postsim.py` performs post simulation processing (trimming, adding noise, comparing with control simulations, splitting into folds and training/test subsets) on outputs of the simulation (`.mat` files). This script is only relevant if you want to generate the data set yourself and want to process it after simulation.
 - `1_data.py` performs data processing prior to training (downsampling, standardising, windowing, converting to tf.data).
 - `2_training.py` performs model training.
