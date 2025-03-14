@@ -22,13 +22,14 @@ Each simulation yields a multivariate time series and is saved as a `.mat` file 
 - `D` = label (anomaly type, control or normal)
 - `E` = start of anomaly, if applicable 
 
-Note that to generate the data set, [MATLAB](https://www.mathworks.com/products/matlab.html) and [Simulink](https://www.mathworks.com/products/simulink.html) as well as the following toolboxes are required:
+Note that to generate the data set, [MATLAB](https://www.mathworks.com/products/matlab.html) and [Simulink](https://www.mathworks.com/products/simulink.html) as well as the following toolboxes and extensions are required:
 - [Parallel Computing Toolbox](https://de.mathworks.com/products/parallel-computing.html)
 - [Statistics and Machine Learning Toolbox](https://de.mathworks.com/products/statistics.html)
 - [Powertrain Blockset](https://de.mathworks.com/products/powertrain.html)
 - [Simscape](https://de.mathworks.com/products/simscape.html)
 - [Simscape Fluids](https://de.mathworks.com/products/simscape-fluids.html)
 - [Simscape Electrical](https://www.mathworks.com/products/simscape-electrical.html)
+- [Powertrain Blockset Drive Cycle Data](https://de.mathworks.com/matlabcentral/fileexchange/59683-powertrain-blockset-drive-cycle-data)
 - [MinGW-w64 C Compiler](https://de.mathworks.com/matlabcentral/fileexchange/52848-matlab-support-for-mingw-w64-c-c-fortran-compiler)
 
 `MATLAB R2023b (23.2)` was used, which applies to Simulink and all toolboxes as well, though simulations were also successfully tested with `MATLAB R2024b (24.2)`. After simulation all processes (data processing, model training, inference, evaluation) are done using `Python 3.10`. 
