@@ -43,7 +43,7 @@ class Inferencer(base_class.BaseProcessor):
             input_windows: np.ndarray,
     ) -> np.ndarray:
         """
-        Private function that generates a multivariate time series from windows.
+        Generic wrapper for methods that generates multivariate time series from windows.
 
         :param input_windows: array of windows of shape (number_of_windows, window_size, channels)
         :return: multivariate time series of shape (number_of_timesteps, channels)
@@ -60,6 +60,8 @@ class Inferencer(base_class.BaseProcessor):
             return self._last_reverse_window_array(input_windows)
         elif self.reverse_mode == 'first':
             return self._first_reverse_window_array(input_windows)
+        else:
+            raise ValueError('Invalid reverse-window method!')
 
     def _mean_reverse_window_array(
             self,
