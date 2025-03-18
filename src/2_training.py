@@ -21,7 +21,7 @@ print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 for seed in range(1, 4):
     # Declare constants
     AD_MODE = 'us'  # or 'ss'
-    MODEL_NAME = 'omnianomaly'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae', 'vsvae', 'vasp'
+    MODEL_NAME = 'tevae'  # or 'tcnae', 'omnianomaly', 'sisvae', 'lwvae', 'vsvae', 'vasp'
 
     # Set fixed seed for random operations
     tf.keras.utils.set_random_seed(seed)
