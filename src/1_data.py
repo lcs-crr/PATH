@@ -73,8 +73,8 @@ for fold_idx, _ in enumerate(train_list_fold):
     scaled_val_window = data_processor.window_list(val_list_scaled)
 
     # Create tf.data objects
-    tfdata_train = tf.data.Dataset.from_tensor_slices(scaled_train_window.astype(np.dtype('float32')))
-    tfdata_val = tf.data.Dataset.from_tensor_slices(scaled_val_window.astype(np.dtype('float32')))
+    tfdata_train = tf.data.Dataset.from_tensor_slices(scaled_train_window)
+    tfdata_val = tf.data.Dataset.from_tensor_slices(scaled_val_window)
 
     # Shuffle and batch tf.data objects
     tfdata_train = tfdata_train.shuffle(tfdata_train.cardinality(), seed=SEED)

@@ -6,7 +6,7 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 
 import math
 import numpy as np
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, lfilter, sosfilt
 from statsmodels.tsa import stattools
 from typing import List, Union
 from utilities import base_class
@@ -171,11 +171,10 @@ class DataProcessor(base_class.BaseProcessor):
             lowpass_input_array = np.zeros_like(input_array)
             for channel_idx, channel in enumerate(np.rollaxis(input_array, 1)):
                 pad_amount = self.target_sampling_rate * 100  # Pad signal to avoid oscillations
-                channel_padded = np.pad(channel, (pad_amount, pad_amount), 'constant',
-                                        constant_values=(channel[0], channel[-1]))
-                b, a = butter(N=1, Wn=self.target_sampling_rate // 2, fs=self.original_sampling_rate, btype='low')
-                low_pass_channel = lfilter(b, a, channel_padded)
-                lowpass_input_array[:, channel_idx] = low_pass_channel[pad_amount:-pad_amount]
+                channel_padded = np.pad(channel, (pad_amount, pad_amount), 'constant', constant_values=(channel[0], channel[-1]))
+                sos = butter(N=1, Wn=self.target_sampling_rate // 2, fs=self.original_sampling_rate, btype='low', output='sos')
+                lowpass_channel = sosfilt(sos, channel_padded)
+                lowpass_input_array[:, channel_idx] = lowpass_channel[pad_amount:-pad_amount]
 
                 assert not np.any(np.isnan(lowpass_input_array)), 'There is NaNs in the data after downsampling!'
             if reduce:
