@@ -75,7 +75,7 @@ for seed in range(1, 4):
                 ma = MA(seq_len=window_size, latent_dim=latent_dim, key_dim=key_dim, features=features)
                 model = TEVAE(encoder, decoder, ma)
                 callback_list = [early_stopping, annealing]
-                clip = None
+                model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=True, clipnorm=None))
 
             elif MODEL_NAME == 'tcnae':
                 from model_garden.tcnae import *
@@ -89,7 +89,7 @@ for seed in range(1, 4):
                 decoder = TCNAE_Decoder(seq_len=window_size, latent_dim=latent_dim, features=features, hidden_units=hidden_units, dilations=dilations, kernel_size=kernel_size, padding=padding, sampling_factor=sampling_factor, seed=seed)
                 model = TCNAE(encoder, decoder)
                 callback_list = [early_stopping]
-                clip = None
+                model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=False, clipnorm=None))
 
             elif MODEL_NAME == 'omnianomaly':
                 from model_garden.omnianomaly import *
@@ -99,7 +99,7 @@ for seed in range(1, 4):
                 decoder = OmniAnomaly_Decoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
                 model = OmniAnomaly(encoder, decoder)
                 callback_list = [early_stopping]
-                clip = None
+                model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=False, clipnorm=10))
 
             elif MODEL_NAME == 'sisvae':
                 from model_garden.sisvae import *
@@ -109,7 +109,7 @@ for seed in range(1, 4):
                 decoder = SISVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
                 model = SISVAE(encoder, decoder)
                 callback_list = [early_stopping]
-                clip = None
+                model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=False, clipnorm=None))
 
             elif MODEL_NAME == 'lwvae':
                 from model_garden.lwvae import *
@@ -119,7 +119,7 @@ for seed in range(1, 4):
                 decoder = LWVAE_Decoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
                 model = LWVAE(encoder, decoder)
                 callback_list = [early_stopping]
-                clip = None
+                model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=False, clipnorm=None))
 
             elif MODEL_NAME == 'vsvae':
                 from model_garden.vsvae import *
@@ -135,7 +135,7 @@ for seed in range(1, 4):
                 vs = VS(seq_len=window_size, latent_dim=latent_dim, features=features, seed=seed)
                 model = VSVAE(encoder, decoder, vs)
                 callback_list = [early_stopping, annealing]
-                clip = 1
+                model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=True, clipnorm=1))
 
             elif MODEL_NAME == 'vasp':
                 from model_garden.vasp import *
@@ -145,9 +145,7 @@ for seed in range(1, 4):
                 decoder = VASP_Decoder(seq_len=window_size, latent_dim=latent_dim, hidden_units=hidden_units, features=features, seed=seed)
                 model = VASP(encoder, decoder)
                 callback_list = [early_stopping]
-                clip = None
-
-            model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=True, clipnorm=clip))
+                model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=False, clipnorm=None))
 
         # Fit vae model
         history = model.fit(tfdata_train,
