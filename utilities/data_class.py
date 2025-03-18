@@ -41,6 +41,44 @@ class DataProcessor(base_class.BaseProcessor):
         self.mean = None
         self.standard_deviation = None
 
+    def find_window_size_from_list(
+            self,
+            data_list: List[np.ndarray],
+    ) -> None:
+        """
+        This function finds the window size required to model the dynamics in all channels of a multivariate time series.
+
+        :param data_list: list of multivariate input time series
+        """
+
+        # Pre-allocate list for possible window sizes
+        possible_window_sizes = []
+        # Iterate through list of multivariate time series
+        for data_ts in data_list:
+            intersection_list = []
+            # Iterate through channels
+            for channel in range(data_ts.shape[-1]):
+                corr_array = stattools.acf(data_ts[:, channel], alpha=0.01, nlags=4096)
+                upper_y = corr_array[1][:, 1] - corr_array[0]
+                corr = corr_array[0]
+                try:
+                    intersection_list.append(np.min(np.where(corr - upper_y < 0)[0]))
+                except:
+                    continue
+            # Append maximum window size for each channel
+            possible_window_sizes.append(np.max(intersection_list))
+        # Choose maximum window size in list
+        candidate_window_size = np.max(possible_window_sizes)
+        # If window_size is not supposed to be rounded, return it as is
+        round_to_power = 2
+        upper_window_size = round_to_power ** (np.ceil(math.log(candidate_window_size, round_to_power)))
+        lower_window_size = round_to_power ** (np.floor(math.log(candidate_window_size, round_to_power)))
+        # Find which rounded window size is closer to the candidate window size and return it
+        if upper_window_size - candidate_window_size > candidate_window_size - lower_window_size:
+            self.window_size = int(lower_window_size)
+        else:
+            self.window_size = int(upper_window_size)
+
     def window_list(
             self,
             input_list: List[np.ndarray],
@@ -55,9 +93,7 @@ class DataProcessor(base_class.BaseProcessor):
         assert isinstance(input_list, list), 'input_list argument must be a list!'
         assert all(isinstance(input_array, np.ndarray) for input_array in input_list), 'All items in input_list must be numpy arrays!'
         assert all(input_array.ndim == 2 for input_array in input_list), 'All items in input_list must be 2D numpy arrays!'
-
-        if self.window_size is None:
-            self.window_size = self._find_window_size_from_list(input_list)
+        assert self.window_size is not None, 'To window the sequences in the list, find the window size first by running the find_window_size_from_list method first!'
 
         if not isinstance(self.window_shift, int):
             if self.window_shift == 'half':
@@ -149,41 +185,3 @@ class DataProcessor(base_class.BaseProcessor):
                 np.dtype('float32', metadata={'file_name': file_name}))
             output_list.append(lowpass_input_array)
         return output_list
-
-    @staticmethod
-    def _find_window_size_from_list(
-            data_list: List[np.ndarray],
-    ) -> int:
-        """
-        This function plots the autocorrelation for each channel in a multivariate time series.
-
-        :param data_list: list of multivariate input time series
-        """
-
-        # Pre-allocate list for possible window sizes
-        possible_window_sizes = []
-        # Iterate through list of multivariate time series
-        for data_ts in data_list:
-            intersection_list = []
-            # Iterate through channels
-            for channel in range(data_ts.shape[-1]):
-                corr_array = stattools.acf(data_ts[:, channel], alpha=0.01, nlags=4096)
-                upper_y = corr_array[1][:, 1] - corr_array[0]
-                corr = corr_array[0]
-                try:
-                    intersection_list.append(np.min(np.where(corr - upper_y < 0)[0]))
-                except:
-                    continue
-            # Append maximum window size for each channel
-            possible_window_sizes.append(np.max(intersection_list))
-        # Choose maximum window size in list
-        candidate_window_size = np.max(possible_window_sizes)
-        # If window_size is not supposed to be rounded, return it as is
-        round_to_power = 2
-        upper_window_size = round_to_power ** (np.ceil(math.log(candidate_window_size, round_to_power)))
-        lower_window_size = round_to_power ** (np.floor(math.log(candidate_window_size, round_to_power)))
-        # Find which rounded window size is closer to the candidate window size and return it
-        if upper_window_size - candidate_window_size > candidate_window_size - lower_window_size:
-            return int(lower_window_size)
-        else:
-            return int(upper_window_size)

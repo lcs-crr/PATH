@@ -65,6 +65,9 @@ for fold_idx, _ in enumerate(train_list_fold):
     val_list_scaled = data_processor.scale_list(val_list_resampled)
     test_list_scaled = data_processor.scale_list(test_list_resampled)
 
+    # Find the window size
+    data_processor.find_window_size_from_list(train_list_scaled)
+
     # Window sequences inside lists
     scaled_train_window = data_processor.window_list(train_list_scaled)
     scaled_val_window = data_processor.window_list(val_list_scaled)
