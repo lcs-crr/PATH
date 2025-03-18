@@ -49,6 +49,7 @@ for fold_idx in range(3):
         sampling_rate=2,
         original_sampling_rate=10,
         calculate_delay=True,
+        label_keyword='normal',
         reverse_window_penalty=False,
     )
 
@@ -74,7 +75,7 @@ for fold_idx in range(3):
     # Evaluate the model
     threshold = detector.unsupervised_threshold(val_detection_score_list)
 
-    groundtruth_labels, predicted_labels, total_delays = detector.evaluate(
+    groundtruth_labels, predicted_labels, total_delays = detector.evaluate_online(
         input_list=test_list,
         detection_score_list=test_detection_score_list,
         threshold=threshold,
@@ -92,19 +93,19 @@ for fold_idx in range(3):
 
     f1_list = []
     reduced_test_detection_score = np.concatenate(test_detection_score_list).ravel()
-    percentile_array = np.arange(0, 100.1, 0.1)
+    percentile_array = np.arange(0, 100.01, 0.01)
     for threshold_percentile in percentile_array:
         threshold_temp = np.percentile(reduced_test_detection_score, threshold_percentile)
-        groundtruth_labels, predicted_labels, _ = detector.evaluate(
+        groundtruth_labels_temp, predicted_labels_temp, _ = detector.evaluate_online(
             input_list=test_list,
             detection_score_list=test_detection_score_list,
             threshold=threshold_temp,
         )
-        f1_list.append(metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0))
+        f1_list.append(metrics.f1_score(groundtruth_labels_temp, predicted_labels_temp, zero_division=0.0))
     f1_list = np.vstack(f1_list)
     threshold_best = np.percentile(reduced_test_detection_score, percentile_array[np.argmax(f1_list)]).astype(float)
 
-    groundtruth_labels_best, predicted_labels_best, total_delays_best = detector.evaluate(
+    groundtruth_labels_best, predicted_labels_best, total_delays_best = detector.evaluate_online(
         input_list=test_list,
         detection_score_list=test_detection_score_list,
         threshold=threshold_best,
