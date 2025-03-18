@@ -36,6 +36,10 @@ class DataProcessor(base_class.BaseProcessor):
         self.target_sampling_rate = target_sampling_rate
         self.scale_method = scale_method
         self.window_shift = window_shift
+        self.minimum = None
+        self.maximum = None
+        self.mean = None
+        self.standard_deviation = None
 
     def window_list(
             self,
@@ -62,7 +66,7 @@ class DataProcessor(base_class.BaseProcessor):
         output_list = [self.window_array(input_array, self.window_size, self.window_shift) for input_array in input_list]
         return np.vstack(output_list)
 
-    def _find_scalers_from_list(
+    def find_scalers_from_list(
             self,
             input_list: List[np.ndarray],
     ) -> None:
@@ -90,16 +94,19 @@ class DataProcessor(base_class.BaseProcessor):
         assert isinstance(input_list, list), 'input_list argument must be a list!'
         assert all(isinstance(input_array, np.ndarray) for input_array in input_list), 'All items in input_list must be numpy arrays!'
         assert all(input_array.ndim == 2 for input_array in input_list), 'All items in input_list must be 2D numpy arrays!'
-        assert self.scale_method is not None, 'scale_method must be provided!'
-
-        self._find_scalers_from_list(input_list)
+        assert self.minimum is not None, 'To scale the list, find the scalers first by running the find_scalers_from_list method first!'
+        assert self.maximum is not None, 'To scale the list, find the scalers first by running the find_scalers_from_list method first!'
+        assert self.mean is not None, 'To scale the list, find the scalers first by running the find_scalers_from_list method first!'
+        assert self.standard_deviation is not None, 'To scale the list, find the scalers first by running the find_scalers_from_list method first!'
 
         if self.scale_method == 'z-score':
             return [(time_series - self.mean) / self.standard_deviation for time_series in input_list]
         elif self.scale_method == 'min-max':
             return [(time_series - self.minimum) / (self.maximum - self.minimum) for time_series in input_list]
-        else:
+        elif self.scale_method is None:
             return [time_series for time_series in input_list]
+        else:
+            raise ValueError('Invalid scaling method!')
 
     def downsample_list(
             self,
@@ -116,11 +123,11 @@ class DataProcessor(base_class.BaseProcessor):
         assert isinstance(input_list, list), 'input_list argument must be a list!'
         assert all(isinstance(input_array, np.ndarray) for input_array in input_list), 'All items in input_list must be numpy arrays!'
         assert all(input_array.ndim == 2 for input_array in input_list), 'All items in input_list must be 2D numpy arrays!'
-        assert self.original_sampling_rate is not None, 'original_sampling_rate must be provided!'
-        assert self.target_sampling_rate is not None, 'target_sampling_rate must be provided!'
-
+        assert self.original_sampling_rate is not None, 'original_sampling_rate argument must be provided!'
+        assert self.target_sampling_rate is not None, 'target_sampling_rate argument must be provided!'
         assert self.original_sampling_rate > self.target_sampling_rate, 'target_sampling_rate must be lower than original_sampling_rate!'
-        assert self.original_sampling_rate % self.target_sampling_rate == 0, 'target_sampling_rate must be a multiple of original_sampling_rate!'
+        if reduce:
+            assert self.original_sampling_rate % self.target_sampling_rate == 0, 'target_sampling_rate must be a multiple of original_sampling_rate!'
 
         output_list = []
         for _, input_array in enumerate(input_list):

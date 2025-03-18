@@ -57,6 +57,9 @@ for fold_idx, _ in enumerate(train_list_fold):
     # Split training data into training and validation
     train_list_resampled, val_list_resampled = train_test_split(train_list_resampled, random_state=SEED, test_size=0.2)
 
+    # Find the scalers for each feature
+    data_processor.find_scalers_from_list(train_list_resampled)
+
     # Scale data
     train_list_scaled = data_processor.scale_list(train_list_resampled)
     val_list_scaled = data_processor.scale_list(val_list_resampled)
