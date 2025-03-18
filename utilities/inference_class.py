@@ -74,7 +74,6 @@ class Inferencer(base_class.BaseProcessor):
 
         assert isinstance(input_windows, np.ndarray), 'input_windows must be a numpy array!'
         assert input_windows.ndim == 3, 'input_windows must be a 3D numpy array of shape (num_windows, window_size, channels)!'
-        assert self.reverse_mode is not None, 'reverse_mode must be provided!'
         assert self.window_shift is not None, 'window_shift must be provided!'
 
         num_windows, window_size, num_channels = input_windows.shape
@@ -103,7 +102,6 @@ class Inferencer(base_class.BaseProcessor):
 
         assert isinstance(input_windows, np.ndarray), 'input_windows must be a numpy array!'
         assert input_windows.ndim == 3, 'input_windows must be a 3D numpy array of shape (num_windows, window_size, channels)!'
-        assert self.reverse_mode is not None, 'reverse_mode must be provided!'
         assert self.window_shift is not None, 'window_shift must be provided!'
 
         num_windows, window_size, num_channels = input_windows.shape
@@ -130,7 +128,6 @@ class Inferencer(base_class.BaseProcessor):
 
         assert isinstance(input_windows, np.ndarray), 'input_windows must be a numpy array!'
         assert input_windows.ndim == 3, 'input_windows must be a 3D numpy array of shape (num_windows, window_size, channels)!'
-        assert self.reverse_mode is not None, 'reverse_mode must be provided!'
         assert self.window_shift is not None, 'window_shift must be provided!'
 
         num_windows, window_size, num_channels = input_windows.shape
