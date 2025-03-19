@@ -61,8 +61,8 @@ class SISVAE(tf.keras.Model):
         z_mean, z_logvar = z_params
         # Calculate KL Divergence between t-1 latent distribution and current latent distribution
         smooth_loss = [
-            tfd.MultivariateNormalDiag(loc=z_mean[:, time_step - 1], scale=tf.sqrt(tf.math.exp(z_logvar[:, time_step - 1]))).kl_divergence(
-                tfd.MultivariateNormalDiag(loc=z_mean[:, time_step], scale=tf.sqrt(tf.math.exp(z_logvar[:, time_step]))),
+            tfd.MultivariateNormalDiag(loc=z_mean[:, time_step - 1], scale_diag=tf.sqrt(tf.math.exp(z_logvar[:, time_step - 1]))).kl_divergence(
+                tfd.MultivariateNormalDiag(loc=z_mean[:, time_step], scale_diag=tf.sqrt(tf.math.exp(z_logvar[:, time_step]))),
             ) for time_step in range(1, z_mean.shape[1])
         ]
         smooth_loss = tf.transpose(tf.stack(smooth_loss), perm=[1, 0])

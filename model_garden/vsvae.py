@@ -87,7 +87,7 @@ class VSVAE(tf.keras.Model):
     def rec_fn(x, xhat_params, reduce_time=True):
         xhat_mean, xhat_logvar = xhat_params
         # Configure distribution with output parameters
-        output_dist = tfd.Laplace(loc=xhat_mean, scale=tf.sqrt(tf.math.exp(xhat_logvar)))
+        output_dist = tfd.Laplace(loc=xhat_mean, scale_diag=tf.sqrt(tf.math.exp(xhat_logvar)))
         # Calculate log probability of input data given output distribution
         loglik_loss = tf.reduce_sum(output_dist.log_prob(x), axis=-1)
         if reduce_time:
@@ -110,10 +110,10 @@ class VSVAE(tf.keras.Model):
     def att_fn(att_params, reduce_time=True):
         a_mean, a_logvar = att_params
         # Configure distribution with latent parameters
-        latent_dist = tfd.MultivariateNormalDiag(loc=a_mean, scale=tf.sqrt(tf.math.exp(a_logvar)))
+        latent_dist = tfd.MultivariateNormalDiag(loc=a_mean, scale_diag=tf.sqrt(tf.math.exp(a_logvar)))
         # Calculate KL-Divergence between latent distribution and standard Gaussian
         att_loss = latent_dist.kl_divergence(
-            tfd.MultivariateNormalDiag(loc=tf.zeros_like(a_mean), scale=tf.ones_like(a_logvar))
+            tfd.MultivariateNormalDiag(loc=tf.zeros_like(a_mean), scale_diag=tf.ones_like(a_logvar))
         )
         if reduce_time:
             return tf.reduce_sum(att_loss, axis=1)

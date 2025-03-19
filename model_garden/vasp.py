@@ -40,10 +40,10 @@ class VASP(tf.keras.Model):
     def kldiv_fn(z_params):
         z_mean, z_logvar = z_params
         # Configure distribution with latent parameters
-        latent_dist = tfd.MultivariateNormalDiag(loc=z_mean, scale=tf.sqrt(tf.math.exp(z_logvar)))
+        latent_dist = tfd.MultivariateNormalDiag(loc=z_mean, scale_diag=tf.sqrt(tf.math.exp(z_logvar)))
         # Calculate KL-Divergence between latent distribution and standard Gaussian
         kl_loss = latent_dist.kl_divergence(
-            tfd.MultivariateNormalDiag(loc=tf.zeros_like(z_mean), scale=tf.ones_like(z_logvar))
+            tfd.MultivariateNormalDiag(loc=tf.zeros_like(z_mean), scale_diag=tf.ones_like(z_logvar))
         )
         return kl_loss
 
