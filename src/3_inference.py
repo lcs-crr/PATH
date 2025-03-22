@@ -8,10 +8,7 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import random
-import numpy as np
 import tensorflow as tf
-from tqdm import tqdm
 from dotenv import dotenv_values
 from utilities import inference_class
 

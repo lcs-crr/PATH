@@ -8,9 +8,7 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import numpy as np
 import tensorflow as tf
-import math
 from sklearn.model_selection import train_test_split
 from dotenv import dotenv_values
 from utilities import data_class
