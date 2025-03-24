@@ -154,8 +154,10 @@ for seed in range(1, 4):
                             verbose=2
                             )
 
-        # Run and save model
+        # Run model on random data with same shape as input to build model
         model.predict(tf.random.normal((32, window_size, features)), verbose=0)
+
+        # Save model and losses
         os.makedirs(model_save_path, exist_ok=True)
         model.save(os.path.join(model_save_path, 'model.keras'))
         data_class.DataProcessor().dump_pickle(history, os.path.join(model_save_path, 'losses.pkl'))
