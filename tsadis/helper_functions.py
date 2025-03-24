@@ -1,9 +1,3 @@
-"""
-Lucas Correia
-LIACS | Leiden University
-Einsteinweg 55 | 2333 CC Leiden | The Netherlands
-"""
-
 import os
 import numpy as np
 import matrixprofile as mpx
