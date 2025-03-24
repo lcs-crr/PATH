@@ -7,7 +7,6 @@ Original paper DOI: 10.1137/1.9781611977653.ch77
 """
 
 from dotenv import dotenv_values
-import random
 import openpyxl
 from sklearn import metrics
 import pandas as pd
@@ -16,14 +15,8 @@ from utilities import detection_class
 from tqdm import tqdm
 
 # Declare constants
-SEED = 1
 AD_MODE = 'us'  # or 'ss'
 MODEL_NAME = 'tsadis'
-
-# Set fixed seed for random operations
-random.seed(SEED)
-np.random.seed(SEED)
-os.environ['PYTHONHASHSEED'] = str(SEED)
 
 # Load variables in .env file
 config = dotenv_values("../.env")
@@ -35,12 +28,8 @@ model_path = config['model_path']
 results = []
 results_best = []
 for fold_idx in range(3):
-    model_seed = SEED
-    model_name = MODEL_NAME + '_' + AD_MODE + '_' + str(fold_idx) + '_' + str(model_seed)
-    if AD_MODE == 'us':
-        data_load_path = os.path.join(data_path, '2_preprocessed', 'unsupervised', 'fold_' + str(fold_idx))
-    else:
-        data_load_path = os.path.join(data_path, '2_preprocessed', 'semisupervised', 'fold_' + str(fold_idx))
+    model_name = MODEL_NAME + '_' + AD_MODE + '_' + str(fold_idx) + '_x'
+    data_load_path = os.path.join(data_path, '2_preprocessed', 'unsupervised', 'fold_' + str(fold_idx))
     model_load_path = os.path.join(model_path, model_name)
 
     detector = detection_class.AnomalyDetector(
@@ -85,7 +74,7 @@ for fold_idx in range(3):
     )
 
     results.append({
-        'Seed': model_seed,
+        'Seed': 'x',
         'Fold': fold_idx,
         'F1': metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0),
         'Precision': metrics.precision_score(groundtruth_labels, predicted_labels, zero_division=0.0),
@@ -115,7 +104,7 @@ for fold_idx in range(3):
     )
 
     results_best.append({
-        'Seed': model_seed,
+        'Seed': 'x',
         'Fold': fold_idx,
         'F1': metrics.f1_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
         'Precision': metrics.precision_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),

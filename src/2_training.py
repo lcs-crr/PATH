@@ -156,10 +156,7 @@ for seed in range(1, 4):
 
         # Run and save model
         model.predict(tf.random.normal((32, window_size, features)), verbose=0)
-        try:
-            os.mkdir(os.path.join(model_save_path))
-        except FileExistsError:
-            pass
+        os.makedirs(model_save_path, exist_ok=True)
         model.save(os.path.join(model_save_path, 'model.keras'))
         data_class.DataProcessor().dump_pickle(history, os.path.join(model_save_path, 'losses.pkl'))
         tf.keras.backend.clear_session()
