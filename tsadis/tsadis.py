@@ -57,6 +57,9 @@ for fold_idx in range(3):
     val_list = detector.load_pickle(os.path.join(data_load_path, 'val.pkl'))
     test_list = detector.load_pickle(os.path.join(data_load_path, 'test.pkl'))
 
+    # Average detection delay (i.e. the average length of test time series in seconds)
+    tsadis_detection_delay = np.mean([len(test_ts) for test_ts in test_list])/2
+
     val_detection_score_list = []
     for val_idx, val_ts in enumerate(tqdm(val_list)):
         mps = cal_tags_mps(val_ts, win=detector.window_size)
@@ -75,7 +78,7 @@ for fold_idx in range(3):
     # Evaluate the model
     threshold = detector.unsupervised_threshold(val_detection_score_list)
 
-    groundtruth_labels, predicted_labels, total_delays = detector.evaluate_online(
+    groundtruth_labels, predicted_labels, _ = detector.evaluate_online(
         input_list=test_list,
         detection_score_list=test_detection_score_list,
         threshold=threshold,
@@ -87,7 +90,7 @@ for fold_idx in range(3):
         'F1': metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0),
         'Precision': metrics.precision_score(groundtruth_labels, predicted_labels, zero_division=0.0),
         'Recall': metrics.recall_score(groundtruth_labels, predicted_labels, zero_division=0.0),
-        'Delay': np.mean(total_delays),
+        'Delay': tsadis_detection_delay,
         'Threshold': threshold
     })
 
@@ -117,7 +120,7 @@ for fold_idx in range(3):
         'F1': metrics.f1_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
         'Precision': metrics.precision_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
         'Recall': metrics.recall_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
-        'Delay': np.mean(total_delays_best),
+        'Delay': tsadis_detection_delay,
         'Threshold': threshold_best
     })
 
