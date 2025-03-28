@@ -17,30 +17,36 @@ class KLAnnealing(tf.keras.callbacks.Callback):
             self,
             annealing_epochs: int = 25,
             annealing_type: str = "normal",
-            grace_period: int = 25,
-            start: float = 1e-3,
-            end: float = 1e0
+            grace_period: int = 0,
+            beta_start: float = 1e-3,
+            beta_end: float = 1e0
     ) -> None:
         super(KLAnnealing, self).__init__()
         self.annealing_epochs = annealing_epochs
         self.annealing_type = annealing_type
         self.grace_period = grace_period
-        self.grace_period_idx = tf.math.maximum(0.0, grace_period - 1)  # Starting from 0
-        self.start = start
-        self.end = end
+        self.beta_start = beta_start
+        self.beta_end = beta_end
         if annealing_type in ["cyclical", "monotonic"]:
-            self.beta_values = tf.linspace(start, end, annealing_epochs)
+            self.beta_values = tf.linspace(beta_start, beta_end, annealing_epochs)
 
     def on_epoch_begin(self, epoch, logs=None):
-        shifted_epochs = tf.math.maximum(0.0, epoch - self.grace_period_idx)
-        if epoch < self.grace_period_idx or self.annealing_type == "normal":
-            new_value = self.start
+        if self.annealing_type == "normal":
+            new_value = self.beta_start
             self.model.beta.assign(new_value)
         elif self.annealing_type == "monotonic":
-            new_value = self.beta_values[min(epoch, self.annealing_epochs - 1)]
+            if epoch < self.grace_period:
+                new_value = self.beta_start
+            elif self.grace_period <= epoch < self.grace_period + self.annealing_epochs:
+                new_value = self.beta_values[epoch % self.annealing_epochs]
+            else:
+                new_value = self.beta_end
             self.model.beta.assign(new_value)
         elif self.annealing_type == "cyclical":
-            new_value = self.beta_values[int(shifted_epochs % self.annealing_epochs)]
+            if epoch < self.grace_period:
+                new_value = self.beta_start
+            else:
+                new_value = self.beta_values[epoch % self.annealing_epochs]
             self.model.beta.assign(new_value)
 
     def get_config(self):
@@ -48,8 +54,8 @@ class KLAnnealing(tf.keras.callbacks.Callback):
             "annealing_epochs": self.annealing_epochs,
             "annealing_type": self.annealing_type,
             "grace_period": self.grace_period,
-            "start": self.start,
-            "end": self.end,
+            "beta_start": self.beta_start,
+            "beta_end": self.beta_end,
         }
 
     @classmethod
