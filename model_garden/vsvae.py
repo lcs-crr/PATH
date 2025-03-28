@@ -87,7 +87,7 @@ class VSVAE(tf.keras.Model):
     def rec_fn(x, xhat_params, reduce_time=True):
         xhat_mean, xhat_logvar = xhat_params
         # Configure distribution with output parameters
-        output_dist = tfd.Laplace(loc=xhat_mean, scale_diag=tf.sqrt(tf.math.exp(xhat_logvar)))
+        output_dist = tfd.Laplace(loc=xhat_mean, scale=tf.sqrt(tf.math.exp(xhat_logvar)))
         # Calculate log probability of input data given output distribution
         loglik_loss = tf.reduce_sum(output_dist.log_prob(x), axis=-1)
         if reduce_time:
