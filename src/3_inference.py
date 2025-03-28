@@ -39,9 +39,12 @@ for model_seed in range(1, 4):
             data_load_path = os.path.join(data_path, '2_preprocessed', 'semisupervised', 'fold_' + str(fold_idx))
         model_load_path = os.path.join(model_path, model_name)
 
+        # Load tf.data to get window_size
+        tfdata_train = tf.data.Dataset.load(os.path.join(data_load_path, data_split, 'train'))
+
         inferencer = inference_class.Inferencer(
             model_path=model_load_path,
-            window_size=256,
+            window_size=tfdata_train.element_spec.shape[0],
             window_shift=1,
         )
 
