@@ -40,7 +40,7 @@ for model_seed in range(1, 4):
         model_load_path = os.path.join(model_path, model_name)
 
         # Load tf.data to get window_size
-        tfdata_train = tf.data.Dataset.load(os.path.join(data_load_path, data_split, 'train'))
+        tfdata_train = tf.data.Dataset.load(os.path.join(data_load_path, 'train'))
 
         inferencer = inference_class.Inferencer(
             model_path=model_load_path,
