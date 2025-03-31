@@ -14,6 +14,7 @@ from utilities import detection_class
 from sklearn import metrics
 import pandas as pd
 import openpyxl
+import tensorflow as tf
 
 # Declare constants
 AD_MODE = 'us'  # or 'ss'
