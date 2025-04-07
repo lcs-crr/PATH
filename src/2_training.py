@@ -65,6 +65,7 @@ for seed in range(1, 4):
                 from model_garden.tevae import *
                 annealing = KLAnnealing(
                     annealing_type="cyclical",
+                    grace_period=25,
                 )
                 latent_dim = features // 2
                 key_dim = features // 8
@@ -124,8 +125,6 @@ for seed in range(1, 4):
                 from model_garden.vsvae import *
                 annealing = KLAnnealing(
                     annealing_type="monotonic",
-                    start=1e-8,
-                    end=1e-2,
                 )
                 latent_dim = 3
                 hidden_units = 128
