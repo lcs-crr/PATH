@@ -154,7 +154,7 @@ class Inferencer(base_class.BaseProcessor):
 
         assert self.model_path is not None, 'model_path must be provided!'
 
-        return self.model_path.split('/')[-1][:-7]
+        return self.model_path.split('/')[-1].split('_')[0]
 
     def _load_keras_model(
             self,
