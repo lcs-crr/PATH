@@ -120,7 +120,7 @@ pip-chill==1.0.3
     # via path (pyproject.toml)
 plotly==5.24.1
     # via path (pyproject.toml)
-protobuf==4.25.6
+protobuf==4.25.8 #4.25.6
     # via
     #   tensorboard
     #   tensorflow
@@ -136,7 +136,7 @@ python-dotenv==1.0.1
     # via path (pyproject.toml)
 pytz==2024.2
     # via pandas
-requests==2.32.3
+requests==2.32.4 #2.32.3
     # via
     #   requests-oauthlib
     #   tensorboard
@@ -188,7 +188,7 @@ typing-extensions==4.12.2
     # via tensorflow
 tzdata==2025.1
     # via pandas
-urllib3==2.3.0
+urllib3==2.5.0 #2.3.0
     # via requests
 werkzeug==3.1.3
     # via tensorboard
