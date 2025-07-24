@@ -7,13 +7,13 @@ To cater for both unsupervised and semi-supervised anomaly detection settings, a
 The preprint of the paper corresponding to this repository can be found on [arXiv](https://arxiv.org/abs/2411.13951).
 
 If you use this dataset for your research, please consider also citing the Zenodo repository using the following bibtex entry:
-@misc{correiaDatasetEvaluatingOnline2024a,
-  title = {A {{Dataset}} for {{Evaluating Online Anomaly Detection Approaches}} for {{Discrete Multivariate Time Series}}},
-  author = {Correia, Lucas and Goos, Jan-Christoph and B{\"a}ck, Thomas and Kononova, Anna V.},
-  year = {2024},
-  publisher = {Zenodo},
-  doi = {10.5281/ZENODO.13255121},
-  copyright = {MIT License}
+@misc{correiaDatasetEvaluatingOnline2024a,<br />
+&nbsp;&nbsp;title = {A {{Dataset}} for {{Evaluating Online Anomaly Detection Approaches}} for {{Discrete Multivariate Time Series}}},<br />
+&nbsp;&nbsp;author = {Correia, Lucas and Goos, Jan-Christoph and B{\"a}ck, Thomas and Kononova, Anna V.},<br />
+&nbsp;&nbsp;year = {2024},<br />
+&nbsp;&nbsp;publisher = {Zenodo},<br />
+&nbsp;&nbsp;doi = {10.5281/ZENODO.13255121},<br />
+&nbsp;&nbsp;copyright = {MIT License}<br />
 }
 
 ## Simulation
