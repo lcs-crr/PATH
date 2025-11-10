@@ -4,7 +4,7 @@
 
 We propose a diverse, extensive, and non-trivial data set generated via state-of-the-art simulation tools that reflect realistic behaviour of an automotive powertrain, including its multivariate, dynamic and variable-state properties. 
 To cater for both unsupervised and semi-supervised anomaly detection settings, as well as time series generation and forecasting, different versions of the data set are made available, where training and test subsets are offered in contaminated and clean versions, depending on the task.
-The paper corresponding to this repository can be found on [here]((https://doi.org/10.1016/j.bdr.2025.100573).
+The paper corresponding to this repository can be found on [here](https://doi.org/10.1016/j.bdr.2025.100573).
 
 If you use this dataset for your research, please consider also citing the Zenodo repository using the following bibtex entry:<br />
 **@misc{correiaDatasetEvaluatingOnline2024a,<br />
