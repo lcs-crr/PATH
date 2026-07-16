@@ -120,7 +120,7 @@ pip-chill==1.0.3
     # via path (pyproject.toml)
 plotly==5.24.1
     # via path (pyproject.toml)
-protobuf==4.25.8 #4.25.6
+protobuf==5.29.6 #4.25.6
     # via
     #   tensorboard
     #   tensorflow
