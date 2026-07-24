@@ -150,7 +150,7 @@ scipy==1.15.1
     # via
     #   scikit-learn
     #   statsmodels
-setuptools==78.1.1
+setuptools==83.0.0
     # via
     #   tensorboard
     #   tensorflow
