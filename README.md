@@ -1,20 +1,23 @@
 # PATH: A Dataset for Evaluating Online Anomaly Detection Approaches for Discrete Multivariate Time Series
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Dataset DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13255120.svg)](https://doi.org/10.5281/zenodo.13255120) [![Paper DOI](https://img.shields.io/badge/Paper%20DOI-10.1016%2Fj.bdr.2025.100573-blue.svg)](https://doi.org/10.1016/j.bdr.2025.100573)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.bdr.2025.100573-blue.svg)](https://doi.org/10.1016/j.bdr.2025.100573) [![Dataset DOI](https://img.shields.io/badge/Dataset%20DOI-10.5281%2Fzenodo.13255120-blue.svg)](https://doi.org/10.5281/zenodo.13255120)
 
 We propose a diverse, extensive, and non-trivial data set generated via state-of-the-art simulation tools that reflect realistic behaviour of an automotive powertrain, including its multivariate, dynamic and variable-state properties. 
 To cater for both unsupervised and semi-supervised anomaly detection settings, as well as time series generation and forecasting, different versions of the data set are made available, where training and test subsets are offered in contaminated and clean versions, depending on the task.
 The paper corresponding to this repository can be found on [here](https://doi.org/10.1016/j.bdr.2025.100573).
 
-If you use this dataset for your research, please consider also citing the Zenodo repository using the following bibtex entry:<br />
-**@misc{correiaDatasetEvaluatingOnline2024a,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;title = {A {{Dataset}} for {{Evaluating Online Anomaly Detection Approaches}} for {{Discrete Multivariate Time Series}}},<br />
-&nbsp;&nbsp;&nbsp;&nbsp;author = {Correia, Lucas and Goos, Jan-Christoph and B{\"a}ck, Thomas and Kononova, Anna V.},<br />
-&nbsp;&nbsp;&nbsp;&nbsp;year = {2024},<br />
-&nbsp;&nbsp;&nbsp;&nbsp;publisher = {Zenodo},<br />
-&nbsp;&nbsp;&nbsp;&nbsp;doi = {10.5281/ZENODO.13255121},<br />
-&nbsp;&nbsp;&nbsp;&nbsp;copyright = {MIT License}<br />
-}**
+If you use this dataset for your research, please consider also citing the Zenodo repository using the following bibtex entry:
+
+```bibtex
+@misc{correiaDatasetEvaluatingOnline2024a,
+    title = {A {{Dataset}} for {{Evaluating Online Anomaly Detection Approaches}} for {{Discrete Multivariate Time Series}}},
+    author = {Correia, Lucas and Goos, Jan-Christoph and B{\"a}ck, Thomas and Kononova, Anna V.},
+    year = {2024},
+    publisher = {Zenodo},
+    doi = {10.5281/ZENODO.13255121},
+    copyright = {MIT License}
+}
+```
 
 ## Simulation
 The multivariate time series composing the proposed data set are generated using a Simulink simulation model and are provided so you don't have to simulate yourself. 
