@@ -18,7 +18,7 @@ class TCNAE(tf.keras.Model):
             self,
             encoder: tf.keras.Model,
             decoder: tf.keras.Model,
-            name: str = None,
+            name: str | None = None,
             **kwargs,
     ) -> None:
         super(TCNAE, self).__init__(name=name, **kwargs)
@@ -33,7 +33,7 @@ class TCNAE(tf.keras.Model):
         else:
             return tf.losses.LogCosh('none')(x, x_hat)
 
-    def train_step(self, x, **kwargs):
+    def train_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         with tf.GradientTape() as tape:
             # Forward pass through models
             z = self.encoder(x)
@@ -42,6 +42,7 @@ class TCNAE(tf.keras.Model):
         # Calculate gradients in backward pass
         grads = tape.gradient(loss, self.trainable_weights)
         # Apply gradients
+        assert self.optimizer is not None, "Model must be compiled with an optimizer!"
         self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
         # Track losses
         self.loss_tracker.update_state(loss)
@@ -49,7 +50,7 @@ class TCNAE(tf.keras.Model):
             "rec_loss": self.loss_tracker.result(),
         }
 
-    def test_step(self, x, **kwargs):
+    def test_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         # Forward pass through encoder
         z = self.encoder(x, training=False)
         x_hat = self.decoder(z, training=False)
@@ -64,7 +65,7 @@ class TCNAE(tf.keras.Model):
         ]
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         z = self.encoder(x, training=False)
         x_hat = self.decoder(z, training=False)
         return x_hat, z
@@ -78,7 +79,7 @@ class TCNAE(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         encoder = TCNAE_Encoder.from_config(config["encoder"])
         decoder = TCNAE_Decoder.from_config(config["decoder"])
         return cls(encoder=encoder, decoder=decoder)
@@ -97,7 +98,7 @@ class TCNAE_Encoder(tf.keras.Model):
             padding: str,
             sampling_factor: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(TCNAE_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -125,7 +126,7 @@ class TCNAE_Encoder(tf.keras.Model):
         return tf.keras.Model(enc_input, enc_output)
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.encoder(x, **kwargs)
 
     def get_config(self):
@@ -145,7 +146,7 @@ class TCNAE_Encoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],
@@ -173,7 +174,7 @@ class TCNAE_Decoder(tf.keras.Model):
             padding: str,
             sampling_factor: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(TCNAE_Decoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -200,7 +201,7 @@ class TCNAE_Decoder(tf.keras.Model):
         return tf.keras.Model(dec_input, dec_output)
 
     @tf.function
-    def call(self, inputs, **kwargs):
+    def call(self, inputs, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.decoder(inputs, **kwargs)
 
     def get_config(self):
@@ -220,7 +221,7 @@ class TCNAE_Decoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],

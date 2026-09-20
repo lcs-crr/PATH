@@ -5,6 +5,7 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
+from typing import cast
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -32,6 +33,7 @@ for seed in range(1, 4):
     # Load directory paths from .env file
     data_path = config['data_path']
     model_path = config['model_path']
+    assert data_path is not None and model_path is not None, "data_path and model_path must be set in .env!"
 
     for fold_idx in range(3):
         # Declare model name and paths
@@ -58,8 +60,10 @@ for seed in range(1, 4):
         )
 
         # Define model
-        window_size = tfdata_train.element_spec.shape[1]
-        features = tfdata_train.element_spec.shape[2]
+        window_size = cast(tf.TensorSpec, tfdata_train.element_spec).shape[1]
+        features = cast(tf.TensorSpec, tfdata_train.element_spec).shape[2]
+        assert window_size is not None and features is not None, 'Training data must have a fixed window size and number of features!'
+        callback_list: list[tf.keras.callbacks.Callback]
         with strategy.scope():
             if MODEL_NAME == 'tevae':
                 from model_garden.tevae import *
@@ -144,6 +148,8 @@ for seed in range(1, 4):
                 model = VASP(encoder, decoder)
                 callback_list = [early_stopping]
                 model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=False, clipnorm=None))
+            else:
+                raise ValueError(f'Unknown MODEL_NAME: {MODEL_NAME}')
 
         # Fit vae model
         history = model.fit(tfdata_train,

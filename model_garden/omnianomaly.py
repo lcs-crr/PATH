@@ -19,7 +19,7 @@ class OmniAnomaly(tf.keras.Model):
             self,
             encoder: tf.keras.Model,
             decoder: tf.keras.Model,
-            name: str = None,
+            name: str | None = None,
             **kwargs
     ) -> None:
         super(OmniAnomaly, self).__init__(name=name, **kwargs)
@@ -70,7 +70,7 @@ class OmniAnomaly(tf.keras.Model):
         # Calculate log probability of sample belongs parametrised distribution
         return -lgssm_dist.log_prob(z)
 
-    def train_step(self, x, **kwargs):
+    def train_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         with tf.GradientTape() as tape:
             # Forward pass through encoder
             z_mean, z_logvar, z = self.encoder(x, training=True)
@@ -85,6 +85,7 @@ class OmniAnomaly(tf.keras.Model):
         # Calculate gradients in backward pass
         grads = tape.gradient(loss, self.trainable_weights)
         # Apply gradients
+        assert self.optimizer is not None, "Model must be compiled with an optimizer!"
         self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
         # Track losses
         self.loss_tracker.update_state(loss)
@@ -98,7 +99,7 @@ class OmniAnomaly(tf.keras.Model):
             "lgssm_loss": self.lgssm_loss_tracker.result(),
         }
 
-    def test_step(self, x, **kwargs):
+    def test_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         # Forward pass through encoder
         z_mean, z_logvar, z = self.encoder(x, training=False)
         # Forward pass through decoder
@@ -125,7 +126,7 @@ class OmniAnomaly(tf.keras.Model):
         ]
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         z_mean, z_logvar, z = self.encoder(x, training=False)
         xhat_mean, xhat_logvar, xhat = self.decoder(z, training=False)
         return xhat_mean, xhat_logvar, xhat, z_mean, z_logvar, z
@@ -139,7 +140,7 @@ class OmniAnomaly(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         encoder = OmniAnomaly_Encoder.from_config(config["encoder"])
         decoder = OmniAnomaly_Decoder.from_config(config["decoder"])
         return cls(encoder=encoder, decoder=decoder)
@@ -154,7 +155,7 @@ class OmniAnomaly_Encoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(OmniAnomaly_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -177,7 +178,7 @@ class OmniAnomaly_Encoder(tf.keras.Model):
         return tf.keras.Model(enc_input, [z_mean, z_logvar, z])
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.encoder(x, **kwargs)
 
     def get_config(self):
@@ -193,7 +194,7 @@ class OmniAnomaly_Encoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],
@@ -213,7 +214,7 @@ class OmniAnomaly_Decoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(OmniAnomaly_Decoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -234,7 +235,7 @@ class OmniAnomaly_Decoder(tf.keras.Model):
         return tf.keras.Model(dec_input, [xhat_mean, xhat_logvar, xhat])
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.decoder(x, **kwargs)
 
     def get_config(self):
@@ -250,7 +251,7 @@ class OmniAnomaly_Decoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],

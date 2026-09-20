@@ -5,6 +5,7 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
+from typing import cast
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -27,6 +28,7 @@ config = dotenv_values("../.env")
 # Load directory paths from .env file
 data_path = config['data_path']
 model_path = config['model_path']
+assert data_path is not None and model_path is not None, "data_path and model_path must be set in .env!"
 
 # Iterate over all seeds and folds
 for model_seed in range(1, 4):
@@ -44,7 +46,7 @@ for model_seed in range(1, 4):
 
         inferencer = inference_class.Inferencer(
             model_path=model_load_path,
-            window_size=tfdata_train.element_spec.shape[0],
+            window_size=cast(tf.TensorSpec, tfdata_train.element_spec).shape[0],
             window_shift=1,
         )
 

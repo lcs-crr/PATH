@@ -24,6 +24,7 @@ config = dotenv_values("../.env")
 # Load directory paths from .env file
 data_path = config['data_path']
 model_path = config['model_path']
+assert data_path is not None and model_path is not None, 'data_path and model_path must be set in .env!'
 
 results = []
 results_best = []
@@ -76,9 +77,9 @@ for fold_idx in range(3):
     results.append({
         'Seed': 'x',
         'Fold': fold_idx,
-        'F1': metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0),
-        'Precision': metrics.precision_score(groundtruth_labels, predicted_labels, zero_division=0.0),
-        'Recall': metrics.recall_score(groundtruth_labels, predicted_labels, zero_division=0.0),
+        'F1': metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0),  # pyright: ignore[reportArgumentType]
+        'Precision': metrics.precision_score(groundtruth_labels, predicted_labels, zero_division=0.0),  # pyright: ignore[reportArgumentType]
+        'Recall': metrics.recall_score(groundtruth_labels, predicted_labels, zero_division=0.0),  # pyright: ignore[reportArgumentType]
         'Delay': tsadis_detection_delay,
         'Threshold': threshold
     })
@@ -93,7 +94,7 @@ for fold_idx in range(3):
             detection_score_list=test_detection_score_list,
             threshold=threshold_temp,
         )
-        f1_list.append(metrics.f1_score(groundtruth_labels_temp, predicted_labels_temp, zero_division=0.0))
+        f1_list.append(metrics.f1_score(groundtruth_labels_temp, predicted_labels_temp, zero_division=0.0))  # pyright: ignore[reportArgumentType]
     f1_list = np.vstack(f1_list)
     threshold_best = np.percentile(reduced_test_detection_score, percentile_array[np.argmax(f1_list)]).astype(float)
 
@@ -106,9 +107,9 @@ for fold_idx in range(3):
     results_best.append({
         'Seed': 'x',
         'Fold': fold_idx,
-        'F1': metrics.f1_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
-        'Precision': metrics.precision_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
-        'Recall': metrics.recall_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
+        'F1': metrics.f1_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),  # pyright: ignore[reportArgumentType]
+        'Precision': metrics.precision_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),  # pyright: ignore[reportArgumentType]
+        'Recall': metrics.recall_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),  # pyright: ignore[reportArgumentType]
         'Delay': tsadis_detection_delay,
         'Threshold': threshold_best
     })

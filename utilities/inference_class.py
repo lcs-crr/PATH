@@ -16,11 +16,11 @@ from utilities import base_class
 class Inferencer(base_class.BaseProcessor):
     def __init__(
             self,
-            model_path: str = None,
-            window_size: int = None,
-            window_shift: int = None,
+            model_path: str | None = None,
+            window_size: int | None = None,
+            window_shift: int | None = None,
             reverse_mode: str = 'mean',
-            batch_size: int = None,
+            batch_size: int | None = None,
     ) -> None:
         """
         This class comprises all required functions to perform inference with a given model.

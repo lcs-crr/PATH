@@ -12,11 +12,11 @@ from utilities import base_class
 class AnomalyDetector(base_class.BaseProcessor):
     def __init__(
             self,
-            model_path: str = None,
-            window_size: int = None,
-            sampling_rate: int = None,
-            original_sampling_rate: int = None,
-            calculate_delay: bool = None,
+            model_path: str | None = None,
+            window_size: int | None = None,
+            sampling_rate: int | None = None,
+            original_sampling_rate: int | None = None,
+            calculate_delay: bool | None = None,
             reverse_window_penalty: bool = True,
             label_keyword: str = 'normal',
     ) -> None:
@@ -99,7 +99,7 @@ class AnomalyDetector(base_class.BaseProcessor):
     def _extract_groundtruth(
             self,
             input_list: List[np.ndarray],
-    ) -> Tuple[List[int], List[float]]:
+    ) -> Tuple[List[bool], List[float]]:
         """
         This function extracts the groundtruth labels and start times from the file names.
 
@@ -108,6 +108,9 @@ class AnomalyDetector(base_class.BaseProcessor):
 
         assert isinstance(input_list, list), 'input_list must be a list!'
         assert all(isinstance(input_array, np.ndarray) for input_array in input_list), 'All items in input_list must be numpy arrays!'
+
+        assert self.sampling_rate is not None, 'sampling_rate must be provided!'
+        assert self.original_sampling_rate is not None, 'original_sampling_rate must be provided!'
 
         groundtruth_labels = [self.label_keyword not in data_ts.dtype.metadata['file_name'] for idx_data, data_ts in enumerate(input_list)]
         groundtruth_start_list = [int(data_ts.dtype.metadata['file_name'].split('_')[-1].split('.')[0]) // (self.original_sampling_rate / self.sampling_rate) for
@@ -118,8 +121,8 @@ class AnomalyDetector(base_class.BaseProcessor):
             self,
             input_list: List[np.ndarray],
             detection_score_list: List[np.ndarray],
-            threshold: float = None,
-    ) -> Tuple[List[int], List[int], List[float]]:
+            threshold: float | None = None,
+    ) -> Tuple[List[bool], List[bool], List[float]]:
         """
         This function evaluates the anomaly detection performance of a given model.
 
@@ -193,8 +196,8 @@ class AnomalyDetector(base_class.BaseProcessor):
             self,
             input_list: List[np.ndarray],
             detection_score_list: List[np.ndarray],
-            threshold: float = None,
-    ) -> Tuple[List[int], List[int], List[float]]:
+            threshold: float | None = None,
+    ) -> Tuple[List[bool], List[bool], List[float]]:
         """
         This function evaluates the anomaly detection performance of a given model.
 
@@ -241,9 +244,9 @@ class AnomalyDetector(base_class.BaseProcessor):
 
     @staticmethod
     def _correct_labels(
-            groundtruth_labels: List[int],
-            predicted_labels: List[int],
-    ) -> Tuple[List[int], List[int]]:
+            groundtruth_labels: List[bool],
+            predicted_labels: List[bool],
+    ) -> Tuple[List[bool], List[bool]]:
         """
         This method finds false positives due to premature positive predictions and corrects the corresponding labels in groundtruth_labels and predicted_labels.
 

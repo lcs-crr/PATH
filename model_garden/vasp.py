@@ -19,7 +19,7 @@ class VASP(tf.keras.Model):
             self,
             encoder: tf.keras.Model,
             decoder: tf.keras.Model,
-            name: str = None,
+            name: str | None = None,
             **kwargs
     ) -> None:
         super(VASP, self).__init__(name=name, **kwargs)
@@ -47,7 +47,7 @@ class VASP(tf.keras.Model):
         )
         return kl_loss
 
-    def train_step(self, x, **kwargs):
+    def train_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         with tf.GradientTape() as tape:
             # Forward pass through encoder
             z_mean, z_logvar, z = self.encoder(x, training=True)
@@ -61,6 +61,7 @@ class VASP(tf.keras.Model):
         # Calculate gradients in backward pass
         grads = tape.gradient(loss, self.trainable_weights)
         # Apply gradients
+        assert self.optimizer is not None, "Model must be compiled with an optimizer!"
         self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
         # Track losses
         self.loss_tracker.update_state(loss)
@@ -72,7 +73,7 @@ class VASP(tf.keras.Model):
             "kl_loss": self.kl_loss_tracker.result(),
         }
 
-    def test_step(self, x, **kwargs):
+    def test_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         # Forward pass through encoder
         z_mean, z_logvar, z = self.encoder(x, training=False)
         # Forward pass through decoder
@@ -96,7 +97,7 @@ class VASP(tf.keras.Model):
         ]
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         z_mean, z_logvar, z = self.encoder(x, training=False)
         xhat = self.decoder(z_mean, training=False)
         return xhat, z_mean, z_logvar, z
@@ -110,7 +111,7 @@ class VASP(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         encoder = VASP_Encoder.from_config(config["encoder"])
         decoder = VASP_Decoder.from_config(config["decoder"])
         return cls(encoder=encoder, decoder=decoder)
@@ -125,7 +126,7 @@ class VASP_Encoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(VASP_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -147,7 +148,7 @@ class VASP_Encoder(tf.keras.Model):
         return tf.keras.Model(enc_input, [z_mean, z_logvar, z])
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.encoder(x, **kwargs)
 
     def get_config(self):
@@ -163,7 +164,7 @@ class VASP_Encoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],
@@ -183,7 +184,7 @@ class VASP_Decoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(VASP_Decoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -203,7 +204,7 @@ class VASP_Decoder(tf.keras.Model):
         return tf.keras.Model(latent_input, xhat)
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.decoder(x, **kwargs)
 
     def get_config(self):
@@ -219,7 +220,7 @@ class VASP_Decoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],

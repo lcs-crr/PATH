@@ -19,7 +19,7 @@ class SISVAE(tf.keras.Model):
             self,
             encoder,
             decoder,
-            name: str = None,
+            name: str | None = None,
             **kwargs
     ) -> None:
         super(SISVAE, self).__init__(name=name, **kwargs)
@@ -71,7 +71,7 @@ class SISVAE(tf.keras.Model):
         else:
             return smooth_loss
 
-    def train_step(self, x, **kwargs):
+    def train_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         with tf.GradientTape() as tape:
             # Forward pass through encoder
             z_mean, z_logvar, z = self.encoder(x, training=True)
@@ -86,6 +86,7 @@ class SISVAE(tf.keras.Model):
         # Calculate gradients in backward pass
         grads = tape.gradient(loss, self.trainable_weights)
         # Apply gradients
+        assert self.optimizer is not None, "Model must be compiled with an optimizer!"
         self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
         # Track losses
         self.loss_tracker.update_state(loss)
@@ -99,7 +100,7 @@ class SISVAE(tf.keras.Model):
             "smooth_loss": self.smooth_loss_tracker.result(),
         }
 
-    def test_step(self, x, **kwargs):
+    def test_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         # Forward pass through encoder
         z_mean, z_logvar, z = self.encoder(x, training=False)
         # Forward pass through decoder
@@ -126,7 +127,7 @@ class SISVAE(tf.keras.Model):
         ]
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         z_mean, z_logvar, z = self.encoder(x, training=False)
         xhat_mean, xhat_logvar, xhat = self.decoder(z, training=False)
         return xhat_mean, xhat_logvar, xhat, z_mean, z_logvar, z
@@ -140,7 +141,7 @@ class SISVAE(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         encoder = SISVAE_Encoder.from_config(config["encoder"])
         decoder = SISVAE_Decoder.from_config(config["decoder"])
         return cls(encoder=encoder, decoder=decoder)
@@ -155,7 +156,7 @@ class SISVAE_Encoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(SISVAE_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -175,7 +176,7 @@ class SISVAE_Encoder(tf.keras.Model):
         return tf.keras.Model(enc_input, [z_mean, z_logvar, z],)
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.encoder(x, **kwargs)
 
     def get_config(self):
@@ -191,7 +192,7 @@ class SISVAE_Encoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],
@@ -211,7 +212,7 @@ class SISVAE_Decoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(SISVAE_Decoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -231,7 +232,7 @@ class SISVAE_Decoder(tf.keras.Model):
         return tf.keras.Model(latent_input, [xhat_mean, xhat_logvar, xhat])
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.decoder(x, **kwargs)
 
     def get_config(self):
@@ -247,7 +248,7 @@ class SISVAE_Decoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],

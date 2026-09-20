@@ -29,6 +29,7 @@ config = dotenv_values("../.env")
 # Load directory paths from .env file
 data_path = config['data_path']
 model_path = config['model_path']
+assert data_path is not None and model_path is not None, "data_path and model_path must be set in .env!"
 
 data_processor = data_class.DataProcessor(
     original_sampling_rate=FREQ_ORIG,

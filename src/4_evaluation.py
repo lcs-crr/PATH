@@ -5,6 +5,7 @@ Einsteinweg 55 | 2333 CC Leiden | The Netherlands
 """
 
 import os
+from typing import cast
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
@@ -26,6 +27,7 @@ config = dotenv_values("../.env")
 # Load directory paths from .env file
 data_path = config['data_path']
 model_path = config['model_path']
+assert data_path is not None and model_path is not None, "data_path and model_path must be set in .env!"
 
 results = []
 results_best = []
@@ -45,7 +47,7 @@ for model_seed in range(1, 4):
 
         detector = detection_class.AnomalyDetector(
             model_path=model_load_path,
-            window_size=tfdata_train.element_spec.shape[0],
+            window_size=cast(tf.TensorSpec, tfdata_train.element_spec).shape[0],
             sampling_rate=2,
             original_sampling_rate=10,
             calculate_delay=True,
@@ -76,9 +78,9 @@ for model_seed in range(1, 4):
         results.append({
             'Seed': model_seed,
             'Fold': fold_idx,
-            'F1': metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0),
-            'Precision': metrics.precision_score(groundtruth_labels, predicted_labels, zero_division=0.0),
-            'Recall': metrics.recall_score(groundtruth_labels, predicted_labels, zero_division=0.0),
+            'F1': metrics.f1_score(groundtruth_labels, predicted_labels, zero_division=0.0),  # pyright: ignore[reportArgumentType]
+            'Precision': metrics.precision_score(groundtruth_labels, predicted_labels, zero_division=0.0),  # pyright: ignore[reportArgumentType]
+            'Recall': metrics.recall_score(groundtruth_labels, predicted_labels, zero_division=0.0),  # pyright: ignore[reportArgumentType]
             'Delay': np.mean(total_delays),
             'Threshold': threshold
         })
@@ -93,7 +95,7 @@ for model_seed in range(1, 4):
                 detection_score_list=test_detection_score_list,
                 threshold=threshold_temp,
             )
-            f1_list.append(metrics.f1_score(groundtruth_labels_temp, predicted_labels_temp, zero_division=0.0))
+            f1_list.append(metrics.f1_score(groundtruth_labels_temp, predicted_labels_temp, zero_division=0.0))  # pyright: ignore[reportArgumentType]
         f1_list = np.vstack(f1_list)
         threshold_best = np.percentile(reduced_test_detection_score, percentile_array[np.argmax(f1_list)]).astype(float)
 
@@ -106,9 +108,9 @@ for model_seed in range(1, 4):
         results_best.append({
             'Seed': model_seed,
             'Fold': fold_idx,
-            'F1': metrics.f1_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
-            'Precision': metrics.precision_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
-            'Recall': metrics.recall_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),
+            'F1': metrics.f1_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),  # pyright: ignore[reportArgumentType]
+            'Precision': metrics.precision_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),  # pyright: ignore[reportArgumentType]
+            'Recall': metrics.recall_score(groundtruth_labels_best, predicted_labels_best, zero_division=0.0),  # pyright: ignore[reportArgumentType]
             'Delay': np.mean(total_delays_best),
             'Threshold': threshold_best
         })

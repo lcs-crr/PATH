@@ -71,7 +71,7 @@ class TEVAE(tf.keras.Model):
             decoder: tf.keras.Model,
             ma: tf.keras.Model,
             beta: float = 1.0,
-            name: str = None,
+            name: str | None = None,
             **kwargs,
     ) -> None:
         super(TEVAE, self).__init__(name=name, **kwargs)
@@ -82,7 +82,7 @@ class TEVAE(tf.keras.Model):
         self.loss_tracker = tf.keras.metrics.Mean(name="loss")
         self.rec_loss_tracker = tf.keras.metrics.Mean(name="rec_loss")
         self.kl_loss_tracker = tf.keras.metrics.Mean(name="kl_loss")
-        self.beta = tf.Variable(beta, trainable=False)  # Weight for KL-Loss, can be modified with a callback
+        self.beta = tf.Variable(tf.constant(beta), trainable=False)  # Weight for KL-Loss, can be modified with a callback
 
     @staticmethod
     def rec_fn(x, xhat_params, reduce_time=True):
@@ -110,7 +110,7 @@ class TEVAE(tf.keras.Model):
         else:
             return kl_loss
 
-    def train_step(self, x, **kwargs):
+    def train_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         with tf.GradientTape() as tape:
             # Forward pass through encoder
             z_mean, z_logvar, z = self.encoder(x, training=True)
@@ -126,6 +126,7 @@ class TEVAE(tf.keras.Model):
         # Calculate gradients in backward pass
         grads = tape.gradient(loss, self.trainable_weights)
         # Apply gradients
+        assert self.optimizer is not None, "Model must be compiled with an optimizer!"
         self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
         # Track losses
         self.beta_tracker.update_state(self.beta)
@@ -139,7 +140,7 @@ class TEVAE(tf.keras.Model):
             "kl_loss": self.kl_loss_tracker.result(),
         }
 
-    def test_step(self, x, **kwargs):
+    def test_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         # Forward pass through encoder
         z_mean, z_logvar, z = self.encoder(x, training=False)
         # Forward pass through MA
@@ -165,7 +166,7 @@ class TEVAE(tf.keras.Model):
         ]
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         z_mean, z_logvar, z = self.encoder(x, training=False)
         c = self.ma([x, z_mean], training=False)
         xhat_mean, xhat_logvar, xhat = self.decoder(c, training=False)
@@ -182,7 +183,7 @@ class TEVAE(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         encoder = TEVAE_Encoder.from_config(config["encoder"])
         decoder = TEVAE_Decoder.from_config(config["decoder"])
         ma = MA.from_config(config["ma"])
@@ -198,7 +199,7 @@ class TEVAE_Encoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(TEVAE_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -220,7 +221,7 @@ class TEVAE_Encoder(tf.keras.Model):
         return tf.keras.Model(enc_input, [z_mean, z_logvar, z])
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.encoder(x, **kwargs)
 
     def get_config(self):
@@ -236,7 +237,7 @@ class TEVAE_Encoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],
@@ -256,7 +257,7 @@ class TEVAE_Decoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(TEVAE_Decoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -277,7 +278,7 @@ class TEVAE_Decoder(tf.keras.Model):
         return tf.keras.Model(dec_input, [xhat_mean, xhat_logvar, xhat])
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.decoder(x, **kwargs)
 
     def get_config(self):
@@ -293,7 +294,7 @@ class TEVAE_Decoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],
@@ -312,7 +313,7 @@ class MA(tf.keras.Model):
             latent_dim: int,
             key_dim: int,
             features: int,
-            name: str = None
+            name: str | None = None
     ) -> None:
         super(MA, self).__init__(name=name)
         self.seq_len = seq_len
@@ -325,7 +326,7 @@ class MA(tf.keras.Model):
         attention = tfkl.MultiHeadAttention(
             num_heads=8,
             key_dim=self.key_dim,
-            output_shape=self.latent_dim,
+            output_shape=self.latent_dim,  # pyright: ignore[reportArgumentType]
         )
 
         raw_input = tfkl.Input(shape=(self.seq_len, self.features))
@@ -334,7 +335,7 @@ class MA(tf.keras.Model):
         return tf.keras.Model([raw_input, latent_input], c)
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.ma(x, **kwargs)
 
     def get_config(self):
@@ -349,7 +350,7 @@ class MA(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],

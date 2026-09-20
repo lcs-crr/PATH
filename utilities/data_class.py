@@ -8,17 +8,17 @@ import math
 import numpy as np
 from scipy.signal import butter, lfilter, sosfilt
 from statsmodels.tsa import stattools
-from typing import List, Union
+from typing import List, Union, cast
 from utilities import base_class
 
 
 class DataProcessor(base_class.BaseProcessor):
     def __init__(
             self,
-            window_size: int = None,
-            original_sampling_rate: int = None,
-            target_sampling_rate: int = None,
-            scale_method: str = None,
+            window_size: int | None = None,
+            original_sampling_rate: int | None = None,
+            target_sampling_rate: int | None = None,
+            scale_method: str | None = None,
             window_shift: Union[int, str] = 'half',
     ) -> None:
         """
@@ -58,9 +58,9 @@ class DataProcessor(base_class.BaseProcessor):
             intersection_list = []
             # Iterate through channels
             for channel in range(data_ts.shape[-1]):
-                corr_array = stattools.acf(data_ts[:, channel], alpha=0.01, nlags=4096)
-                upper_y = corr_array[1][:, 1] - corr_array[0]
-                corr = corr_array[0]
+                # With alpha set, acf returns the autocorrelations and their confidence intervals
+                corr, confint = cast(tuple[np.ndarray, np.ndarray], stattools.acf(data_ts[:, channel], alpha=0.01, nlags=4096))
+                upper_y = confint[:, 1] - corr
                 try:
                     intersection_list.append(np.min(np.where(corr - upper_y < 0)[0]))
                 except:
@@ -98,6 +98,7 @@ class DataProcessor(base_class.BaseProcessor):
         if not isinstance(self.window_shift, int):
             if self.window_shift == 'half':
                 self.window_shift = self.window_size // 2
+        assert isinstance(self.window_shift, int), 'window_shift must be an integer or \'half\'!'
 
         output_list = [self.window_array(input_array, self.window_size, self.window_shift) for input_array in input_list]
         return np.vstack(output_list)

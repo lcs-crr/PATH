@@ -74,7 +74,7 @@ class VSVAE(tf.keras.Model):
             vs: tf.keras.Model,
             beta: float = 1.0,
             att_beta: float = 0.01,
-            name: str = None,
+            name: str | None = None,
             **kwargs,
     ) -> None:
         super(VSVAE, self).__init__(name=name, **kwargs)
@@ -86,7 +86,7 @@ class VSVAE(tf.keras.Model):
         self.rec_loss_tracker = tf.keras.metrics.Mean(name="rec_loss")
         self.kl_loss_tracker = tf.keras.metrics.Mean(name="kl_loss")
         self.att_loss_tracker = tf.keras.metrics.Mean(name="att_loss")
-        self.beta = tf.Variable(beta, trainable=False)  # Weight for KL-Loss, can be modified with a callback
+        self.beta = tf.Variable(tf.constant(beta), trainable=False)  # Weight for KL-Loss, can be modified with a callback
         self.att_beta = tf.constant(att_beta)  # Is not modified
 
     @staticmethod
@@ -126,7 +126,7 @@ class VSVAE(tf.keras.Model):
         else:
             return att_loss
 
-    def train_step(self, x, **kwargs):
+    def train_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         with tf.GradientTape() as tape:
             # Forward pass through encoder
             z_mean, z_logvar, z, states = self.encoder(x, training=True)
@@ -143,6 +143,7 @@ class VSVAE(tf.keras.Model):
         # Calculate gradients in backward pass
         grads = tape.gradient(loss, self.trainable_weights)
         # Apply gradients
+        assert self.optimizer is not None, "Model must be compiled with an optimizer!"
         self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
         # Track losses
         self.beta_tracker.update_state(self.beta)
@@ -158,7 +159,7 @@ class VSVAE(tf.keras.Model):
             "att_loss": self.att_loss_tracker.result(),
         }
 
-    def test_step(self, x, **kwargs):
+    def test_step(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         # Forward pass through encoder
         z_mean, z_logvar, z, states = self.encoder(x, training=False)
         # Forward pass through VS
@@ -187,7 +188,7 @@ class VSVAE(tf.keras.Model):
         ]
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         z_mean, z_logvar, z, states = self.encoder(x, training=False)
         a_mean, a_logvar, a = self.vs(states, training=False)
         xhat_mean, xhat_logvar, xhat = self.decoder([z, a], training=False)
@@ -205,7 +206,7 @@ class VSVAE(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         encoder = VSVAE_Encoder.from_config(config["encoder"])
         decoder = VSVAE_Decoder.from_config(config["decoder"])
         vs = VS.from_config(config["vs"])
@@ -221,7 +222,7 @@ class VSVAE_Encoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ) -> None:
         super(VSVAE_Encoder, self).__init__(name=name)
         self.seq_len = seq_len
@@ -244,7 +245,7 @@ class VSVAE_Encoder(tf.keras.Model):
         return tf.keras.Model(enc_input, [z_mean, z_logvar, z, bilstm])
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.encoder(x, **kwargs)
 
     def get_config(self):
@@ -260,7 +261,7 @@ class VSVAE_Encoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],
@@ -280,7 +281,7 @@ class VSVAE_Decoder(tf.keras.Model):
             features: int,
             hidden_units: int,
             seed: int,
-            name: str = None,
+            name: str | None = None,
     ):
         super(VSVAE_Decoder, self).__init__(name=name)
 
@@ -306,7 +307,7 @@ class VSVAE_Decoder(tf.keras.Model):
         return tf.keras.Model([dec_input, attention_input], [xhat_mean, xhat_logvar, xhat])
 
     @tf.function
-    def call(self, x, **kwargs):
+    def call(self, x, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.decoder(x, **kwargs)
 
     def get_config(self):
@@ -322,7 +323,7 @@ class VSVAE_Decoder(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],
@@ -341,7 +342,7 @@ class VS(tf.keras.Model):
             latent_dim: int,
             features: int,
             seed: int,
-            name: str = None
+            name: str | None = None
     ):
         super(VS, self).__init__(name=name)
         self.seq_len = seq_len
@@ -362,7 +363,7 @@ class VS(tf.keras.Model):
         return tf.keras.Model(vs_input, [a_mean, a_logvar, a])
 
     @tf.function
-    def call(self, inputs, **kwargs):
+    def call(self, inputs, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return self.vs(inputs, **kwargs)
 
     def get_config(self):
@@ -377,7 +378,7 @@ class VS(tf.keras.Model):
         return config
 
     @classmethod
-    def from_config(cls, config, **kwargs):
+    def from_config(cls, config, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
         return cls(
             seq_len=config['seq_len'],
             latent_dim=config['latent_dim'],

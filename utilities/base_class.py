@@ -41,8 +41,8 @@ class BaseProcessor:
     @staticmethod
     def window_array(
             input_array: np.ndarray,
-            window_size: int = None,
-            window_shift: int = None,
+            window_size: int | None = None,
+            window_shift: int | None = None,
     ) -> np.ndarray:
         """
         Generates windows from an array.
