@@ -79,7 +79,7 @@ Utility functions can be found in the `utilities` folder in this repository. It 
 
 Custom model classes for each of the tested approaches can be found in the `model_garden` folder in this repository.
 
-Typically, a `.env` file should be excluded from version control, though we have added a dummy one (`.env_dummy`) to illustrate the file structure.
+Typically, a `.env` file should be excluded from version control, though we have added a template (`.env.template`) to illustrate the file structure.
 
 `requirements.txt` (venv) and `pyprojects.toml` (uv) contain all libraries used.
 
