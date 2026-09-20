@@ -14,7 +14,7 @@ If you use this dataset for your research, please consider also citing the Zenod
     author = {Correia, Lucas and Goos, Jan-Christoph and B{\"a}ck, Thomas and Kononova, Anna V.},
     year = {2024},
     publisher = {Zenodo},
-    doi = {10.5281/ZENODO.13255121},
+    doi = {10.5281/zenodo.13255120},
     copyright = {MIT License}
 }
 ```
