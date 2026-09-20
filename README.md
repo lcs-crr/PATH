@@ -1,6 +1,6 @@
 # PATH: A Dataset for Evaluating Online Anomaly Detection Approaches for Discrete Multivariate Time Series
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13255120.svg)](https://doi.org/10.5281/zenodo.13255120)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Dataset DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13255120.svg)](https://doi.org/10.5281/zenodo.13255120) [![Paper DOI](https://img.shields.io/badge/Paper%20DOI-10.1016%2Fj.bdr.2025.100573-blue.svg)](https://doi.org/10.1016/j.bdr.2025.100573)
 
 We propose a diverse, extensive, and non-trivial data set generated via state-of-the-art simulation tools that reflect realistic behaviour of an automotive powertrain, including its multivariate, dynamic and variable-state properties. 
 To cater for both unsupervised and semi-supervised anomaly detection settings, as well as time series generation and forecasting, different versions of the data set are made available, where training and test subsets are offered in contaminated and clean versions, depending on the task.
