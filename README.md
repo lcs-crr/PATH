@@ -1,6 +1,6 @@
 # PATH: A Dataset for Evaluating Online Anomaly Detection Approaches for Discrete Multivariate Time Series
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.bdr.2025.100573-blue.svg)](https://doi.org/10.1016/j.bdr.2025.100573) [![Dataset DOI](https://img.shields.io/badge/Dataset%20DOI-10.5281%2Fzenodo.13255120-blue.svg)](https://doi.org/10.5281/zenodo.13255120)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.bdr.2025.100573-blue.svg)](https://doi.org/10.1016/j.bdr.2025.100573) [![Dataset DOI](https://img.shields.io/badge/Dataset%20DOI-10.5281%2Fzenodo.13255120-blue.svg)](https://doi.org/10.5281/zenodo.13255120) [![Hugging Face Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-yellow.svg)](https://huggingface.co/datasets/lcs-crr/PATH)
 
 We propose a diverse, extensive, and non-trivial data set generated via state-of-the-art simulation tools that reflect realistic behaviour of an automotive powertrain, including its multivariate, dynamic and variable-state properties. 
 To cater for both unsupervised and semi-supervised anomaly detection settings, as well as time series generation and forecasting, different versions of the data set are made available, where training and test subsets are offered in contaminated and clean versions, depending on the task.
@@ -57,10 +57,10 @@ The `0_simulation` and `1_postsim` folders can be found on [Zenodo](https://doi.
 - `normal.pkl`, which contains all nominal sequences 
 - `anomalous.pkl`, which contains all anomalous sequences 
 - `control.pkl`, which contains all control-counterparts to anomalous.pkl
-- `training.pkl`, which contains all pre-determined folds for training
-- `training_clean.pkl`, a version of training.pkl without anomalous sequences
-- `testing.pkl`, which contains all pre-determined folds for testing
-- `testing_clean.pkl`, a version of testing.pkl without anomalous sequences
+- `train.pkl`, which contains all pre-determined folds for training
+- `train_clean.pkl`, a version of train.pkl without anomalous sequences
+- `test.pkl`, which contains all pre-determined folds for testing
+- `test_clean.pkl`, a version of test.pkl without anomalous sequences
 
 Each pickle file is a list of several 2D NumPy arrays, each representing a multivariate time series. The name of the corresponding `.mat` file (and, by extension, the label) is present in the metadata. For NumPy object `array`, it can be read by calling `array.dtype.metadata['file_name']`.
 
