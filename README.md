@@ -53,7 +53,7 @@ The data set consists of three states, each with a folder associated with it:
 - `1_postsim`, where files are saved after post-simulation processing 
 - `2_preprocessed`, where files are saved after downsampling, standardising, and windowing
 
-The `0_simulation` and `1_postsim` folders can be found on [Zenodo](https://doi.org/10.5281/zenodo.13255120) and [HuggingFace](https://huggingface.co/datasets/lcs-crr/PATH). The `0_simulation` folder consists of the raw `.mat` files, each representing a multivariate time series, whereas the `1_postsim folder` consists of the following pickle files:
+The `0_simulation` and `1_postsim` folders can be found on [Zenodo](https://doi.org/10.5281/zenodo.13255120) and [Hugging Face](https://huggingface.co/datasets/lcs-crr/PATH). The `0_simulation` folder consists of the raw `.mat` files, each representing a multivariate time series, whereas the `1_postsim folder` consists of the following pickle files:
 - `normal.pkl`, which contains all nominal sequences 
 - `anomalous.pkl`, which contains all anomalous sequences 
 - `control.pkl`, which contains all control-counterparts to anomalous.pkl
